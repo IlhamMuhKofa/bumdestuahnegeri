@@ -1,0 +1,320 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+/// ===============================
+/// MODEL ANGGOTA / USER
+/// ===============================
+model anggota {
+  id        Int     @id @default(autoincrement())
+  nama      String?
+  alamat    String?
+  no_hp     String?
+  pekerjaan String?
+
+  jenis_kelamin String?
+  tanggal_lahir DateTime?
+
+  role     String  @default("nasabah")
+  email    String  @unique
+  username String? @unique
+  password String
+  status   String  @default("active") // active / disabled (kalau mau blokir)
+
+  nik       String?
+  foto_diri String?
+
+  isProfileComplete Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relasi
+  peminjaman   Peminjaman[]
+  riwayat      RiwayatTransaksi[]
+  notifikasi   Notifikasi[]
+  eventPeserta EventPeserta[]
+  simpanans    Simpanan[]
+
+  @@map("anggota")
+}
+
+/// ===============================
+/// MODEL PEMINJAMAN
+/// ===============================
+model Peminjaman {
+  id_peminjaman     Int      @id @default(autoincrement())
+  id_anggota        Int
+  tanggal_pengajuan DateTime @default(now())
+  status            String
+  status_survey     String   @default("BELUM")
+  total_pinjaman    Int
+
+  jangka_waktu Int
+
+  // Relasi
+  anggota      anggota            @relation(fields: [id_anggota], references: [id])
+  detail       DetailPeminjaman[]
+  jadwal       JadwalAngsuran[]
+  jadwalSurvey jadwalSurvey[]
+
+  @@map("peminjaman")
+}
+
+/// ===============================
+/// DETAIL PEMINJAMAN
+/// ===============================
+model DetailPeminjaman {
+  id_peminjamandetail Int     @id @default(autoincrement())
+  id_peminjaman       Int
+  nama                String
+  jenis               String
+  jumlah              Int
+  nilai_perolehan     Int
+  keterangan          String?
+
+  jangka_waktu Int
+  foto_agunan  String?
+  foto_surat   String?
+
+  peminjaman Peminjaman @relation(fields: [id_peminjaman], references: [id_peminjaman])
+
+  @@map("detail_peminjaman")
+}
+
+/// ===============================
+/// JADWAL ANGSURAN
+/// ===============================
+model JadwalAngsuran {
+  id_jadwal      Int      @id @default(autoincrement())
+  id_peminjaman  Int
+  cicilan_ke     Int
+  jumlah_cicilan Int
+  jatuh_tempo    DateTime
+  jumlah_tagihan Int
+
+  denda   Int?
+  catatan String?
+  status  String
+
+  peminjaman Peminjaman   @relation(fields: [id_peminjaman], references: [id_peminjaman])
+  pembayaran Pembayaran[]
+
+  @@map("jadwal_angsuran")
+}
+
+/// ===============================
+/// PEMBAYARAN
+/// ===============================
+model Pembayaran {
+  id_pembayaran Int @id @default(autoincrement())
+  id_jadwal     Int
+
+  tanggal_bayar DateTime @default(now())
+
+  jumlah Int
+
+  metode_bayar String
+  status       String
+
+  bukti_bayar String?
+  catatan     String?
+
+  jadwal JadwalAngsuran @relation(fields: [id_jadwal], references: [id_jadwal])
+
+  @@map("pembayaran")
+}
+
+/// ===============================
+/// SIMPANAN
+/// ===============================
+model Simpanan {
+  id_simpanan     Int      @id @default(autoincrement())
+  id_anggota      Int
+  jenis_simpanan  String // WAJIB / PENDIDIKAN
+  nominal         Int
+  tanggal_tagihan DateTime
+  status          String   @default("BELUM_BAYAR")
+  tujuan          String?
+  target_dana     Int?
+  jangka_waktu    Int?
+  terkumpul       Int      @default(0)
+
+  created_at          DateTime             @default(now())
+  anggota             anggota              @relation(fields: [id_anggota], references: [id])
+  pembayaran_simpanan PembayaranSimpanan[]
+
+  @@map("simpanan")
+}
+
+/// ===============================
+/// PEMBAYARAN SIMPANAN
+/// ===============================
+model PembayaranSimpanan {
+  id_pembayaran_simpanan Int @id @default(autoincrement())
+
+  id_simpanan Int
+
+  jenis_simpanan String?
+
+  tanggal_bayar DateTime @default(now())
+
+  bulan_ke Int
+
+  metode_bayar String?
+
+  nominal_bayar Int
+
+  bukti_bayar String?
+
+  catatan String?
+
+  status String @default("MENUNGGU")
+
+  simpanan Simpanan @relation(fields: [id_simpanan], references: [id_simpanan])
+
+  @@map("pembayaran_simpanan")
+}
+
+/// ===============================
+/// RIWAYAT TRANSAKSI
+/// ===============================
+model RiwayatTransaksi {
+  id_riwayat      Int      @id @default(autoincrement())
+  id_anggota      Int
+  jenis_transaksi String
+  nominal         Int
+  tanggal         DateTime @default(now())
+  keterangan      String?
+  kategori        String?
+  metode_bayar    String?
+  bukti_bayar     String?
+  ref_tabel       String?
+  ref_id          Int?
+
+  anggota anggota @relation(fields: [id_anggota], references: [id])
+
+  @@map("riwayat_transaksi")
+}
+
+/// ===============================
+/// NOTIFIKASI
+/// ===============================
+model Notifikasi {
+  id_notifikasi    Int       @id @default(autoincrement())
+  id_anggota       Int?
+  role_tujuan      String // "admin" | "nasabah"
+  isi_notifikasi   String
+  url_tujuan       String?
+  waktu_dibaca     DateTime?
+  jenis_notifikasi String
+  created_at       DateTime  @default(now())
+
+  anggota anggota? @relation(fields: [id_anggota], references: [id])
+
+  @@map("notifikasi")
+}
+
+/// ===============================
+/// EVENT
+/// ===============================
+model Event {
+  id_event        Int      @id @default(autoincrement())
+  judul           String
+  deskripsi_event String?  @db.LongText
+  gambar_event    String?
+  tanggal         DateTime
+  lokasi          String
+  status          String   @default("published")
+
+  peserta EventPeserta[]
+
+  @@map("event")
+}
+
+/// ===============================
+/// EVENT PESERTA
+/// ===============================
+model EventPeserta {
+  id_event_peserta Int      @id @default(autoincrement())
+  id_event         Int
+  id_anggota       Int
+  nama             String
+  email            String
+  tanggal_daftar   DateTime @default(now())
+
+  event   Event   @relation(fields: [id_event], references: [id_event])
+  anggota anggota @relation(fields: [id_anggota], references: [id])
+
+  @@unique([id_event, id_anggota]) // 🔥 ANTI DOUBLE
+  @@map("event_peserta")
+}
+
+/// ===============================
+/// ARTIKEL
+/// ===============================
+model Artikel {
+  id_artikel       Int      @id @default(autoincrement())
+  judul            String
+  deskripsi_konten String?  @db.LongText
+  gambar_konten    String?
+  tanggal_publish  DateTime @default(now())
+  status           String
+
+  @@map("artikel")
+}
+
+/// ===============================
+/// SIMULASI ANGSURAN
+/// ===============================
+model SimulasiCicilan {
+  id                Int @id @default(autoincrement())
+  jumlah_pinjaman   Int
+  tenor             Int
+  cicilan_per_bulan Int
+
+  @@map("simulasi_cicilan")
+}
+
+model jadwalSurvey {
+  id_survey      Int      @id @default(autoincrement())
+  id_peminjaman  Int
+  tanggal_survey DateTime
+  lokasi         String?
+  catatan        String?
+  status         String   @default("TERJADWAL")
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+
+  peminjaman Peminjaman @relation(fields: [id_peminjaman], references: [id_peminjaman])
+
+  @@map("jadwal_survey")
+}
+
+model RekeningPembayaran {
+  id_rekening Int @id @default(autoincrement())
+
+  nama_bank   String
+  no_rekening String
+  atas_nama   String
+
+  is_active Boolean @default(true)
+
+  created_at DateTime @default(now())
+}
+
+model SuratTemplate {
+  id_surat Int @id @default(autoincrement())
+
+  kode      String @unique @default("SP2K_PENCAIRAN")
+  nama_file String
+  file_url  String
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
