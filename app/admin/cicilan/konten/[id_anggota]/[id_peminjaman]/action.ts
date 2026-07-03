@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { catatRiwayatTransaksi } from "@/lib/transaksi";
 import { createNotifikasi } from "@/lib/notifikasi";
+import { createWhatsAppReminderForJadwal } from "@/lib/whatsapp-reminder";
 
 type CreateJadwalInput = {
   idPeminjaman: number;
@@ -30,6 +31,19 @@ export async function createJadwalAngsuran(
   const startDate = new Date(tanggalMulai);
 
   const peminjaman = await prisma.$transaction(async (tx) => {
+    const dataPeminjaman = await tx.peminjaman.findUnique({
+      where: {
+        id_peminjaman: idPeminjaman,
+      },
+      include: {
+        anggota: true,
+      },
+    });
+
+    if (!dataPeminjaman) {
+      throw new Error("Peminjaman tidak ditemukan");
+    }
+
     for (let i = 0; i < tenor; i++) {
       const dueDate = new Date(startDate);
 
@@ -37,7 +51,7 @@ export async function createJadwalAngsuran(
         dueDate.getMonth() + i
       );
 
-      await tx.jadwalAngsuran.create({
+      const jadwal = await tx.jadwalAngsuran.create({
         data: {
           id_peminjaman: idPeminjaman,
           cicilan_ke: i + 1,
@@ -51,6 +65,8 @@ export async function createJadwalAngsuran(
           status: "PENDING",
         },
       });
+
+      await createWhatsAppReminderForJadwal(tx, jadwal, dataPeminjaman.anggota);
     }
 
     const updated = await tx.peminjaman.update({

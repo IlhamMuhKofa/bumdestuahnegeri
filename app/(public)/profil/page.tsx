@@ -74,9 +74,10 @@ const Profil = () => {
                 </h2>
               </div>
               <p className="text-gray-700 text-justify leading-relaxed">
-                Lorem ipsum dolor sit amet consectetur. Ac faucibus fringilla tristique sed gravida varius. 
-                Cursus ut consectetur ornare libero. Porttitor elit elemen elementum libero. Euismod non egestas 
-                pharetra potenti et. Etiam mi pharetra gravida ut massa. Sagittis est porttitor sit mattis sit libero.
+                Sejak resmi beroperasi, BUMDes Tuah Negeri terus bergerak maju mendampingi pertumbuhan ekonomi masyarakat 
+                Kampung Pinang Sebatang Barat. Melalui pengelolaan aset yang transparan dan profesional , 
+                saat ini kami telah menggerakkan enam unit usaha produktif yang menjadi pilar utama Pendapatan Asli Kampung. 
+                Kami percaya bahwa sinergi yang solid antara pengelola dan warga adalah kunci utama untuk mewujudkan desa yang mandiri, sejahtera, dan berdaya saing tinggi.
               </p>
               <div className="mt-6 flex gap-4">
                 <div className="bg-emerald-50 px-6 py-4 rounded-xl flex-1">
@@ -96,12 +97,12 @@ const Profil = () => {
         <div className="mb-12">
           <div className="text-center mb-8">
             <h3 className="text-3xl font-bold text-gray-800 mb-3">Nilai Kami</h3>
-            <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+            <p className="text-gray-600 text-lg max-full mx-auto">
               Kami di BUMDes Tuah Negeri mewujudkan nilai-nilai inti ini dalam setiap langkah
             </p>
           </div>
 
-          <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-6">
+          <div className="max-w-full mx-auto grid md:grid-cols-2 gap-6">
             {/* Visi */}
             <div className="group">
               <div className="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl p-8 shadow-xl transform transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl h-full">
@@ -237,21 +238,6 @@ const Profil = () => {
             </div>
           </div>
         </div>
-
-        {/* Footer CTA */}
-        {/* <div className="mt-12 text-center">
-          <div className="bg-gradient-to-r from-emerald-500 to-teal-500 rounded-2xl p-8 shadow-xl">
-            <h3 className="text-white text-2xl font-bold mb-3">
-              Mari Bergabung Bersama Kami
-            </h3>
-            <p className="text-white/90 mb-6 max-w-2xl mx-auto">
-              Bersama membangun ekonomi desa yang lebih baik dan berkelanjutan
-            </p>
-            <button className="bg-white text-emerald-600 font-bold px-8 py-3 rounded-full shadow-lg hover:shadow-xl transform transition-all duration-300 hover:scale-105">
-              Hubungi Kami
-            </button>
-          </div>
-        </div> */}
       </div>
     </div>
   );

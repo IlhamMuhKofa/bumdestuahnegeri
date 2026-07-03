@@ -324,7 +324,7 @@ function AdaptiveBanner({ user }: { user: AnggotaLike }) {
               Selesaikan profil untuk membuka semua fitur
             </p>
             <Link
-              href="/nasabah/profil"
+              href="/nasabah/profile"
               className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-emerald-700 hover:shadow-md active:translate-y-0"
             >
               Lengkapi Profil

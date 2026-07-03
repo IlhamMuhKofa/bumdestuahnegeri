@@ -71,7 +71,7 @@ const Artikel = () => {
         </div>
 
         {/* FEATURED */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-12">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
           <div className="lg:col-span-2">
             {featured && (
               <div
@@ -123,6 +123,16 @@ const Artikel = () => {
               </div>
             ))}
           </div>
+        </div>
+
+        {/* HEADER */}
+        <div className="mb-6">
+          <div className="flex items-center gap-2 mb-3">
+          </div>
+          <h1 className="text-3xl font-bold text-gray-800">Berita Lainnya</h1>
+          <p className="text-gray-600">
+            Jangan lewatkan kabar menarik dan informasi penting lainnya
+          </p>
         </div>
 
         {/* LIST */}

@@ -189,21 +189,30 @@ export default function Riwayat({
     ]);
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6 font-sans">
+    <div className="min-h-screen bg-gray-50 px-4 py-5 sm:p-6 font-sans">
 
-      <div className="max-w-6xl mx-auto">
+      <div className="mx-auto w-full max-w-6xl space-y-6">
 
         {/* TITLE */}
-        <h1 className="text-2xl font-bold text-gray-800 mb-6">
-          Riwayat
-          Transaksi Anda
-        </h1>
+<div>
+    <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-gray-800">
+        Riwayat Transaksi
+    </h1>
+
+    <p className="mt-2 text-sm text-gray-500 leading-relaxed">
+        Lihat seluruh aktivitas pembayaran, cicilan, dan setoran Anda.
+    </p>
+</div>
 
         {/* SEARCH */}
-        <div className="flex flex-wrap items-center gap-3 mb-6">
+        <div className="flex
+flex-col
+gap-3
+lg:flex-row
+lg:items-center3">
 
           {/* SEARCH JENIS */}
-          <div className="flex items-center flex-1 min-w-[180px] bg-white border border-gray-200 rounded-lg px-3 py-2.5 shadow-sm gap-2">
+          <div className="flex items-center w-full lg:flex-1 bg-white border border-gray-200 rounded-lg px-3 py-2.5 shadow-sm gap-2">
 
             <Search className="w-4 h-4 text-gray-400 shrink-0" />
 
@@ -226,7 +235,7 @@ export default function Riwayat({
           </div>
 
           {/* SEARCH TANGGAL */}
-          <div className="flex items-center min-w-[180px] bg-white border border-gray-200 rounded-lg px-3 py-2.5 shadow-sm gap-2">
+          <div className="flex items-center w-full lg:flex-1 bg-white border border-gray-200 rounded-lg px-3 py-2.5 shadow-sm gap-2">
 
             <Calendar className="w-4 h-4 text-gray-400 shrink-0" />
 
@@ -263,7 +272,7 @@ export default function Riwayat({
                     !prev
                 )
               }
-              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-semibold text-sm px-4 py-2.5 rounded-lg shadow-sm transition-all duration-150"
+              className="flex items-center w-full sm:w-auto gap-2 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-semibold text-sm px-4 py-2.5 rounded-lg shadow-sm transition-all duration-150"
             >
 
               <SlidersHorizontal className="w-4 h-4" />
@@ -283,7 +292,7 @@ export default function Riwayat({
             {/* DROPDOWN */}
             {filterOpen && (
 
-              <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-xl shadow-lg z-20 p-4">
+              <div className="absolute right-0 mt-2 w-full sm:w-56 bg-white border border-gray-200 rounded-xl shadow-lg z-20 p-4">
 
                 <p className="text-sm font-semibold text-gray-700 mb-3">
                   Filter
@@ -335,9 +344,10 @@ export default function Riwayat({
         </div>
 
         {/* TABLE */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div className="overflow-hidden rounded-3xl border border-gray-100 bg-white shadow-sm">
 
-          <table className="w-full text-sm">
+          <div className="overflow-x-auto">
+            <table className="min-w-[950px] w-full text-sm">
 
             <thead>
 
@@ -425,7 +435,7 @@ export default function Riwayat({
                       key={
                         item.id_riwayat
                       }
-                      className="border-t"
+                      className="border-t transition-colors hover:bg-gray-50"
                     >
 
                       {/* TANGGAL */}
@@ -516,6 +526,7 @@ export default function Riwayat({
             </tbody>
 
           </table>
+          </div>
 
         </div>
 

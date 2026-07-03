@@ -107,19 +107,19 @@ useEffect(() => {
   );
 
   return (
-    <div className="bg-gray-50 p-6">
-      <div className="max-w-6xl mx-auto">
+    <div className="bg-gray-50 px-4 py-5 sm:p-6">
+      <div className="mx-auto w-full max-w-6xl">
 
         {/* TITLE */}
         <div className="mb-6">
 
           <div className="flex items-center gap-3">
             <div>
-              <h1 className="text-3xl font-bold tracking-tight text-gray-800">
+              <h1 className="text-2xl font-bold sm:text-3xl tracking-tight text-gray-800">
                 Pinjaman
               </h1>
 
-              <p className="mt-1 text-sm leading-relaxed text-gray-500">
+              <p className="mt-2 text-sm leading-relaxed text-gray-500">
                 Pantau perkembangan pinjaman dan angsuran Anda dengan lebih mudah melalui layanan digital BUMDes
               </p>
             </div>
@@ -138,7 +138,7 @@ useEffect(() => {
 
           <div className="absolute bottom-0 left-1/3 h-28 w-28 rounded-full bg-white/[0.03]" />
 
-          <div className="relative z-10 flex min-h-[240px] flex-col justify-between sm:flex-row">
+          <div className="relative z-10 flex flex-col lg:flex-row justify-between min-h-[220px] sm:flex-row">
 
             {/* LEFT */}
             <div className="flex flex-1 flex-col justify-center px-8 py-8 sm:py-10">
@@ -283,18 +283,30 @@ useEffect(() => {
 </div>
 
         {/* ── Toolbar ── */}
-        <div className="flex items-center justify-between mb-4 gap-3">
+        <div className="mb-4
+flex
+flex-col
+items-start
+gap-4
+lg:flex-row
+lg:items-center
+lg:justify-between">
           <p className="text-sm text-gray-500">
             Daftar pengajuan Anda akan tampil di bawah ini.
           </p>
 
-          <div className="flex items-center gap-4">
+          <div className="flex
+w-full
+flex-col
+gap-3
+sm:flex-row
+sm:justify-end">
 
             {/* Filter Dropdown */}
             <div className="relative" ref={dropdownRef}>
               <button
                 onClick={() => setFilterOpen((v) => !v)}
-                className="flex items-center gap-2 bg-white border border-gray-200 hover:border-gray-300 text-gray-600 text-sm font-medium px-4 py-2 rounded-lg shadow-sm transition-all"
+                className="flex w-full sm:w-auto items-center justify-center gap-2 bg-white border border-gray-200 hover:border-gray-300 text-gray-600 text-sm font-medium px-4 py-2 rounded-lg shadow-sm transition-all"
               >
                 <span>Filter</span>
                 {selectedFilters.length > 0 && (
@@ -352,7 +364,7 @@ useEffect(() => {
             {/* ✅ BUTTON BARU (SELALU MUNCUL) */}
             <button
               onClick={() => setOpenForm(true)}
-              className="flex items-center gap-1.5 bg-[#1a3c2e] hover:bg-green-900 text-white text-sm font-medium px-4 py-2 rounded-lg transition-all"
+              className="flex w-full sm:w-auto items-center justify-center gap-2 bg-[#1a3c2e] hover:bg-green-900 text-white text-sm font-medium px-4 py-2 rounded-lg transition-all"
             >
               <Plus className="w-4 h-4" />
               Buat Pengajuan
@@ -362,8 +374,9 @@ useEffect(() => {
         </div>
 
         {/* ── Table ── */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-          <table className="w-full text-sm">
+        <div className="overflow-hidden rounded 2xl border border-gray-100 bg-white shadow-sm">
+          <div className="overflow-x-auto">
+             <table className="min-w-[900px] w-full text-sm">
             <thead>
               <tr className="bg-[#1a3c2e]">
                 {["Tanggal", "Jenis Pengajuan", "Jumlah", "Jangka Waktu", "Jenis Agunan", "Status"].map((col) => (
@@ -452,10 +465,18 @@ useEffect(() => {
               )}
             </tbody>
           </table>
+          </div>
         </div>
 
         {/* Pagination */}
-        <div className="flex items-center justify-between mt-4 text-sm text-gray-500 px-1">
+        <div className="flex
+flex-col
+gap-4
+sm:flex-row
+sm:items-center
+sm:justify-between
+mt-4
+px-1">
 
           {/* INFO */}
           <span>
@@ -514,7 +535,7 @@ useEffect(() => {
 
             {/* Modal content */}
             <motion.div
-              className="relative w-full max-w-5xl max-h-[90vh] overflow-y-auto rounded-2xl bg-white shadow-xl"
+              className="relative w-full max-w-5xl max-h-[90vh] overflow-y-auto rounded-2xl bg-white shadow-xl sm:rounded 2xl"
               initial={{ y: 30, opacity: 0, scale: 0.95 }}
               animate={{ y: 0, opacity: 1, scale: 1 }}
               exit={{ y: 30, opacity: 0, scale: 0.95 }}

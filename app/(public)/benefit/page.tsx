@@ -12,7 +12,7 @@ const Benefit: React.FC = () => {
   return (
     <section className="container mx-auto px-8 py-12 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
       {/* Gambar */}
-      <div className="flex justify-center mr-12">
+      <div className="flex justify-center md:mr-12">
         <img
           src="/img/benefit.jpg"
           alt="Ilustrasi Digitalisasi BUMDes"

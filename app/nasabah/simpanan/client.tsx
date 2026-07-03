@@ -186,8 +186,8 @@ const tagihanModal =
     }));
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="mx-auto max-w-6xl">
+    <div className="min-h-screen bg-gray-50 px-4 py-5 sm:p-6">
+      <div className="mx-auto w-full max-w-6xl space-y-6">
 
         {/* TITLE */}
         <div className="mb-6">
@@ -195,7 +195,7 @@ const tagihanModal =
 
             <div>
 
-              <h1 className="text-3xl font-bold tracking-tight text-gray-800">
+              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-gray-800">
                 Simpanan
               </h1>
 
@@ -209,7 +209,7 @@ const tagihanModal =
         </div>
 
         {/* BANNER */}
-        <div className="relative mb-6 overflow-hidden rounded-[32px] bg-[#1a3c2e] shadow-xl">
+        <div className="relative overflow-hidden rounded-[32px] bg-[#1a3c2e] shadow-xl">
 
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(255,255,255,0.10),_transparent_35%)]" />
 
@@ -217,10 +217,16 @@ const tagihanModal =
 
           <div className="absolute bottom-0 left-1/3 h-28 w-28 rounded-full bg-white/[0.03]" />
 
-          <div className="relative z-10 flex min-h-[240px] flex-col justify-between sm:flex-row">
+          <div className="relative
+z-10
+flex
+flex-col
+lg:flex-row
+justify-between
+min-h-[220px]">
 
             {/* LEFT */}
-            <div className="flex flex-1 flex-col justify-center px-8 py-8 sm:py-10">
+            <div className="flex flex-1 flex-col justify-center px-5 py-6 sm:px-8 sm:py-10">
 
               <p className="mb-3 text-xs font-semibold uppercase tracking-[3px] text-green-300">
                 BUMDes · Layanan Simpanan
@@ -259,13 +265,25 @@ const tagihanModal =
         </div>
 
         {/* TOOLBAR */}
-        <div className="mb-4 flex items-center justify-between gap-3">
+        <div className="mb-4
+flex
+flex-col
+items-start
+gap-4
+lg:flex-row
+lg:items-center
+lg:justify-between">
 
-          <p className="text-sm text-gray-500">
+          <p className="text-sm w-full text-gray-500">
             Kelola simpanan wajib dan tabungan pendidikan Anda melalui halaman ini.
           </p>
 
-          <div className="flex items-center gap-4">
+          <div className="flex
+w-full
+flex-col
+gap-3
+sm:flex-row
+sm:justify-end">
 
             {/* FILTER */}
             <div
@@ -279,7 +297,20 @@ const tagihanModal =
                     (v) => !v
                   )
                 }
-                className="flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm shadow-sm"
+                className="flex
+w-full
+sm:w-auto
+justify-center
+items-center
+gap-2
+rounded-xl
+border
+border-gray-200
+bg-white
+px-4
+py-2
+text-sm
+shadow-sm"
               >
                 {selectedFilter}
 
@@ -354,7 +385,8 @@ const tagihanModal =
           "Wajib" ? (
           <div className="overflow-hidden rounded-3xl border border-gray-100 bg-white shadow-sm">
 
-            <table className="w-full text-sm">
+            <div className="overflow-x-auto">
+              <table className="min-w-[700px] w-full text-sm">
 
               <thead>
                 <tr className="bg-[#1a3c2e] text-white">
@@ -431,6 +463,7 @@ const tagihanModal =
               </tbody>
 
             </table>
+            </div>
 
           </div>
         ) : (
@@ -485,13 +518,23 @@ const tagihanModal =
                           tabungan.id_simpanan
                         )
                       }
-                      className="flex w-full items-center justify-between bg-white p-6 text-left transition-all hover:bg-gray-50"
+                      className="flex
+flex-col
+gap-5
+sm:flex-row
+sm:items-center
+sm:justify-between
+bg-white
+p-5
+sm:p-6
+transition-all
+hover:bg-gray-50"
                     >
 
-                      <div className="flex flex-1 items-start gap-4">
+                      <div className="flex flex-1 items-start gap-3 sm:gap-4">
 
                         {/* ICON */}
-                        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50">
+                        <div className="flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-2xl bg-blue-50">
                           <GraduationCap className="h-7 w-7 text-blue-700" />
                         </div>
 
@@ -544,7 +587,8 @@ const tagihanModal =
                     {isOpen && (
                       <div className="border-t border-gray-100">
 
-                        <table className="w-full text-sm">
+                      <div className="overflow-x-auto">
+                        <table className="min-w-[700px] w-full text-sm">
 
                           <thead>
                             <tr className="bg-[#1a3c2e] text-white">
@@ -631,6 +675,7 @@ const tagihanModal =
                           </tbody>
 
                         </table>
+                        </div>
 
                       </div>
                     )}
@@ -645,7 +690,12 @@ const tagihanModal =
 
         {/* PAGINATION */}
         {totalData > 0 && (
-          <div className="flex items-center justify-between mt-4 text-sm text-gray-500 px-1">
+          <div className="flex
+flex-col
+gap-4
+sm:flex-row
+sm:items-center
+sm:justify-between mt-4 text-sm text-gray-500 px-1">
 
             <span className="text-sm text-gray-500">
               Menampilkan{" "}

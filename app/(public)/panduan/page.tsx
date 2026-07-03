@@ -6,6 +6,14 @@ import { FileText, UserCheck, DollarSign, FileCheck, Wallet, Calculator, Trendin
 const LoanCalculator: React.FC = () => {
   const [loanAmount, setLoanAmount] = useState<number>(5000000);
   const [duration, setDuration] = useState<number>(12);
+  const [results, setResults] = useState<{
+    cicilan_per_bulan: number;
+  } | null>(null);
+
+    const nominalValid =
+  loanAmount >= 1000000 &&
+  loanAmount <= 30000000 &&
+  loanAmount % 1000000 === 0;
   const [isCalculating, setIsCalculating] = useState<boolean>(false);
 
   // Interest rate: 1.5% per month = 18% per year
@@ -17,21 +25,38 @@ const LoanCalculator: React.FC = () => {
     return () => clearTimeout(timer);
   }, [loanAmount, duration]);
 
-  const calculateResults = () => {
-    // Calculate using flat interest rate method
-    const totalInterest = loanAmount * monthlyInterestRate * duration;
-    const totalPayment = loanAmount + totalInterest;
-    const monthlyPayment = totalPayment / duration;
-    
-    return {
-      monthlyPayment: Math.round(monthlyPayment),
-      totalInterest: Math.round(totalInterest),
-      totalPayment: Math.round(totalPayment),
-      interestRate: monthlyInterestRate * 100
-    };
-  };
+  useEffect(() => {
 
-  const results = calculateResults();
+  async function loadSimulasi() {
+
+    try {
+
+      const res = await fetch(
+        `/api/simulasi?jumlah=${loanAmount}&tenor=${duration}`
+      );
+
+      const json = await res.json();
+
+      if (json.success) {
+        setResults(json.data);
+      } else {
+        setResults(null);
+      }
+
+    } catch (err) {
+      console.error(err);
+      setResults(null);
+    }
+
+  }
+
+  if (nominalValid) {
+    loadSimulasi();
+  } else {
+    setResults(null);
+  }
+
+}, [loanAmount, duration, nominalValid]);
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('id-ID', {
@@ -83,26 +108,36 @@ const LoanCalculator: React.FC = () => {
     { icon: FileCheck, label: 'surat ket usaha' }
   ];
 
-  const loanPresets = [
-    { value: 1000000, label: '1 Juta' },
-    { value: 2000000, label: '2 Juta' },
-    { value: 3000000, label: '3 Juta' },
-    { value: 5000000, label: '5 Juta' },
-    { value: 7000000, label: '7 Juta' },
-    { value: 10000000, label: '10 Juta' }
-  ];
+  // const loanPresets = [
+  //   { value: 1000000, label: '1 Juta' },
+  //   { value: 2000000, label: '2 Juta' },
+  //   { value: 3000000, label: '3 Juta' },
+  //   { value: 5000000, label: '5 Juta' },
+  //   { value: 7000000, label: '7 Juta' },
+  //   { value: 10000000, label: '10 Juta' }
+  // ];
 
   const durationOptions = [
     { value: 12, label: '12 Bulan' },
     { value: 18, label: '18 Bulan' },
     { value: 24, label: '24 Bulan' }
-    
+
   ];
+
+  const totalBayar =
+    results
+      ? results.cicilan_per_bulan * duration
+      : 0;
+
+  const totalBunga =
+    results
+      ? totalBayar - loanAmount
+      : 0;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       {/* Hero Section */}
-      <div className="bg-white py-12 px-4 shadow-sm">
+      <div className="bg-white py-12 px-6 shadow-sm">
         <div className="max-w-6xl mx-auto">
           <h1 className="text-3xl font-bold text-center text-gray-800 mb-4">
             Yakin Mau Ajukan Pinjaman? Pahami Dulu di Sini
@@ -114,13 +149,13 @@ const LoanCalculator: React.FC = () => {
           {/* Steps Section */}
           <div className="grid md:grid-cols-2 gap-8 items-center">
             {/* Illustration */}
-      <div className="flex justify-center mr-12">
-        <img
-          src="/icon/panduan.jpg"
-          alt="Ilustrasi Digitalisasi BUMDes"
-          className="max-h-auto w-auto object-contain"
-        />
-      </div>
+            <div className="flex justify-center md:mr-12">
+              <img
+                src="/icon/panduan.jpg"
+                alt="Ilustrasi Digitalisasi BUMDes"
+                className="max-h-auto w-auto object-contain"
+              />
+            </div>
 
 
             {/* Steps List */}
@@ -134,7 +169,7 @@ const LoanCalculator: React.FC = () => {
                   </div>
                   <div>
                     <h3 className="font-bold text-gray-800 mb-2">{step.title}</h3>
-                    <p className="text-gray-600 text-sm leading-relaxed">{step.description}</p>
+                    <p className="text-gray-600 text-sm leading-relaxed text-justify">{step.description}</p>
                   </div>
                 </div>
               ))}
@@ -144,21 +179,20 @@ const LoanCalculator: React.FC = () => {
 
         </div>
       </div>
-          {/* Terms Button */}
-          <div className="flex justify-center mt-12">
-            <button className="bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-700 hover:to-teal-800 text-white px-8 py-3 rounded-full font-semibold flex items-center gap-2 transition-all shadow-lg hover:shadow-xl transform hover:scale-105">
-              <FileCheck className="w-5 h-5" />
-              Syarat Pengajuan Pinjaman
-            </button>
-          </div>
+      {/* Terms Button */}
+      <div className="flex justify-center my-8">
+        <button className="bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-700 hover:to-teal-800 text-white px-8 py-3 rounded-full font-semibold flex items-center gap-2 transition-all shadow-lg hover:shadow-xl transform hover:scale-105">
+          <FileCheck className="w-5 h-5" />
+          Syarat Pengajuan Pinjaman
+        </button>
+      </div>
       {/* Documents Section */}
-      <div className="bg-white py-12 px-4 mt-8 shadow-sm">
+      <div className="bg-white py-6 px-6 shadow-sm">
         <div className="max-w-6xl mx-auto">
           <p className="text-center text-gray-700 mb-8">
             Kami menyediakan kemudahan bagi Anda yang ingin mengajukan pinjaman di BUMDes Tuah Negeri. Pastikan Anda memenuhi syarat berikut:
           </p>
-
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-12">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {documents.map((doc, index) => {
               const Icon = doc.icon;
               return (
@@ -173,7 +207,7 @@ const LoanCalculator: React.FC = () => {
       </div>
 
       {/* Calculator Section */}
-      <div className="py-16 px-8">
+      <div className="py-10 px-6">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-4xl font-bold text-gray-800 mb-3">Simulasi Pinjaman</h2>
@@ -191,52 +225,108 @@ const LoanCalculator: React.FC = () => {
                   </div>
                   <div>
                     <label className="block text-gray-700 font-bold text-lg">Jumlah Pinjaman</label>
-                    <p className="text-sm text-gray-500">Maksimal Rp 10.000.000 untuk nasabah baru</p>
+                    <p className="text-sm text-gray-500">Nominal pinjaman antara Rp 1.000.000 - Rp 30.000.000</p>
                   </div>
                 </div>
 
-                <div className="mb-6">
-                  <div className="relative">
-                    <span className="absolute left-6 top-1/2 transform -translate-y-1/2 text-gray-500 font-semibold text-lg">Rp</span>
-                    <input
-                      type="number"
-                      value={loanAmount}
-                      onChange={(e) => setLoanAmount(Math.min(Number(e.target.value), 10000000))}
-                      className="w-full pl-16 pr-6 py-4 text-2xl font-bold border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition-colors bg-gray-50"
-                      min="1000000"
-                      max="10000000"
-                      step="100000"
-                    />
-                  </div>
-                </div>
+<div className="mb-6">
 
-                <div className="mb-4">
+  <div className="relative">
+
+    <span className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-500 font-semibold text-lg">
+      Rp
+    </span>
+
+    <input
+      type="text"
+      value={formatNumber(loanAmount)}
+      onChange={(e) => {
+
+        const angka = Number(
+          e.target.value.replace(/\D/g, "")
+        );
+
+        if (angka <= 30000000) {
+          setLoanAmount(angka);
+        }
+
+      }}
+      className="
+      w-full
+      pl-16
+      pr-6
+      py-5
+      text-4xl
+      font-extrabold
+      border-2
+      border-gray-200
+      rounded-xl
+      bg-gray-50
+      focus:border-blue-500
+      outline-none
+      "
+    />
+
+  </div>
+
+  <div className="mt-3 flex justify-between text-sm">
+
+    <span className="text-gray-500">
+      Minimal Rp1.000.000
+    </span>
+
+    <span className="text-gray-500">
+      Maksimal Rp30.000.000
+    </span>
+
+  </div>
+
+</div>
+{
+nominalValid ? (
+
+<p className="mt-3 text-green-600 text-sm font-semibold">
+
+✓ Nominal tersedia
+
+</p>
+
+) : (
+
+<p className="mt-3 text-red-500 text-sm">
+
+Nominal harus kelipatan Rp1.000.000
+
+</p>
+
+)
+}
+                {/* <div className="mb-4">
                   <input
                     type="range"
-                    value={loanAmount}
+                    value={formatNumber(loanAmount)}
                     onChange={(e) => setLoanAmount(Number(e.target.value))}
                     min="1000000"
                     max="10000000"
                     step="100000"
                     className="w-full h-2 bg-gradient-to-r from-blue-200 to-blue-500 rounded-lg appearance-none cursor-pointer accent-blue-600"
                   />
-                </div>
+                </div> */}
 
-                <div className="grid grid-cols-3 gap-3">
+                {/* <div className="grid grid-cols-3 gap-3">
                   {loanPresets.map((preset) => (
                     <button
                       key={preset.value}
                       onClick={() => setLoanAmount(preset.value)}
-                      className={`py-2 px-3 rounded-lg font-semibold text-sm transition-all ${
-                        loanAmount === preset.value
-                          ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md'
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                      }`}
+                      className={`py-2 px-3 rounded-lg font-semibold text-sm transition-all ${loanAmount === preset.value
+                        ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        }`}
                     >
                       {preset.label}
                     </button>
                   ))}
-                </div>
+                </div> */}
               </div>
 
               {/* Duration */}
@@ -251,16 +341,15 @@ const LoanCalculator: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                   {durationOptions.map((option) => (
                     <button
                       key={option.value}
                       onClick={() => setDuration(option.value)}
-                      className={`py-4 px-4 rounded-xl font-bold text-center transition-all ${
-                        duration === option.value
-                          ? 'bg-gradient-to-br from-green-500 to-green-600 text-white shadow-lg scale-105'
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                      }`}
+                      className={`py-4 px-4 rounded-xl font-bold text-center transition-all ${duration === option.value
+                        ? 'bg-gradient-to-br from-green-500 to-green-600 text-white shadow-lg scale-105'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        }`}
                     >
                       <div className="text-2xl">{option.value}</div>
                       <div className="text-xs mt-1">Bulan</div>
@@ -287,36 +376,62 @@ const LoanCalculator: React.FC = () => {
                       <TrendingUp className="w-5 h-5 text-yellow-300" />
                       <p className="text-sm font-medium text-blue-100">Angsuran per Bulan</p>
                     </div>
-                    <p className="text-4xl font-bold">{formatCurrency(results.monthlyPayment)}</p>
+                    <p className="text-4xl font-bold">{results ? formatCurrency(results.cicilan_per_bulan) : "-"}</p>
                     <p className="text-xs text-blue-200 mt-2">Dibayar setiap bulan selama {duration} bulan</p>
                   </div>
 
                   {/* Interest Rate Info */}
                   <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
                     <div className="flex justify-between items-center">
-                      <span className="text-sm text-blue-100">Suku Bunga</span>
-                      <span className="text-xl font-bold">{results.interestRate}% / bulan</span>
+                      <span className="text-sm text-blue-100">
+                        Suku Bunga
+                      </span>
+
+                      <span className="text-xl font-bold">
+                        1.5% / bulan
+                      </span>
                     </div>
+
+                    <p className="text-xs text-blue-200 mt-2">
+                      Flat Rate (18% per tahun)
+                    </p>
                   </div>
 
                   {/* Total Interest */}
                   <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+
                     <div className="flex justify-between items-center mb-1">
-                      <span className="text-sm text-blue-100">Total Bunga</span>
-                      <span className="text-xl font-bold">{formatCurrency(results.totalInterest)}</span>
+
+                      <span className="text-sm text-blue-100">
+                        Total Bunga
+                      </span>
+
+                      <span className="text-xl font-bold">
+                        {formatCurrency(totalBunga)}
+                      </span>
+
                     </div>
+
                     <div className="w-full bg-white/20 rounded-full h-2 mt-2">
-                      <div 
+
+                      <div
                         className="bg-yellow-400 h-2 rounded-full transition-all duration-500"
-                        style={{ width: `${(results.totalInterest / results.totalPayment) * 100}%` }}
-                      ></div>
+                        style={{
+                          width:
+                            totalBayar > 0
+                              ? `${(totalBunga / totalBayar) * 100}%`
+                              : "0%",
+                        }}
+                      />
+
                     </div>
+
                   </div>
 
                   {/* Total Payment */}
                   <div className="bg-white/20 backdrop-blur-sm rounded-xl p-6 border border-white/30">
                     <p className="text-sm font-medium text-blue-100 mb-2">Total Pembayaran</p>
-                    <p className="text-3xl font-bold">{formatCurrency(results.totalPayment)}</p>
+                    <p className="text-3xl font-bold">{results ? formatCurrency(results.cicilan_per_bulan * duration) : "-"}</p>
                     <div className="mt-4 pt-4 border-t border-white/20">
                       <div className="flex justify-between text-sm">
                         <span className="text-blue-100">Pokok Pinjaman</span>
@@ -348,7 +463,7 @@ const LoanCalculator: React.FC = () => {
                 <p className="text-gray-800 font-semibold mb-1">Informasi Penting</p>
                 <p className="text-gray-700">
                   Untuk Nasabah baru hanya dapat mengajukan pinjaman{' '}
-                  <span className="font-bold text-amber-700">maksimal Rp 10.000.000</span>.
+                  <span className="font-bold text-amber-700">maksimal Rp 30.000.000</span>.
                   Perhitungan ini menggunakan bunga flat <span className="font-bold">1,5% per bulan</span> atau <span className="font-bold">18% per tahun</span>.
                 </p>
               </div>

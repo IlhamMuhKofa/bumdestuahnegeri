@@ -13,7 +13,7 @@ const services = [
 const Layanan: React.FC = () => {
   return (
     <section className="bg-gradient-to-br from-green-700 to-green-600 py-14">
-      <div className="container mx-auto px-5">
+      <div className="container mx-auto px-6">
 
         {/* HEADER */}
         <div className="text-center mb-10">

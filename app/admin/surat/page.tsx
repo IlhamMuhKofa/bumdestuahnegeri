@@ -3,7 +3,7 @@ import Client from "./client";
 
 export default async function SuratPage() {
   const surat =
-    await prisma.suratTemplate.findUnique({
+    await prisma.surattemplate.findUnique({
       where: {
         kode: "SP2K_PENCAIRAN",
       },

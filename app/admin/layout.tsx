@@ -16,6 +16,7 @@ import {
   PiggyBank,
   CalendarDays,
   Images,
+  MessageCircle,
 } from "lucide-react";
 
 import Link from "next/link";
@@ -84,6 +85,7 @@ const navItems = [
 
   { label: "Laporan Transaksi", icon: <BarChart3 size={18} />, href: "/admin/riwayat" },
   { label: "manajemen surat", icon: <FileText size={18} />, href: "/admin/surat" },
+  { label: "Manajemen WhatsApp", icon: <MessageCircle size={18} />, href: "/admin/whatsapp" },
   {
     label: "Manajemen Konten",
     icon: <Images size={18} />,
@@ -130,6 +132,7 @@ export default function DashboardLayout({ children }: Props) {
     if (pathname.includes("event")) return "Manajemen Event";
     if (pathname.includes("artikel")) return "Manajemen Artikel";
     if (pathname.includes("surat")) return "Manajemen Surat";
+    if (pathname.includes("whatsapp")) return "Manajemen WhatsApp";
     return "Overview";
   };
 
