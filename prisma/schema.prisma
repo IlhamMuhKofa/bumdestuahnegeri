@@ -19,15 +19,18 @@ model anggota {
   pekerjaan         String?
   email             String             @unique
   password          String
-  createdAt         DateTime           @default(now())
+
+  createdAt         DateTime           @default(now()) @map("createdat")
   status            String             @default("active")
-  updatedAt         DateTime           @updatedAt
-  isProfileComplete Boolean            @default(false)
+  updatedAt         DateTime           @updatedAt @map("updatedat")
+  isProfileComplete Boolean            @default(false) @map("isprofilecomplete")
+
   jenis_kelamin     String?
   tanggal_lahir     DateTime?
   foto_diri         String?
   nik               String?
   username          String?            @unique
+
   eventPeserta      EventPeserta[]
   notifikasi        Notifikasi[]
   peminjaman        Peminjaman[]
