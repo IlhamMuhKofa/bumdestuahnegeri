@@ -1,18 +1,18 @@
 "use client";
-import { useState } from "react";
+
+import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { signIn, getSession } from "next-auth/react";
 
-export default function LoginPage() {
+function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl") || "/nasabah/dashboard";
+  const callbackUrl =
+    searchParams.get("callbackUrl") || "/nasabah/dashboard";
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
@@ -45,29 +45,29 @@ export default function LoginPage() {
       if (res.error === "AKUN_MENUNGGU") {
         setErrorMsg("Akun kamu masih menunggu verifikasi admin.");
       } else if (res.error === "AKUN_DITOLAK") {
-        setErrorMsg("Akun kamu ditolak. Hubungi admin untuk info lebih lanjut.");
+        setErrorMsg(
+          "Akun kamu ditolak. Hubungi admin untuk info lebih lanjut."
+        );
       } else {
         setErrorMsg("Email atau password salah.");
       }
       return;
     }
 
-    // ✅ AMBIL SESSION DI SINI
-const session = await getSession();
+    const session = await getSession();
 
-if (!session) {
-  setErrorMsg("Gagal mengambil session.");
-  return;
-}
+    if (!session) {
+      setErrorMsg("Gagal mengambil session.");
+      return;
+    }
 
-    // Kalau sukses, NextAuth memberi res.url
-      const role = (session.user as any).role;
+    const role = (session.user as any).role;
 
-  if (role === "admin") {
-    router.push("/admin/dashboard");
-  } else {
-    router.push("/nasabah/dashboard");
-  }
+    if (role === "admin") {
+      router.push("/admin/dashboard");
+    } else {
+      router.push("/nasabah/dashboard");
+    }
   }
 
   return (
@@ -84,7 +84,7 @@ if (!session) {
         />
       </div>
 
-      {/* Right Side - Login Form */}
+      {/* Right Side */}
       <motion.div
         initial={{ x: 50, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
@@ -95,8 +95,10 @@ if (!session) {
           <h2 className="text-3xl lg:text-4xl font-bold mb-3 text-black">
             Selamat Datang Kembali!
           </h2>
+
           <p className="text-lg mb-12 text-black text-justify">
-            Masuk ke akunmu untuk mengakses layanan dan informasi dari BUMDes Tuah Negeri.
+            Masuk ke akunmu untuk mengakses layanan dan informasi dari BUMDes
+            Tuah Negeri.
           </p>
 
           <form className="space-y-4" onSubmit={handleSubmit}>
@@ -108,6 +110,7 @@ if (!session) {
               onChange={(e) => setEmail(e.target.value)}
               autoComplete="email"
             />
+
             <input
               type="password"
               placeholder="Password"
@@ -146,5 +149,19 @@ if (!session) {
         </div>
       </motion.div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen items-center justify-center">
+          Loading...
+        </div>
+      }
+    >
+      <LoginContent />
+    </Suspense>
   );
 }

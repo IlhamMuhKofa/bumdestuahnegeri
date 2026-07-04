@@ -4,7 +4,7 @@ import Client from "./client";
 
 export default async function Page() {
   const data =
-    await prisma.rekeningPembayaran.findMany({
+    await prisma.rekeningpembayaran.findMany({
       orderBy: {
         created_at: "desc",
       },

@@ -17,8 +17,8 @@ import {
   motion,
 } from "framer-motion";
 
-import FormTambah from "./form/page";
-import FormEdit from "./form_edit/page";
+import FormTambah from "./form/FormTambah";
+import FormEdit from "./form_edit/FormEdit";
 
 import {
   aktifkanRekening,

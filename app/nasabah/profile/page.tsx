@@ -2,7 +2,7 @@ import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { prisma } from "@/lib/prisma";
-import ProfilePageClient from "@/app/nasabah/detail_profile/page";
+import ProfilePageClient from "@/app/nasabah/detail_profile/ProfilePageClient";
 
 export default async function ProfilNasabahPage() {
   const session = await getServerSession(authOptions);
