@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { processDueWhatsAppReminders } from "@/lib/whatsapp-reminder";
+import { connectWhatsApp } from "@/lib/whatsapp";
 
 const intervalMs = Number(process.env.WA_REMINDER_INTERVAL_MS || 60_000);
 
@@ -18,11 +19,16 @@ async function runOnce() {
 }
 
 async function main() {
-  console.log("WA reminder worker berjalan.");
-  console.log("Menunggu antrean otomatis berdasarkan basis data...");
+console.log("WA reminder worker berjalan.");
+console.log("Menghubungkan WhatsApp...");
 
-  // Eksekusi pertama saat worker dinyalakan
-  await runOnce();
+await connectWhatsApp();
+
+console.log("WhatsApp siap.");
+console.log("Menunggu antrean otomatis berdasarkan basis data...");
+
+// Eksekusi pertama saat worker dinyalakan
+await runOnce();
 
   // Menggunakan fungsi rekursif agar tidak terjadi tabrakan proses (Overlapping)
   async function workerLoop() {
