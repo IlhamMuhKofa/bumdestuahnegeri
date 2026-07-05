@@ -1,3 +1,5 @@
+import "@/worker-api/server";
+
 import { prisma } from "@/lib/prisma";
 import { processDueWhatsAppReminders } from "@/lib/whatsapp-reminder";
 import { connectWhatsApp } from "@/lib/whatsapp";
