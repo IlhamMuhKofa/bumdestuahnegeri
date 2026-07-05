@@ -156,20 +156,20 @@ async function createSocket() {
     path.join(process.cwd(), "wa-session")
   );
 
-const { version, isLatest } = await baileys.fetchLatestBaileysVersion();
+  const { version, isLatest } = await baileys.fetchLatestBaileysVersion();
 
-console.log("Baileys Version:", version);
-console.log("Is Latest:", isLatest);
+  console.log("Baileys Version:", version);
+  console.log("Is Latest:", isLatest);
 
-const sock = baileys.makeWASocket({
-  version,
-  auth: state,
-  browser: baileys.Browsers.ubuntu("Chrome"),
-  logger: pino({
-    level: "info",
-  }),
-  syncFullHistory: false,
-});
+  const sock = baileys.makeWASocket({
+    version,
+    auth: state,
+    browser: baileys.Browsers.ubuntu("Chrome"),
+    logger: pino({
+      level: "info",
+    }),
+    syncFullHistory: false,
+  });
 
   console.log("=== SOCKET BERHASIL DIBUAT ===");
   runtime.socket = sock;
@@ -178,6 +178,11 @@ const sock = baileys.makeWASocket({
 
   console.log("=== MENUNGGU UPDATE KONEKSI ===");
   sock.ev.on("connection.update", (update) => {
+    
+  console.log("========== CONNECTION UPDATE ==========");
+  console.dir(update, { depth: null });
+  console.log("======================================");
+
     if (update.qr) {
       runtime.status = {
         ...runtime.status,
@@ -194,14 +199,24 @@ const sock = baileys.makeWASocket({
       }
     }
 
-    console.log("LastDisconnect:");
-console.dir(update.lastDisconnect, { depth: null });
+let statusCode: number | undefined;
 
-    const statusCode = getStatusCode(update.lastDisconnect?.error);
+if (update.connection === "close") {
+  console.log("LastDisconnect:");
+  console.dir(update.lastDisconnect, { depth: null });
 
-    console.log("StatusCode =", statusCode);
-console.log("DisconnectReason.restartRequired =", baileys.DisconnectReason.restartRequired);
-console.log("DisconnectReason.loggedOut =", baileys.DisconnectReason.loggedOut);
+  statusCode = getStatusCode(update.lastDisconnect?.error);
+
+  console.log("StatusCode =", statusCode);
+  console.log(
+    "DisconnectReason.restartRequired =",
+    baileys.DisconnectReason.restartRequired
+  );
+  console.log(
+    "DisconnectReason.loggedOut =",
+    baileys.DisconnectReason.loggedOut
+  );
+}
 
     if (update.connection === "open") {
       console.log("=== KONEKSI TERHUBUNG ===");
@@ -213,54 +228,54 @@ console.log("DisconnectReason.loggedOut =", baileys.DisconnectReason.loggedOut);
       });
     }
 
-if (update.connection === "close") {
-  console.log("Connection closed. Status:", statusCode);
+    if (update.connection === "close") {
+      console.log("Connection closed. Status:", statusCode);
 
-  // Pairing berhasil → WhatsApp meminta reconnect
-  if (statusCode === baileys.DisconnectReason.restartRequired) {
-    console.log("Restart required. Reconnecting...");
+      // Pairing berhasil → WhatsApp meminta reconnect
+      if (statusCode === baileys.DisconnectReason.restartRequired) {
+        console.log("Restart required. Reconnecting...");
 
-    runtime.socket = null;
-    runtime.socketPromise = null;
+        runtime.socket = null;
+        runtime.socketPromise = null;
 
-    // reconnect otomatis
-    setTimeout(() => {
-    void getWhatsAppSocket();
-}, 1000);
+        // reconnect otomatis
+        setTimeout(() => {
+          void getWhatsAppSocket();
+        }, 1000);
 
-    return;
-  }
+        return;
+      }
 
-  // Logout dari HP
-  if (statusCode === baileys.DisconnectReason.loggedOut) {
-    console.log("WhatsApp logout.");
+      // Logout dari HP
+      if (statusCode === baileys.DisconnectReason.loggedOut) {
+        console.log("WhatsApp logout.");
 
-    runtime.socket = null;
-    runtime.socketPromise = null;
+        runtime.socket = null;
+        runtime.socketPromise = null;
 
-    runtime.status = {
-      connected: false,
-      connection: "idle",
-      qr: null,
-      phoneNumber: null,
-    };
+        runtime.status = {
+          connected: false,
+          connection: "idle",
+          qr: null,
+          phoneNumber: null,
+        };
 
-    notifyWaiters();
+        notifyWaiters();
 
-    return;
-  }
+        return;
+      }
 
-  // Disconnect biasa
-  setStatus({
-    connected: false,
-    connection: "close",
-    qr: null,
-    phoneNumber: null,
-  });
+      // Disconnect biasa
+      setStatus({
+        connected: false,
+        connection: "close",
+        qr: null,
+        phoneNumber: null,
+      });
 
-  runtime.socket = null;
-  runtime.socketPromise = null;
-}
+      runtime.socket = null;
+      runtime.socketPromise = null;
+    }
   });
 
   return sock;
@@ -294,7 +309,7 @@ function formatConnectedNumber(jid?: string) {
   return jid.split(":")[0]?.replace(/\D/g, "") || null;
 }
 
-function getStatusCode(error: unknown) {
+function getStatusCode(error: unknown): number | undefined {
   if (
     typeof error === "object" &&
     error !== null &&
@@ -303,7 +318,9 @@ function getStatusCode(error: unknown) {
     error.output !== null &&
     "statusCode" in error.output
   ) {
-    return error.output.statusCode;
+    return typeof error.output.statusCode === "number"
+      ? error.output.statusCode
+      : undefined;
   }
 
   return undefined;
