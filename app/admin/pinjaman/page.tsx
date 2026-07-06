@@ -4,7 +4,7 @@ import ClientPage from "./client";
 export default async function Page() {
   const data = await prisma.peminjaman.findMany({
     include: {
-      detail_peminjaman: true,
+      detail: true,
       anggota: true,
     },
     orderBy: {
