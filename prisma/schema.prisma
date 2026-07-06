@@ -26,11 +26,11 @@ model anggota {
   foto_diri         String?
   nik               String?
   username          String?             @unique
-  event_peserta     event_peserta[]
-  notifikasi        notifikasi[]
-  peminjaman        peminjaman[]
-  riwayat_transaksi riwayat_transaksi[]
-  simpanan          simpanan[]
+eventPeserta      event_peserta[]
+notifikasi        notifikasi[]
+peminjaman        peminjaman[]
+riwayat           riwayat_transaksi[]
+simpanans         simpanan[]
 }
 
 model artikel {
@@ -95,8 +95,8 @@ model jadwal_angsuran {
   catatan           String?
   denda             Int?
   peminjaman        peminjaman         @relation(fields: [id_peminjaman], references: [id_peminjaman])
-  pembayaran        pembayaran[]
-  whatsapp_reminder whatsapp_reminder?
+pembayaran pembayaran[]
+whatsappReminder whatsapp_reminder?
 
   @@index([id_peminjaman])
 }
@@ -138,7 +138,7 @@ model pembayaran {
   bukti_bayar     String?
   catatan         String?
   id_jadwal       Int
-  jadwal_angsuran jadwal_angsuran @relation(fields: [id_jadwal], references: [id_jadwal])
+  jadwal jadwal_angsuran @relation(fields: [id_jadwal], references: [id_jadwal])
 
   @@index([id_jadwal])
 }
@@ -167,9 +167,9 @@ model peminjaman {
   total_pinjaman    Int
   jangka_waktu      Int
   status_survey     String              @default("BELUM")
-  detail_peminjaman detail_peminjaman[]
-  jadwal_angsuran   jadwal_angsuran[]
-  jadwal_survey     jadwal_survey[]
+detail         detail_peminjaman[]
+jadwal         jadwal_angsuran[]
+jadwalSurvey   jadwal_survey[]
   anggota           anggota             @relation(fields: [id_anggota], references: [id])
 
   @@index([id_anggota])
@@ -213,7 +213,7 @@ model simpanan {
   target_dana         Int?
   terkumpul           Int                   @default(0)
   tujuan              String?
-  pembayaran_simpanan pembayaran_simpanan[]
+  pembayaranSimpanan pembayaran_simpanan[]
   anggota             anggota               @relation(fields: [id_anggota], references: [id])
 
   @@index([id_anggota])

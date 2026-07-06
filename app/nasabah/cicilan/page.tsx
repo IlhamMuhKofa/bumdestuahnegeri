@@ -38,7 +38,7 @@ export default async function Page() {
       },
 
       include: {
-        jadwal: {
+        jadwal_angsuran: {
           include: {
             pembayaran: {
               orderBy: {
@@ -67,7 +67,7 @@ export default async function Page() {
   // SURVEY
   // =========================
   const survey =
-    await prisma.jadwalSurvey.findMany({
+    await prisma.jadwal_survey.findMany({
       where: {
         peminjaman: {
           id_anggota:

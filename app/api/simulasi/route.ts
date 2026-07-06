@@ -17,7 +17,7 @@ export async function GET(req: Request) {
     }
 
     // 🔥 AMBIL DATA SIMULASI
-    const simulasi = await prisma.simulasiCicilan.findFirst({
+    const simulasi = await prisma.simulasi_cicilan.findFirst({
       where: {
         jumlah_pinjaman: jumlah,
         tenor: tenor,

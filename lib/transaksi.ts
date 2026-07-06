@@ -39,7 +39,7 @@ export async function catatRiwayatTransaksi(
   db: Db,
   input: CatatTransaksiInput
 ) {
-  return db.riwayatTransaksi.create({
+  return db.riwayat_transaksi.create({
     data: {
       id_anggota: input.idAnggota,
       jenis_transaksi: jenisTransaksi(input.kategori),

@@ -17,7 +17,7 @@ export async function GET() {
 
     const result = data.map((item) => {
       const totalCicilan = item.jangka_waktu;
-      const jadwal = item.jadwal;
+      const jadwal = item.jadwal as Array<{ status: string; jatuh_tempo: string }>;
 
       // =========================
       // 🔥 STATUS LOGIC

@@ -44,7 +44,7 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   // 🔥 OPTIONAL: kalau ada relasi peserta
-  await prisma.eventPeserta.deleteMany({
+  await prisma.event_peserta.deleteMany({
     where: {
       id_event: Number(params.id),
     },

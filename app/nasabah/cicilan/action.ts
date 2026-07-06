@@ -15,7 +15,7 @@ export async function submitTransferPayment(
 ) {
   // cek jadwal
   const jadwal =
-    await prisma.jadwalAngsuran.findUnique({
+    await prisma.jadwal_angsuran.findUnique({
       where: {
         id_jadwal: payload.idJadwal,
       },
@@ -76,7 +76,7 @@ export async function submitTransferPayment(
   });
 
   // update status jadwal
-  await prisma.jadwalAngsuran.update({
+  await prisma.jadwal_angsuran.update({
     where: {
       id_jadwal:
         payload.idJadwal,
@@ -109,7 +109,7 @@ export async function submitCashPayment(
 ) {
   // cek jadwal
   const jadwal =
-    await prisma.jadwalAngsuran.findUnique({
+    await prisma.jadwal_angsuran.findUnique({
       where: {
         id_jadwal:
           idJadwal,
@@ -165,7 +165,7 @@ export async function submitCashPayment(
   });
 
   // update status jadwal
-  await prisma.jadwalAngsuran.update({
+  await prisma.jadwal_angsuran.update({
     where: {
       id_jadwal:
         idJadwal,

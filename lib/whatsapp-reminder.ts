@@ -55,7 +55,7 @@ export async function createWhatsAppReminderForJadwal(
     return;
   }
 
-  await db.whatsAppReminder.upsert({
+  await db.whatsapp_reminder.upsert({
     where: {
       id_jadwal: jadwal.id_jadwal,
     },
@@ -92,7 +92,7 @@ export async function processDueWhatsAppReminders(
   const tomorrowEnd = new Date(tomorrowStart);
   tomorrowEnd.setHours(23, 59, 59, 999);
 
-  const reminders = await db.whatsAppReminder.findMany({
+  const reminders = await db.whatsapp_reminder.findMany({
     where: {
       status: "PENDING",
       ...(options.forceHMinusOne
@@ -102,7 +102,7 @@ export async function processDueWhatsAppReminders(
               lte: now,
             },
           }),
-      jadwal: {
+      jadwal_angsuran: {
         status: {
           not: "LUNAS",
         },
@@ -117,7 +117,7 @@ export async function processDueWhatsAppReminders(
       },
     },
     include: {
-      jadwal: true,
+      jadwal_angsuran: true,
     },
     orderBy: {
       jadwal_kirim: "asc",
@@ -132,7 +132,7 @@ export async function processDueWhatsAppReminders(
     try {
       await sendWhatsAppMessage(reminder.no_hp, reminder.pesan);
 
-      await db.whatsAppReminder.update({
+      await db.whatsapp_reminder.update({
         where: {
           id_reminder: reminder.id_reminder,
         },
@@ -148,7 +148,7 @@ export async function processDueWhatsAppReminders(
       const message =
         error instanceof Error ? error.message : "Gagal mengirim WhatsApp";
 
-      await db.whatsAppReminder.update({
+      await db.whatsapp_reminder.update({
         where: {
           id_reminder: reminder.id_reminder,
         },

@@ -24,7 +24,7 @@ export default async function Page() {
 
   // ambil riwayat transaksi user
   const data =
-    await prisma.riwayatTransaksi.findMany({
+    await prisma.riwayat_transaksi.findMany({
       where: {
         id_anggota:
           userId,

@@ -36,7 +36,7 @@ export default async function Page({
 
   // ambil jadwal + validasi milik user
   const jadwal =
-    await prisma.jadwalAngsuran.findFirst({
+    await prisma.jadwal_angsuran.findFirst({
       where: {
         id_jadwal:
           Number(

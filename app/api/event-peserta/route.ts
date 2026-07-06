@@ -6,7 +6,7 @@ import { createNotifikasi } from "@/lib/notifikasi";
 // ✅ GET DATA PESERTA
 // =======================
 export async function GET() {
-  const data = await prisma.eventPeserta.findMany({
+  const data = await prisma.event_peserta.findMany({
     include: {
       event: true,     // 🔥 ambil data event (judul, dll)
       anggota: true,   // 🔥 ambil data user (optional)
@@ -29,7 +29,7 @@ export async function POST(req: Request) {
   const { id_event, id_anggota, nama, email } = body;
 
   // 🔥 CEK SUDAH DAFTAR
-  const existing = await prisma.eventPeserta.findFirst({
+  const existing = await prisma.event_peserta.findFirst({
     where: {
       id_event: Number(id_event),
       id_anggota: Number(id_anggota),
@@ -44,7 +44,7 @@ export async function POST(req: Request) {
   }
 
   // 🔥 SIMPAN
-  const data = await prisma.eventPeserta.create({
+  const data = await prisma.event_peserta.create({
     data: {
       id_event: Number(id_event),
       id_anggota: Number(id_anggota),

@@ -15,7 +15,7 @@ export default async function Page({
   );
 
   const rekening =
-    await prisma.rekeningPembayaran.findFirst({
+    await prisma.rekeningpembayaran.findFirst({
       where: {
         is_active: true,
       },

@@ -111,7 +111,7 @@ export async function bayarSimpanan(
       `/uploads/bukti-transfer/${fileName}`;
 
     const bulanKe =
-      (await prisma.pembayaranSimpanan.count(
+      (await prisma.pembayaran_simpanan.count(
         {
           where: {
             id_simpanan:
@@ -123,7 +123,7 @@ export async function bayarSimpanan(
     // ===============================
     // SIMPAN PEMBAYARAN
     // ===============================
-    await prisma.pembayaranSimpanan.create(
+    await prisma.pembayaran_simpanan.create(
       {
         data: {
           id_simpanan:
@@ -306,7 +306,7 @@ export async function bayarTransferNasabah(
     // AMBIL TAGIHAN
     // =========================
     const tagihan =
-      await prisma.pembayaranSimpanan.findMany({
+      await prisma.pembayaran_simpanan.findMany({
         where: {
           id_pembayaran_simpanan: {
             in: idsPembayaran,
@@ -339,7 +339,7 @@ export async function bayarTransferNasabah(
     // =========================
     // UPDATE PEMBAYARAN
     // =========================
-    await prisma.pembayaranSimpanan.updateMany({
+    await prisma.pembayaran_simpanan.updateMany({
       where: {
         id_pembayaran_simpanan: {
           in: idsPembayaran,

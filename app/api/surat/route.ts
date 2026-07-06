@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 
 export async function GET() {
   try {
-    const surat = await prisma.suratTemplate.findUnique({
+    const surat = await prisma.surattemplate.findUnique({
       where: {
         kode: "SP2K_PENCAIRAN",
       },

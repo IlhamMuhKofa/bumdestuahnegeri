@@ -73,7 +73,7 @@ export async function POST(req: Request) {
         status: "PENDING",
         jangka_waktu: Number(jangkaWaktu),
 
-        detail: {
+        detail_peminjaman: {
           create: [
             {
               nama: "Pengajuan Pinjaman",
@@ -89,7 +89,7 @@ export async function POST(req: Request) {
         },
       },
       include: {
-        detail: true,
+        detail_peminjaman: true,
       },
     });
 
