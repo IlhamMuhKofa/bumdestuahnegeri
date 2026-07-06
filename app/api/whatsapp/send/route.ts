@@ -1,36 +1,45 @@
 import { NextResponse } from "next/server";
 import { canAccessWhatsAppApi } from "@/lib/whatsapp-auth";
-import { getWhatsAppStatus, sendWhatsAppMessage } from "@/lib/whatsapp";
 
 export async function POST(req: Request) {
   if (!(await canAccessWhatsAppApi(req))) {
-    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-  }
-
-  const body = (await req.json()) as {
-    noHp?: string;
-    pesan?: string;
-  };
-
-  if (!body.noHp || !body.pesan?.trim()) {
     return NextResponse.json(
-      { message: "Nomor HP dan pesan wajib diisi" },
-      { status: 400 }
+      { message: "Unauthorized" },
+      { status: 401 }
     );
   }
 
-  const status = getWhatsAppStatus();
+  try {
+    const body = await req.json();
 
-  if (!status.connected) {
+    const response = await fetch(
+      `${process.env.WHATSAPP_WORKER_URL}/send`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      }
+    );
+
+    const data = await response.json();
+
+    return NextResponse.json(data, {
+      status: response.status,
+    });
+
+  } catch (error) {
+    console.error(error);
+
     return NextResponse.json(
-      { message: "WhatsApp belum terhubung" },
-      { status: 400 }
+      {
+        success: false,
+        message: "Worker WhatsApp tidak dapat dihubungi.",
+      },
+      {
+        status: 500,
+      }
     );
   }
-
-  await sendWhatsAppMessage(body.noHp, body.pesan.trim());
-
-  return NextResponse.json({
-    success: true,
-  });
 }

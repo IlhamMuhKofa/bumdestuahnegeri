@@ -1,15 +1,38 @@
 import { NextResponse } from "next/server";
 import { canAccessWhatsAppApi } from "@/lib/whatsapp-auth";
-import { logoutWhatsApp } from "@/lib/whatsapp";
 
 export async function POST(req: Request) {
   if (!(await canAccessWhatsAppApi(req))) {
-    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    return NextResponse.json(
+      { message: "Unauthorized" },
+      { status: 401 }
+    );
   }
 
-  await logoutWhatsApp();
+  try {
+    const response = await fetch(
+      `${process.env.WHATSAPP_WORKER_URL}/logout`,
+      {
+        method: "POST",
+      }
+    );
 
-  return NextResponse.json({
-    success: true,
-  });
+    const data = await response.json();
+
+    return NextResponse.json(data, {
+      status: response.status,
+    });
+  } catch (error) {
+    console.error(error);
+
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Worker WhatsApp tidak dapat dihubungi.",
+      },
+      {
+        status: 500,
+      }
+    );
+  }
 }

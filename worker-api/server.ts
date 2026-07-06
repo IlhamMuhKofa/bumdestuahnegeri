@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import QRCode from "qrcode";
-import { connectWhatsApp, getWhatsAppStatus } from "@/lib/whatsapp";
+import { connectWhatsApp, getWhatsAppStatus, sendWhatsAppMessage, logoutWhatsApp } from "@/lib/whatsapp";
 
 const app = express();
 
@@ -34,6 +34,33 @@ res.json({
   }
 });
 
+app.post("/send", async (req, res) => {
+  try {
+    const { noHp, pesan } = req.body;
+
+    if (!noHp || !pesan?.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: "Nomor HP dan pesan wajib diisi",
+      });
+    }
+
+    await sendWhatsAppMessage(noHp, pesan.trim());
+
+    return res.json({
+      success: true,
+    });
+
+  } catch (err) {
+    console.error(err);
+
+    return res.status(500).json({
+      success: false,
+      message: "Gagal mengirim WhatsApp",
+    });
+  }
+});
+
 app.get("/status", async (req, res) => {
   try {
     const status = getWhatsAppStatus();
@@ -58,6 +85,23 @@ app.get("/status", async (req, res) => {
       qr: null,
       qrDataUrl: null,
       phoneNumber: null,
+    });
+  }
+});
+
+app.post("/logout", async (req, res) => {
+  try {
+    await logoutWhatsApp();
+
+    return res.json({
+      success: true,
+    });
+  } catch (err) {
+    console.error(err);
+
+    return res.status(500).json({
+      success: false,
+      message: "Gagal logout WhatsApp",
     });
   }
 });
