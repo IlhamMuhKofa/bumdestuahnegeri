@@ -72,24 +72,20 @@ export async function POST(req: Request) {
         total_pinjaman: Number(jumlahPinjaman),
         status: "PENDING",
         jangka_waktu: Number(jangkaWaktu),
-
-        detail_peminjaman: {
-          create: [
-            {
-              nama: "Pengajuan Pinjaman",
-              jenis: jenisAgunan as string,
-              jumlah: Number(jumlahPinjaman),
-              nilai_perolehan: Number(penghasilan),
-              keterangan: rencanaUsaha as string,
-              jangka_waktu: Number(jangkaWaktu),
-              foto_agunan: fotoAgunanPath,
-              foto_surat: fotoSuratPath,
-            },
-          ],
-        },
       },
-      include: {
-        detail_peminjaman: true,
+    });
+
+    await prisma.detail_peminjaman.create({
+      data: {
+        id_peminjaman: peminjaman.id_peminjaman,
+        nama: "Pengajuan Pinjaman",
+        jenis: jenisAgunan as string,
+        jumlah: Number(jumlahPinjaman),
+        nilai_perolehan: Number(penghasilan),
+        keterangan: rencanaUsaha as string,
+        jangka_waktu: Number(jangkaWaktu),
+        foto_agunan: fotoAgunanPath,
+        foto_surat: fotoSuratPath,
       },
     });
 
