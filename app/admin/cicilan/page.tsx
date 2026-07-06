@@ -76,7 +76,7 @@ export default async function Page() {
 
   // ================= JADWAL =================
   const jadwal =
-    await prisma.jadwalAngsuran.findMany({
+    await prisma.jadwal_angsuran.findMany({
       include: {
         peminjaman: {
           include: {
