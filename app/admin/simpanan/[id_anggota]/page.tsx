@@ -27,7 +27,7 @@ export default async function Page({
       include: {
         simpanans: {
           include: {
-            pembayaran_simpanan: true,
+            pembayaranSimpanan: true,
           },
         },
       },
@@ -59,7 +59,7 @@ export default async function Page({
           item.status,
 
         pembayaran:
-          item.pembayaran_simpanan
+          item.pembayaranSimpanan
             .sort(
               (a, b) =>
                 (a.bulan_ke ?? 0) -
@@ -118,7 +118,7 @@ export default async function Page({
       )
       .map((item) => {
         const totalTerkumpul =
-          item.pembayaran_simpanan
+          item.pembayaranSimpanan
             .filter(
               (bayar) =>
                 bayar.status ===
@@ -165,7 +165,7 @@ export default async function Page({
           progress,
 
           pembayaran:
-            item.pembayaran_simpanan
+            item.pembayaranSimpanan
               .sort(
                 (a, b) =>
                   new Date(

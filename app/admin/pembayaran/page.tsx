@@ -39,7 +39,7 @@ export default async function Page() {
     });
 
   const pembayaranSimpanan =
-    await prisma.pembayaranSimpanan.findMany({
+    await prisma.pembayaran_simpanan.findMany({
       include: {
         simpanan: {
           include: {

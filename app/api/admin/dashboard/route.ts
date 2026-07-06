@@ -82,7 +82,7 @@ export async function GET() {
           status: "ACTIVE",
         },
       }),
-      prisma.pembayaranSimpanan.aggregate({
+      prisma.pembayaran_simpanan.aggregate({
         where: {
           status: "BERHASIL",
           simpanan: {
@@ -93,7 +93,7 @@ export async function GET() {
           nominal_bayar: true,
         },
       }),
-      prisma.pembayaranSimpanan.aggregate({
+      prisma.pembayaran_simpanan.aggregate({
         where: {
           status: "BERHASIL",
           simpanan: {
@@ -104,7 +104,7 @@ export async function GET() {
           nominal_bayar: true,
         },
       }),
-      prisma.pembayaranSimpanan.findMany({
+      prisma.pembayaran_simpanan.findMany({
         where: {
           status: "BERHASIL",
           tanggal_bayar: {

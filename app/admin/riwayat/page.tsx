@@ -20,7 +20,7 @@ export default async function Page() {
 
   // ambil riwayat transaksi
   const data =
-    await prisma.riwayatTransaksi.findMany({
+    await prisma.riwayat_transaksi.findMany({
       include: {
         anggota: true,
       },

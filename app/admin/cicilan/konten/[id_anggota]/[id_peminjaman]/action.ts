@@ -51,7 +51,7 @@ export async function createJadwalAngsuran(
         dueDate.getMonth() + i
       );
 
-      const jadwal = await tx.jadwalAngsuran.create({
+      const jadwal = await tx.jadwal_angsuran.create({
         data: {
           id_peminjaman: idPeminjaman,
           cicilan_ke: i + 1,
@@ -110,7 +110,7 @@ async function syncStatusPeminjaman(
   idPeminjaman: number
 ) {
   const jadwal =
-    await prisma.jadwalAngsuran.findMany({
+    await prisma.jadwal_angsuran.findMany({
       where: {
         id_peminjaman:
           idPeminjaman,
@@ -146,7 +146,7 @@ export async function konfirmasiPembayaran(
       async (tx) => {
 
         const jadwal =
-          await tx.jadwalAngsuran.findUnique({
+          await tx.jadwal_angsuran.findUnique({
             where: {
               id_jadwal:
                 idJadwal,
@@ -191,7 +191,7 @@ export async function konfirmasiPembayaran(
         }
 
         // update cicilan
-        await tx.jadwalAngsuran.update({
+        await tx.jadwal_angsuran.update({
           where: {
             id_jadwal:
               idJadwal,
@@ -245,7 +245,7 @@ export async function batalkanPembayaran(
       async (tx) => {
 
         const jadwal =
-          await tx.jadwalAngsuran.findUnique({
+          await tx.jadwal_angsuran.findUnique({
             where: {
               id_jadwal:
                 idJadwal,
@@ -262,7 +262,7 @@ export async function batalkanPembayaran(
         }
 
         // reset cicilan
-        await tx.jadwalAngsuran.update({
+        await tx.jadwal_angsuran.update({
           where: {
             id_jadwal:
               idJadwal,
@@ -278,7 +278,7 @@ export async function batalkanPembayaran(
           where: { id_jadwal: idJadwal },
         });
 
-        await tx.riwayatTransaksi.deleteMany({
+        await tx.riwayat_transaksi.deleteMany({
           where: pembayaran
             ? {
                 ref_tabel: "pembayaran",
@@ -331,7 +331,7 @@ export async function createManualPayment(
       async (tx) => {
 
         const jadwal =
-          await tx.jadwalAngsuran.findUnique({
+          await tx.jadwal_angsuran.findUnique({
             where: {
               id_jadwal:
                 idJadwal,
@@ -383,7 +383,7 @@ export async function createManualPayment(
         });
 
         // update jadwal
-        await tx.jadwalAngsuran.update({
+        await tx.jadwal_angsuran.update({
           where: {
             id_jadwal:
               idJadwal,

@@ -45,7 +45,7 @@ export async function tambahRekeningPembayaran(
 
     /* HITUNG TOTAL */
     const totalRekening =
-      await prisma.rekeningPembayaran.count();
+      await prisma.rekeningpembayaran.count();
 
     /* JIKA PERTAMA AUTO AKTIF */
     const activeFinal =
@@ -55,7 +55,7 @@ export async function tambahRekeningPembayaran(
 
     /* NONAKTIFKAN SEMUA */
     if (activeFinal) {
-      await prisma.rekeningPembayaran.updateMany(
+      await prisma.rekeningpembayaran.updateMany(
         {
           data: {
             is_active: false,
@@ -65,7 +65,7 @@ export async function tambahRekeningPembayaran(
     }
 
     /* CREATE */
-    await prisma.rekeningPembayaran.create(
+    await prisma.rekeningpembayaran.create(
       {
         data: {
           nama_bank,
@@ -109,7 +109,7 @@ export async function aktifkanRekening(
 ) {
   try {
     /* NONAKTIFKAN SEMUA */
-    await prisma.rekeningPembayaran.updateMany(
+    await prisma.rekeningpembayaran.updateMany(
       {
         data: {
           is_active: false,
@@ -118,7 +118,7 @@ export async function aktifkanRekening(
     );
 
     /* AKTIFKAN SATU */
-    await prisma.rekeningPembayaran.update(
+    await prisma.rekeningpembayaran.update(
       {
         where: {
           id_rekening: id,
@@ -160,7 +160,7 @@ export async function nonaktifkanRekening(
 ) {
   try {
     const totalAktif =
-      await prisma.rekeningPembayaran.count(
+      await prisma.rekeningpembayaran.count(
         {
           where: {
             is_active: true,
@@ -177,7 +177,7 @@ export async function nonaktifkanRekening(
       };
     }
 
-    await prisma.rekeningPembayaran.update(
+    await prisma.rekeningpembayaran.update(
       {
         where: {
           id_rekening: id,
@@ -253,7 +253,7 @@ export async function updateRekening(
 
     /* JIKA DISET AKTIF */
     if (is_active) {
-      await prisma.rekeningPembayaran.updateMany(
+      await prisma.rekeningpembayaran.updateMany(
         {
           data: {
             is_active: false,
@@ -262,7 +262,7 @@ export async function updateRekening(
       );
     }
 
-    await prisma.rekeningPembayaran.update(
+    await prisma.rekeningpembayaran.update(
       {
         where: {
           id_rekening: id,
@@ -309,7 +309,7 @@ export async function hapusRekening(
   try {
     /* AMBIL DATA */
     const rekening =
-      await prisma.rekeningPembayaran.findUnique(
+      await prisma.rekeningpembayaran.findUnique(
         {
           where: {
             id_rekening: id,
@@ -327,7 +327,7 @@ export async function hapusRekening(
 
     /* HITUNG TOTAL */
     const total =
-      await prisma.rekeningPembayaran.count();
+      await prisma.rekeningpembayaran.count();
 
     /* CEGAH HAPUS SEMUA */
     if (total <= 1) {
@@ -339,7 +339,7 @@ export async function hapusRekening(
     }
 
     /* HAPUS */
-    await prisma.rekeningPembayaran.delete(
+    await prisma.rekeningpembayaran.delete(
       {
         where: {
           id_rekening: id,
@@ -350,7 +350,7 @@ export async function hapusRekening(
     /* JIKA YANG DIHAPUS AKTIF */
     if (rekening.is_active) {
       const first =
-        await prisma.rekeningPembayaran.findFirst(
+        await prisma.rekeningpembayaran.findFirst(
           {
             orderBy: {
               id_rekening:
@@ -361,7 +361,7 @@ export async function hapusRekening(
 
       /* AKTIFKAN REKENING PERTAMA */
       if (first) {
-        await prisma.rekeningPembayaran.update(
+        await prisma.rekeningpembayaran.update(
           {
             where: {
               id_rekening:
