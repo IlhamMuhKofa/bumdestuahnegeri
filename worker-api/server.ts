@@ -35,23 +35,35 @@ res.json({
 });
 
 app.post("/send", async (req, res) => {
+  console.log("========== MASUK ENDPOINT /SEND ==========");
+
   try {
     const { noHp, pesan } = req.body;
 
+    console.log("Nomor :", noHp);
+    console.log("Pesan :", pesan);
+
     if (!noHp || !pesan?.trim()) {
+      console.log("Data tidak lengkap.");
+
       return res.status(400).json({
         success: false,
         message: "Nomor HP dan pesan wajib diisi",
       });
     }
 
+    console.log("Memanggil sendWhatsAppMessage...");
+
     await sendWhatsAppMessage(noHp, pesan.trim());
+
+    console.log("SELESAI SEND MESSAGE");
 
     return res.json({
       success: true,
     });
 
   } catch (err) {
+    console.error("SEND ERROR:");
     console.error(err);
 
     return res.status(500).json({
@@ -90,6 +102,7 @@ app.get("/status", async (req, res) => {
 });
 
 app.post("/logout", async (req, res) => {
+  console.log("========== MASUK ENDPOINT /LOGOUT ==========");
   try {
     await logoutWhatsApp();
 
