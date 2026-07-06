@@ -15,7 +15,7 @@ export async function verifyPayment(
       },
 
       include: {
-        jadwal_angsuran: {
+        jadwal: {
           include: {
             peminjaman: true,
           },
@@ -57,22 +57,22 @@ export async function verifyPayment(
 
   // 3. insert riwayat transaksi
   await catatRiwayatTransaksi(prisma, {
-    idAnggota: pembayaran.jadwal_angsuran.peminjaman.id_anggota,
+    idAnggota: pembayaran.jadwal.peminjaman.id_anggota,
     kategori: "PINJAMAN",
     nominal: pembayaran.jumlah,
     metodeBayar: pembayaran.metode_bayar,
-    nomor: pembayaran.jadwal_angsuran.cicilan_ke,
+    nomor: pembayaran.jadwal.cicilan_ke,
     buktiBayar: pembayaran.bukti_bayar,
     refTabel: "pembayaran",
     refId: pembayaran.id_pembayaran,
   });
 
   await createNotifikasi({
-    id_anggota: pembayaran.jadwal_angsuran.peminjaman.id_anggota,
+    id_anggota: pembayaran.jadwal.peminjaman.id_anggota,
     role_tujuan: "nasabah",
-    isi: `Pembayaran cicilan ke-${pembayaran.jadwal_angsuran.cicilan_ke} telah diverifikasi`,
+    isi: `Pembayaran cicilan ke-${pembayaran.jadwal.cicilan_ke} telah diverifikasi`,
     jenis: "VERIFIKASI_CICILAN",
-    url: `/nasabah/cicilan/${pembayaran.jadwal_angsuran.id_peminjaman}`,
+    url: `/nasabah/cicilan/${pembayaran.jadwal.peminjaman.id_peminjaman}`,
   });
 
   return {

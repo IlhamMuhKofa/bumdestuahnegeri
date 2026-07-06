@@ -25,7 +25,7 @@ const anggota = await prisma.anggota.findMany({
   include: {
     simpanans: {
       include: {
-        pembayaran_simpanan: true,
+        pembayaranSimpanan: true,
       },
     },
   },
@@ -53,7 +53,7 @@ const totalWajib =
     )
     .reduce((total, simpanan) => {
       const berhasil =
-        simpanan.pembayaran_simpanan
+        simpanan.pembayaranSimpanan
           .filter(
             (bayar) =>
               bayar.status ===
@@ -81,7 +81,7 @@ const totalPendidikan =
     )
     .reduce((total, simpanan) => {
       const berhasil =
-        simpanan.pembayaran_simpanan
+        simpanan.pembayaranSimpanan
           .filter(
             (bayar) =>
               bayar.status ===
@@ -104,7 +104,7 @@ const pending =
   item.simpanans.reduce(
     (total, simpanan) => {
       const jumlahPending =
-        simpanan.pembayaran_simpanan.filter(
+        simpanan.pembayaranSimpanan.filter(
           (bayar) =>
             bayar.status ===
             "MENUNGGU"

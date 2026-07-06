@@ -29,7 +29,7 @@ export default async function Page({
       },
 
       include: {
-        pembayaran_simpanan: true,
+        pembayaranSimpanan: true,
       },
     });
 
@@ -48,7 +48,7 @@ export default async function Page({
   // TOTAL TERKUMPUL
   // =========================
   const totalTerkumpul =
-    simpanan.pembayaran_simpanan
+    simpanan.pembayaranSimpanan
       .filter(
         (x) =>
           x.status ===

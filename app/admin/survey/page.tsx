@@ -85,7 +85,7 @@ export default async function Page() {
   // DATA KALENDER
   // =========================
   const dataSurvey =
-    await prisma.jadwalSurvey.findMany({
+    await prisma.jadwal_survey.findMany({
 
       include: {
         peminjaman: {

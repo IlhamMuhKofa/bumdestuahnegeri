@@ -38,7 +38,7 @@ export default async function Page() {
       },
 
       include: {
-        jadwal_angsuran: {
+        jadwal: {
           include: {
             pembayaran: {
               orderBy: {
