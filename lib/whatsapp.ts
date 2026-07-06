@@ -152,9 +152,12 @@ async function createSocket() {
     generate?: QrCodeTerminal["generate"];
   };
   const qrCode = qrCodeModule.default ?? qrCodeModule;
-  const { state, saveCreds } = await baileys.useMultiFileAuthState(
-    path.join(process.cwd(), "wa-session")
-  );
+  const sessionPath = path.join(process.cwd(), "wa-session");
+
+  console.log("Session Path:", sessionPath);
+
+  const { state, saveCreds } =
+    await baileys.useMultiFileAuthState(sessionPath);
 
   const { version, isLatest } = await baileys.fetchLatestBaileysVersion();
 
@@ -174,14 +177,20 @@ async function createSocket() {
   console.log("=== SOCKET BERHASIL DIBUAT ===");
   runtime.socket = sock;
 
-  sock.ev.on("creds.update", saveCreds);
+  sock.ev.on("creds.update", async () => {
+    console.log("=== CREDS UPDATE ===");
+
+    await saveCreds();
+
+    console.log("=== CREDS SAVED ===");
+  });
 
   console.log("=== MENUNGGU UPDATE KONEKSI ===");
   sock.ev.on("connection.update", (update) => {
-    
-  console.log("========== CONNECTION UPDATE ==========");
-  console.dir(update, { depth: null });
-  console.log("======================================");
+
+    console.log("========== CONNECTION UPDATE ==========");
+    console.dir(update, { depth: null });
+    console.log("======================================");
 
     if (update.qr) {
       runtime.status = {
@@ -199,24 +208,24 @@ async function createSocket() {
       }
     }
 
-let statusCode: number | undefined;
+    let statusCode: number | undefined;
 
-if (update.connection === "close") {
-  console.log("LastDisconnect:");
-  console.dir(update.lastDisconnect, { depth: null });
+    if (update.connection === "close") {
+      console.log("LastDisconnect:");
+      console.dir(update.lastDisconnect, { depth: null });
 
-  statusCode = getStatusCode(update.lastDisconnect?.error);
+      statusCode = getStatusCode(update.lastDisconnect?.error);
 
-  console.log("StatusCode =", statusCode);
-  console.log(
-    "DisconnectReason.restartRequired =",
-    baileys.DisconnectReason.restartRequired
-  );
-  console.log(
-    "DisconnectReason.loggedOut =",
-    baileys.DisconnectReason.loggedOut
-  );
-}
+      console.log("StatusCode =", statusCode);
+      console.log(
+        "DisconnectReason.restartRequired =",
+        baileys.DisconnectReason.restartRequired
+      );
+      console.log(
+        "DisconnectReason.loggedOut =",
+        baileys.DisconnectReason.loggedOut
+      );
+    }
 
     if (update.connection === "open") {
       console.log("=== KONEKSI TERHUBUNG ===");
@@ -334,7 +343,12 @@ export async function sendWhatsAppMessage(noHp: string, message: string) {
   }
 
   const sock = await getWhatsAppSocket();
+
+  console.log("Mengirim ke:", jid);
+
   await sock.sendMessage(jid, {
     text: message,
   });
+
+  console.log("Pesan berhasil dikirim.");
 }

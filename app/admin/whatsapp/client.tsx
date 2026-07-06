@@ -385,33 +385,6 @@ export default function WhatsAppManagementClient() {
                 </button>
               </div>
             )}
-
-            {/* <div className="grid gap-3 sm:grid-cols-3">
-              <div className="rounded-xl border border-slate-200 p-4">
-                <p className="text-xs font-semibold uppercase text-slate-400">
-                  Nasabah Tersedia
-                </p>
-                <p className="mt-2 text-2xl font-bold text-slate-900">
-                  {nasabah.length}
-                </p>
-              </div>
-              <div className="rounded-xl border border-slate-200 p-4">
-                <p className="text-xs font-semibold uppercase text-slate-400">
-                  Mode Kirim
-                </p>
-                <p className="mt-2 text-sm font-bold text-blue-800">
-                  Baileys WebSocket
-                </p>
-              </div>
-              <div className="rounded-xl border border-slate-200 p-4">
-                <p className="text-xs font-semibold uppercase text-slate-400">
-                  Endpoint Demo
-                </p>
-                <p className="mt-2 text-sm font-bold text-blue-800">
-                  /api/whatsapp/reminder/run
-                </p>
-              </div>
-            </div> */}
           </div>
 
           <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
