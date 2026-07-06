@@ -29,7 +29,7 @@ export default async function BerandaNasabahPage() {
     saldoPendidikan,
     totalPengajuan,
   ] = await Promise.all([
-    prisma.pembayaranSimpanan.aggregate({
+    prisma.pembayaran_simpanan.aggregate({
       _sum: {
         nominal_bayar: true,
       },
@@ -43,7 +43,7 @@ export default async function BerandaNasabahPage() {
       },
     }),
 
-    prisma.pembayaranSimpanan.aggregate({
+    prisma.pembayaran_simpanan.aggregate({
       _sum: {
         nominal_bayar: true,
       },
@@ -79,7 +79,7 @@ export default async function BerandaNasabahPage() {
       },
 
       include: {
-        pembayaran_simpanan: true,
+        pembayaranSimpanan: true,
       },
 
       orderBy: {
@@ -89,7 +89,7 @@ export default async function BerandaNasabahPage() {
 
   const totalTerkumpul =
     tabunganPendidikan
-      ?.pembayaran_simpanan
+      ?.pembayaranSimpanan
       .filter(
         (x) =>
           x.status === "BERHASIL"
@@ -129,7 +129,7 @@ export default async function BerandaNasabahPage() {
   });
 
   const jadwalTerdekat =
-    await prisma.jadwalAngsuran.findFirst({
+    await prisma.jadwal_angsuran.findFirst({
       where: {
         peminjaman: {
           id_anggota: user.id,
