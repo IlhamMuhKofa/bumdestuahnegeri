@@ -4,7 +4,8 @@ import { useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Camera, Pencil, X } from "lucide-react";
 import { useSession } from "next-auth/react";
-import { useToast } from "@/app/Component/notify/toast";
+import { toast } from "react-toastify";
+import Swal from "sweetalert2";
 import { signOut } from "next-auth/react";
 
 type User = {
@@ -87,7 +88,6 @@ export default function ProfilePageClient({ initialUser }: { initialUser: User }
   const [user, setUser] = useState<User>(initialUser);
   const [openEdit, setOpenEdit] = useState(false);
   const [saving, setSaving] = useState(false);
-  const { push } = useToast();
 
   const progress = useMemo(() => calcProgress(user), [user]);
   const { update } = useSession(); // penting untuk refresh session (avatar navbar)
@@ -139,19 +139,17 @@ export default function ProfilePageClient({ initialUser }: { initialUser: User }
       setOpenEdit(false);
 
       // ✅ TOAST SUCCESS
-      push({
-        type: "success",
-        message: "Profil berhasil disimpan.",
-        duration: 3500,
+      toast.success("Profil berhasil disimpan.", {
+        position: "top-right",
+        autoClose: 3500,
       });
 
       await update(); // optional refresh session
     } catch (e: any) {
       // ✅ TOAST ERROR (ganti alert)
-      push({
-        type: "error",
-        message: e?.message || "Terjadi kesalahan saat menyimpan profil.",
-        duration: 3500,
+      toast.error(e?.message || "Gagal menyimpan.", {
+        position: "top-right",
+        autoClose: 3500
       });
     } finally {
       setSaving(false);
@@ -169,20 +167,18 @@ export default function ProfilePageClient({ initialUser }: { initialUser: User }
 
     const data = await res.json().catch(() => ({}));
     if (!res.ok) {
-      push({
-        type: "error",
-        message: data?.message || "Upload foto gagal.",
-        duration: 3500,
+      toast.error(data?.message || "Gagal upload foto profil.", {
+        position: "top-right",
+        autoClose: 3500,
       });
       return;
     }
 
     setUser((prev) => ({ ...prev, foto_diri: data.url }));
 
-    push({
-      type: "success",
-      message: "Foto profil berhasil diperbarui.",
-      duration: 3500,
+    toast.success("Foto profil berhasil diunggah.", {
+      position: "top-right",
+      autoClose: 3500,
     });
 
     await update({ image: data.url }); // navbar ikut berubah
@@ -195,40 +191,40 @@ export default function ProfilePageClient({ initialUser }: { initialUser: User }
     const data = await res.json().catch(() => ({}));
 
     if (!res.ok) {
-      push({
-        type: "error",
-        message: data?.message || "Gagal menghapus foto profil.",
-        duration: 3500,
+      toast.error(data?.message || "Gagal hapus foto profil.", {
+        position: "top-right",
+        autoClose: 3500,
       });
       return;
     }
 
     setUser((prev) => ({ ...prev, foto_diri: null }));
 
-    push({
-      type: "success",
-      message: "Foto profil berhasil dihapus.",
-      duration: 3500,
+    toast.success("Foto profil berhasil dihapus.", {
+      position: "top-right",
+      autoClose: 3500,
     });
 
     await update({ image: null });
   }
 
   async function handleLogout() {
-    const ok = confirm("Apakah Anda yakin ingin keluar?");
-    if (!ok) return;
-
-    push({
-      type: "info",
-      message: "Sedang keluar...",
-      duration: 5000,
+    const result = await Swal.fire({
+      title: "Keluar?",
+      text: "Apakah Anda yakin ingin keluar?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Ya, keluar",
+      cancelButtonText: "Batal",
+      
     });
 
-    // beri sedikit delay biar toast sempat muncul
+    if (!result.isConfirmed) return;
+
+    toast.info("Sedang keluar...");
+
     setTimeout(() => {
-      signOut({
-        callbackUrl: "/",
-      });
+      signOut({ callbackUrl: "/" });
     }, 800);
   }
 

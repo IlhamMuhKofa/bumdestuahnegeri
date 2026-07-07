@@ -30,7 +30,11 @@ export async function createJadwalAngsuran(
 
   const startDate = new Date(tanggalMulai);
 
-  const peminjaman = await prisma.$transaction(async (tx) => {
+let peminjaman;
+
+try {
+  peminjaman = await prisma.$transaction(async (tx) => {
+
     const dataPeminjaman = await tx.peminjaman.findUnique({
       where: {
         id_peminjaman: idPeminjaman,
@@ -46,19 +50,16 @@ export async function createJadwalAngsuran(
 
     for (let i = 0; i < tenor; i++) {
       const dueDate = new Date(startDate);
+      dueDate.setMonth(dueDate.getMonth() + i);
 
-      dueDate.setMonth(
-        dueDate.getMonth() + i
-      );
+      console.log("Membuat jadwal ke:", i + 1);
 
       const jadwal = await tx.jadwal_angsuran.create({
         data: {
           id_peminjaman: idPeminjaman,
           cicilan_ke: i + 1,
-          jumlah_cicilan:
-            cicilanPerBulan,
-          jumlah_tagihan:
-            cicilanPerBulan,
+          jumlah_cicilan: cicilanPerBulan,
+          jumlah_tagihan: cicilanPerBulan,
           jatuh_tempo: dueDate,
           denda: denda || 0,
           catatan,
@@ -66,22 +67,27 @@ export async function createJadwalAngsuran(
         },
       });
 
-      await createWhatsAppReminderForJadwal(tx, jadwal, dataPeminjaman.anggota);
+      console.log("Jadwal berhasil:", jadwal);
+
+      // sementara tetap dikomentari
+      // await createWhatsAppReminderForJadwal(tx, jadwal, dataPeminjaman.anggota);
     }
 
-    const updated = await tx.peminjaman.update({
+    return await tx.peminjaman.update({
       where: {
-        id_peminjaman:
-          idPeminjaman,
+        id_peminjaman: idPeminjaman,
       },
       data: {
         status: "ACTIVE",
       },
     });
 
-    return updated;
   });
-
+} catch (error) {
+  console.error("========== ERROR DETAIL ==========");
+  console.dir(error, { depth: null });
+  throw error;
+}
   await createNotifikasi({
     id_anggota: peminjaman.id_anggota,
     role_tujuan: "nasabah",

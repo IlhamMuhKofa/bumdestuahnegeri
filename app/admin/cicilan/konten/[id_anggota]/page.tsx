@@ -60,8 +60,7 @@ export default async function DetailNasabah({
   ) {
     return (
       <div className="p-6 text-gray-400">
-        Tidak ada
-        pengajuan
+        Tidak ada pengajuan
       </div>
     );
   }
@@ -83,31 +82,43 @@ export default async function DetailNasabah({
 
       {/* HEADER */}
       <div className="bg-white border-b">
+
         <div className="max-w-7xl mx-auto px-6 py-5 flex items-center gap-4">
 
+          {/* BACK */}
           <Link
             href="/admin/cicilan"
-            className="flex items-center justify-center w-10 h-10 rounded-lg border hover:bg-gray-100"
+            className="
+              flex
+              items-center
+              justify-center
+              w-10
+              h-10
+              rounded-xl
+              border
+              hover:bg-gray-100
+              transition
+            "
           >
             ←
           </Link>
 
+          {/* TITLE */}
           <div>
-            <h1 className="text-xl font-semibold text-gray-800">
-              Detail
-              Pengajuan
+
+            <h1 className="text-2xl font-bold text-gray-800">
+              Detail Pengajuan
             </h1>
 
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-gray-500 mt-1">
               {nama} •{" "}
-              {
-                data.length
-              }{" "}
-              pengajuan
+              {data.length} pengajuan
             </p>
+
           </div>
 
         </div>
+
       </div>
 
       {/* CONTENT */}
@@ -117,6 +128,7 @@ export default async function DetailNasabah({
 
           {data.map(
             (item) => {
+
               const total =
                 item.jangka_waktu ||
                 0;
@@ -125,16 +137,12 @@ export default async function DetailNasabah({
                 item.jadwal ||
                 [];
 
-              // FIX
               const sudahBayar =
                 jadwal.filter(
-                  (
-                    j
-                  ) =>
+                  (j) =>
                     j.status ===
                     "LUNAS"
-                )
-                  .length;
+                ).length;
 
               const progress =
                 total === 0
@@ -164,23 +172,16 @@ export default async function DetailNasabah({
                 item.status ===
                 "LUNAS"
               ) {
-                status =
-                  "lunas";
-              }
-
-              else if (
+                status = "lunas";
+              } else if (
                 item.status ===
                 "ACTIVE"
               ) {
-                status =
-                  "aktif";
+                status = "aktif";
 
                 const telat =
                   jadwal.some(
-                    (
-                      j
-                    ) => {
-                      // FIX
+                    (j) => {
                       if (
                         j.status ===
                         "LUNAS"
@@ -207,190 +208,272 @@ export default async function DetailNasabah({
                     }
                   );
 
-                if (
-                  telat
-                ) {
-                  status =
-                    "telat";
+                if (telat) {
+                  status = "telat";
                 }
               }
+
+              const accentGradient =
+                status === "telat"
+                  ? "from-red-500 to-rose-400"
+                  : status === "lunas"
+                  ? "from-emerald-500 to-teal-400"
+                  : status === "aktif"
+                  ? "from-blue-500 to-blue-700"
+                  : "from-blue-500 to-cyan-400";
+
+              const badgeClass =
+                status === "baru"
+                  ? "bg-blue-100 text-blue-700"
+                  : status === "aktif"
+                  ? "bg-blue-100 text-blue-700"
+                  : status === "lunas"
+                  ? "bg-emerald-100 text-emerald-700"
+                  : "bg-red-100 text-red-700";
+
+              const badgeLabel =
+                status === "baru"
+                  ? "Baru"
+                  : status === "aktif"
+                  ? "Aktif"
+                  : status === "lunas"
+                  ? "Lunas"
+                  : "Telat";
+
+              const progressBarClass =
+                status === "telat"
+                  ? "bg-red-500"
+                  : status === "lunas"
+                  ? "bg-emerald-500"
+                  : "bg-blue-500";
+
+              const buttonClass =
+                status === "baru"
+                  ? "bg-blue-600 hover:bg-blue-700"
+                  : status === "aktif"
+                  ? "bg-blue-600 hover:bg-blue-700"
+                  : status === "lunas"
+                  ? "bg-blue-600 hover:bg-blue-700"
+                  : "bg-red-500 hover:bg-red-600";
+
+              const buttonLabel =
+                status === "baru"
+                  ? "Buat Jadwal"
+                  : status === "aktif"
+                  ? "Detail"
+                  : status === "lunas"
+                  ? "Selesai"
+                  : "Lihat";
+
+              const belumAdaJadwal =
+                jadwal.length === 0;
 
               return (
                 <div
                   key={
                     item.id_peminjaman
                   }
-                  className="relative bg-white rounded-2xl p-5 border shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all"
+                  className="
+                    relative
+                    bg-white
+                    rounded-3xl
+                    border
+                    shadow-sm
+                    hover:shadow-xl
+                    hover:-translate-y-1
+                    transition-all
+                    duration-300
+                    overflow-hidden
+                    p-6
+                  "
                 >
 
-                  {/* BAR */}
-                  <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-500 to-emerald-400" />
+                  {/* ACCENT */}
+                  <div
+                    className={`
+                      absolute
+                      top-0
+                      left-0
+                      w-full
+                      h-1
+                      bg-gradient-to-r
+                      ${accentGradient}
+                    `}
+                  />
 
-                  <div className="flex flex-col gap-5">
+                  <div className="flex flex-col gap-6">
 
-                    {/* HEADER */}
-                    <div className="flex justify-between">
+                    {/* TOP */}
+                    <div className="flex items-start justify-between">
 
                       <div>
-                        <p className="text-xl font-bold text-gray-800">
+
+                        <p className="text-2xl font-bold text-gray-800">
                           {formatRupiah(
                             item.total_pinjaman
                           )}
                         </p>
 
-                        <p className="text-xs text-gray-400 mt-1">
+                        <p className="text-xs text-gray-400 mt-2">
+                          Pengajuan:
+                        </p>
+
+                        <p className="text-sm text-gray-600">
                           {new Date(
                             item.tanggal_pengajuan
                           ).toLocaleDateString(
                             "id-ID",
                             {
-                              day:
-                                "numeric",
-                              month:
-                                "long",
-                              year:
-                                "numeric",
+                              day: "numeric",
+                              month: "long",
+                              year: "numeric",
                             }
                           )}
                         </p>
+
                       </div>
 
+                      {/* STATUS */}
                       <span
-                        className={`text-xs px-3 py-1 rounded-full font-medium ${
-                          status ===
-                          "baru"
-                            ? "bg-blue-100 text-blue-600"
-                            : status ===
-                              "aktif"
-                            ? "bg-green-100 text-green-600"
-                            : status ===
-                              "lunas"
-                            ? "bg-emerald-100 text-emerald-700"
-                            : "bg-red-100 text-red-600"
-                        }`}
+                        className={`
+                          text-xs
+                          px-3
+                          py-1
+                          rounded-full
+                          font-medium
+                          ${badgeClass}
+                        `}
                       >
-                        {status ===
-                          "baru" &&
-                          "Baru"}
-
-                        {status ===
-                          "aktif" &&
-                          "Aktif"}
-
-                        {status ===
-                          "telat" &&
-                          "Telat"}
-
-                        {status ===
-                          "lunas" &&
-                          "Lunas"}
+                        {badgeLabel}
                       </span>
 
                     </div>
 
                     {/* INFO */}
-                    <div className="flex justify-between text-sm">
+                    <div className="grid grid-cols-2 gap-4">
 
-                      <div>
-                        <p className="text-gray-400 text-xs">
-                          Tenor
+                      {/* TENOR */}
+                      <div className="bg-gray-50 border rounded-2xl p-4">
+
+                        <p className="text-xs text-gray-400">
+                          Jangka Waktu
                         </p>
 
-                        <p className="font-semibold">
-                          {
-                            total
-                          }{" "}
-                          bulan
+                        <p className="text-lg font-bold text-gray-800 mt-1">
+                          {total} Bulan
                         </p>
+
                       </div>
 
-                      <div className="text-right">
-                        <p className="text-gray-400 text-xs">
+                      {/* PROGRESS COUNT */}
+                      <div className="bg-gray-50 border rounded-2xl p-4">
+
+                        <p className="text-xs text-gray-400">
                           Progress
                         </p>
 
-                        <p className="font-semibold">
-                          {
-                            sudahBayar
-                          }
-                          /
-                          {
-                            total
-                          }
-                        </p>
-                      </div>
-
-                    </div>
-
-                    {/* PROGRESS */}
-                    <div>
-                      <div className="w-full h-2.5 bg-gray-100 rounded-full overflow-hidden">
-
-                        <div
-                          className={`h-full transition-all ${
-                            status ===
-                            "telat"
-                              ? "bg-red-500"
-                              : status ===
-                                "lunas"
-                              ? "bg-emerald-500"
-                              : "bg-green-500"
-                          }`}
-                          style={{
-                            width: `${progress}%`,
-                          }}
-                        />
-
-                      </div>
-
-                      <p className="text-[11px] text-right mt-1 text-gray-400">
-                        {Math.round(
-                          progress
+                        {belumAdaJadwal ? (
+                          <p className="text-sm font-semibold text-gray-400 mt-1">
+                            Belum ada
+                          </p>
+                        ) : (
+                          <p className="text-lg font-bold text-gray-800 mt-1">
+                            {sudahBayar}/{total}
+                          </p>
                         )}
-                        %
-                      </p>
+
+                      </div>
+
                     </div>
 
-                    {/* BUTTON */}
+                    {/* PROGRESS BAR */}
+                    {belumAdaJadwal ? (
+                      <div
+                        className="
+                          flex
+                          items-center
+                          gap-3
+                          bg-gray-50
+                          border
+                          border-dashed
+                          border-gray-300
+                          rounded-2xl
+                          p-4
+                        "
+                      >
+
+                        <div className="w-9 h-9 shrink-0 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-base">
+                          🗓️
+                        </div>
+
+                        <div>
+                          <p className="text-sm font-semibold text-gray-600">
+                            Jadwal cicilan belum dibuat
+                          </p>
+                          <p className="text-xs text-gray-400 mt-0.5">
+                            Buat jadwal untuk mulai memantau progress pembayaran
+                          </p>
+                        </div>
+
+                      </div>
+                    ) : (
+                      <div className="bg-gray-50 border rounded-2xl p-4">
+
+                        <p className="text-xs text-gray-400 mb-2">
+                          Progress Pembayaran
+                        </p>
+
+                        <div className="w-full h-2.5 bg-white border rounded-full overflow-hidden">
+
+                          <div
+                            className={`h-full transition-all ${progressBarClass}`}
+                            style={{
+                              width: `${progress}%`,
+                            }}
+                          />
+
+                        </div>
+
+                        <p className="text-[11px] text-right mt-1 text-gray-400">
+                          {Math.round(progress)}%
+                        </p>
+
+                      </div>
+                    )}
+
+                    {/* ACTION */}
                     <div className="flex justify-end">
 
                       <Link
                         href={`/admin/cicilan/konten/${id}/${item.id_peminjaman}`}
-                        className={`px-4 py-2 rounded-lg text-sm text-white ${
-                          status ===
-                          "baru"
-                            ? "bg-blue-600"
-                            : status ===
-                              "aktif"
-                            ? "bg-green-600"
-                            : status ===
-                              "lunas"
-                            ? "bg-emerald-600"
-                            : "bg-red-500"
-                        }`}
+                        className={`
+                          px-5
+                          py-3
+                          rounded-xl
+                          text-sm
+                          font-medium
+                          text-white
+                          shadow-sm
+                          transition
+                          ${buttonClass}
+                        `}
                       >
-                        {status ===
-                        "baru"
-                          ? "Buat Jadwal"
-                          : status ===
-                            "aktif"
-                          ? "Detail"
-                          : status ===
-                            "lunas"
-                          ? "Selesai"
-                          : "Lihat"}
+                        {buttonLabel}
                       </Link>
 
                     </div>
 
                   </div>
+
                 </div>
               );
             }
           )}
 
         </div>
+
       </div>
+
     </div>
   );
 }

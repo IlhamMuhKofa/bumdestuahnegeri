@@ -9,17 +9,17 @@ export default async function Page() {
   ====================================================== */
 const anggota = await prisma.anggota.findMany({
   where: {
-    role: "NASABAH",
+    role: "nasabah",
 
     status: {
       not: "disabled",
     },
 
-    peminjaman: {
-      some: {
-        status: "APPROVED",
-      },
-    },
+    // peminjaman: {
+    //   some: {
+    //     status: "APPROVED",
+    //   },
+    // },
   },
 
   include: {

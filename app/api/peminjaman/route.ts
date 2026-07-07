@@ -75,6 +75,27 @@ export async function POST(req: Request) {
       },
     });
 
+    // 🔥 CEK APAKAH SUDAH ADA PENGAJUAN PINJAMAN YANG PENDING
+
+    const existing = await prisma.peminjaman.findFirst({
+  where: {
+    id_anggota: Number(sessionUser.id),
+    status: "PENDING",
+  },
+});
+
+if (existing) {
+  return NextResponse.json(
+    {
+      error:
+        "Masih ada pengajuan pinjaman yang sedang diproses.",
+    },
+    {
+      status: 400,
+    }
+  );
+}
+
     await prisma.detail_peminjaman.create({
       data: {
         id_peminjaman: peminjaman.id_peminjaman,

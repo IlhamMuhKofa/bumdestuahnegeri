@@ -56,74 +56,6 @@ export default async function ProfilePage() {
           </p>
         </div>
 
-        {/* SUMMARY */}
-        <div className="grid md:grid-cols-3 gap-4">
-
-          {/* TOTAL ADMIN */}
-          <div className="bg-white rounded-3xl border p-6 shadow-sm">
-            <div className="flex justify-between">
-              <div>
-                <p className="text-sm text-gray-500">
-                  Total Admin
-                </p>
-
-                <h2 className="text-3xl font-bold mt-2">
-                  {totalAdmin}
-                </h2>
-              </div>
-
-              <div className="h-14 w-14 rounded-2xl bg-blue-100 flex items-center justify-center">
-                <Users className="w-6 h-6 text-blue-700" />
-              </div>
-            </div>
-          </div>
-
-          {/* ADMIN AKTIF */}
-          <div className="bg-white rounded-3xl border p-6 shadow-sm">
-            <div className="flex justify-between">
-              <div>
-                <p className="text-sm text-gray-500">
-                  Admin Aktif
-                </p>
-
-                <h2 className="text-3xl font-bold mt-2">
-                  {activeAdmin}
-                </h2>
-              </div>
-
-              <div className="h-14 w-14 rounded-2xl bg-green-100 flex items-center justify-center">
-                <Shield className="w-6 h-6 text-green-700" />
-              </div>
-            </div>
-          </div>
-
-          {/* ADD ADMIN (INI YANG TERHUBUNG KE MODAL) */}
-          <AddAdminModal
-            trigger={
-              <div className="bg-white rounded-3xl border p-6 shadow-sm cursor-pointer hover:shadow-md transition">
-                <div className="flex justify-between">
-
-                  <div>
-                    <p className="text-sm text-gray-500">
-                      Tambah Admin
-                    </p>
-
-                    <h2 className="text-lg font-semibold mt-3">
-                      Kelola Akun
-                    </h2>
-                  </div>
-
-                  <div className="h-14 w-14 rounded-2xl bg-purple-100 flex items-center justify-center">
-                    <UserPlus className="w-6 h-6 text-purple-700" />
-                  </div>
-
-                </div>
-              </div>
-            }
-          />
-
-        </div>
-
         {/* PROFILE CARD */}
         <div className="bg-white rounded-3xl border shadow-sm p-8">
 
@@ -228,7 +160,7 @@ export default async function ProfilePage() {
             {/* BONUS: tombol ini juga buka modal */}
             <AddAdminModal
               trigger={
-                <button className="bg-[#1a3c2e] hover:bg-[#244d3c] text-white px-4 py-2 rounded-xl text-sm font-semibold">
+                <button className="bg-blue-800 hover:bg-blue-900 text-white px-4 py-2 rounded-xl text-sm font-semibold">
                   + Tambah Admin
                 </button>
               }
@@ -238,7 +170,7 @@ export default async function ProfilePage() {
 
           <table className="w-full text-sm">
 
-            <thead className="bg-[#1a3c2e] text-white">
+            <thead className="bg-blue-800 text-white">
               <tr>
                 <th className="px-6 py-4 text-left">
                   Nama

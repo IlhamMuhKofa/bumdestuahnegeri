@@ -239,7 +239,7 @@ export default function ModalJadwalWajib({
           <button
             onClick={handleSubmit}
             disabled={loading}
-            className="flex-1 rounded-2xl bg-blue-800 py-3 font-semibold text-white hover:bg-[#244d3c]"
+            className="flex-1 rounded-2xl bg-blue-800 py-3 font-semibold text-white hover:bg-blue-900"
           >
             {loading
               ? "Menyimpan..."

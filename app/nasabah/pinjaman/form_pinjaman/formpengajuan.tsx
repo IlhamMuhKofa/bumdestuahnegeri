@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Calculator, Handshake, Eye } from 'lucide-react';
+import { toast } from "react-toastify";
 
 const FormPengajuan = () => {
   const [jumlahPinjaman, setJumlahPinjaman] = useState('10000000');
@@ -18,6 +19,7 @@ const FormPengajuan = () => {
   // const [previewSurat, setPreviewSurat] = useState<string | null>(null);
   const [previewFile, setPreviewFile] = useState<string | null>(null);
   const [previewType, setPreviewType] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const triggerFile = (id: string) => {
     const input = document.getElementById(id);
@@ -75,6 +77,9 @@ const FormPengajuan = () => {
   async function handleSubmit(e: any) {
     e.preventDefault();
 
+    if (loading) return; // Prevent multiple submissions
+    setLoading(true);
+
     // ✅ VALIDASI DULU
     if (!fotoAgunan) {
       alert("Foto agunan wajib diisi!");
@@ -101,22 +106,26 @@ const FormPengajuan = () => {
 
       const res = await fetch("/api/peminjaman", {
         method: "POST",
-        body: formData, // 🔥 TANPA JSON, TANPA HEADER
-
+        body: formData,
       });
 
       const data = await res.json();
 
-      if (data.success) {
-        alert("Pengajuan berhasil dikirim!");
-        window.location.reload();
-      } else {
-        alert("Gagal mengajukan");
+      console.log("Status:", res.status);
+      console.log("Response:", data);
+
+      if (!res.ok) {
+        toast.error(data.error || "Terjadi kesalahan saat mengajukan pinjaman.");
+        return;
       }
+
+      toast.success("Pengajuan pinjaman berhasil dikirim!");
+      window.location.reload();
 
     } catch (err) {
       console.error(err);
     }
+    setLoading(false);
   }
 
   useEffect(() => {

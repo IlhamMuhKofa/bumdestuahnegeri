@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Download, Eye } from "lucide-react";
 import { konfirmasiPembayaran } from "@/app/admin/cicilan/konten/[id_anggota]/[id_peminjaman]/action";
+import { toast } from "react-toastify";
 
 type Props = {
   pinjaman?: any[];
@@ -64,9 +65,10 @@ export default function ClientPage({
     try {
       setLoadingId(idJadwal);
       await konfirmasiPembayaran(idJadwal);
+      toast.success("Pembayaran berhasil diverifikasi");
       router.refresh();
     } catch (error: any) {
-      alert(error.message || "Gagal verifikasi pembayaran");
+      toast.error(error.message || "Gagal verifikasi pembayaran");
     } finally {
       setLoadingId(null);
     }
@@ -86,7 +88,7 @@ export default function ClientPage({
 
         <button
           onClick={() => router.push("/admin/pembayaran/form")}
-          className="rounded-xl bg-blue-600 px-4 py-2 text-sm text-white shadow-sm hover:bg-green-700"
+          className="rounded-xl bg-blue-600 px-4 py-2 text-sm text-white shadow-sm hover:bg-blue-800"
         >
           + Tambah Pembayaran
         </button>

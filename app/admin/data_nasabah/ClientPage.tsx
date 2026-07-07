@@ -60,18 +60,18 @@ export default function ClientPage({ nasabah }: any) {
     startIndex + itemsPerPage
   );
 
-  const totalNasabah = nasabah.length;
-const totalAktif = nasabah.filter(
-  (n: any) => getStatus(n) === "aktif"
-).length;
+//   const totalNasabah = nasabah.length;
+// const totalAktif = nasabah.filter(
+//   (n: any) => getStatus(n) === "aktif"
+// ).length;
 
-const totalPendaftar = nasabah.filter(
-  (n: any) => getStatus(n) === "new"
-).length;
+// const totalPendaftar = nasabah.filter(
+//   (n: any) => getStatus(n) === "new"
+// ).length;
 
-const totalNonaktif = nasabah.filter(
-  (n: any) => getStatus(n) === "nonaktif"
-).length;
+// const totalNonaktif = nasabah.filter(
+//   (n: any) => getStatus(n) === "nonaktif"
+// ).length;
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
@@ -82,7 +82,7 @@ const totalNonaktif = nasabah.filter(
           <h1 className="text-2xl font-bold text-gray-800">
             Data Nasabah
           </h1>
-          <button className="bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-[#244d3c]">
+          <button className="bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-900">
             + Tambah Nasabah
           </button>
         </div>
@@ -147,10 +147,10 @@ const totalNonaktif = nasabah.filter(
               <tr>
                 <th className="px-4 py-3 text-left">Nama</th>
                 {/* <th className="px-4 py-3 text-left">Jenis Kelamin</th> */}
-                <th className="px-4 py-3 text-left">No HP</th>
-                <th className="px-4 py-3 text-left">Email</th>
-                <th className="px-4 py-3 text-left">Alamat</th>
-                <th className="px-4 py-3 text-left">Status</th>
+                <th className="px-4 py-3 text-center">No HP</th>
+                <th className="px-4 py-3 text-center">Email</th>
+                {/* <th className="px-4 py-3 text-left">Alamat</th> */}
+                <th className="px-4 py-3 text-center">Status</th>
                 <th className="px-4 py-3 text-center">Aksi</th>
               </tr>
             </thead>
@@ -172,11 +172,11 @@ const totalNonaktif = nasabah.filter(
                       {/* <td className="px-4 py-3">
                         {user.jenis_kelamin || "-"}
                       </td> */}
-                      <td className="px-4 py-3">{user.no_hp || "-"}</td>
-                      <td className="px-4 py-3">{user.email}</td>
-                      <td className="px-4 py-3">{user.alamat || "-"}</td>
+                      <td className="px-4 py-3 text-center">{user.no_hp || "-"}</td>
+                      <td className="px-4 py-3 text-center">{user.email}</td>
+                      {/* <td className="px-4 py-3">{user.alamat || "-"}</td> */}
 
-                      <td className="px-4 py-3">
+                      <td className="px-4 py-3 text-center">
                         {status === "aktif" && (
                           <span className="px-4 py-1 text-xs rounded-xl bg-green-100 text-green-700">
                             Aktif

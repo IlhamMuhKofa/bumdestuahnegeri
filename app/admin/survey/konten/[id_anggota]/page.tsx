@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Prisma } from "@prisma/client";
 
 type PeminjamanWithRelasi =
-  Prisma.PeminjamanGetPayload<{
+  Prisma.peminjamanGetPayload<{
     include: {
       anggota: true;
       jadwalSurvey: true;

@@ -3,6 +3,8 @@
 import { useState, useTransition } from "react";
 import SuratCard from "./item/suratcard";
 import { createSurat, updateSurat } from "./action";
+import Swal from "sweetalert2";
+import { toast } from "react-toastify";
 
 type Surat = {
   id_surat: number;
@@ -19,20 +21,53 @@ export default function ClientPage({
   const [open, setOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
 
-  const handleSubmit = (formData: FormData) => {
-    startTransition(async () => {
-      const result = surat
-        ? await updateSurat(surat.id_surat, formData)
-        : await createSurat(formData);
+const handleSubmit = (formData: FormData) => {
+  startTransition(async () => {
+    const file = formData.get("file") as File;
 
-      alert(result.message);
+    if (!file || file.size === 0) {
+      toast.error("Silakan pilih file PDF.");
+      return;
+    }
 
-      if (result.success) {
-        setOpen(false);
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error("Ukuran file maksimal 2 MB.");
+      return;
+    }
+
+    const toastId = toast.loading(
+      surat
+        ? "Memperbarui dokumen..."
+        : "Mengupload dokumen..."
+    );
+
+    const result = surat
+      ? await updateSurat(surat.id_surat, formData)
+      : await createSurat(formData);
+
+    if (result.success) {
+      toast.update(toastId, {
+        render: result.message,
+        type: "success",
+        isLoading: false,
+        autoClose: 2000,
+      });
+
+      setOpen(false);
+
+      setTimeout(() => {
         window.location.reload();
-      }
-    });
-  };
+      }, 500);
+    } else {
+      toast.update(toastId, {
+        render: result.message,
+        type: "error",
+        isLoading: false,
+        autoClose: 3000,
+      });
+    }
+  });
+};
 
   return (
     <div className="space-y-6">
@@ -50,7 +85,7 @@ export default function ClientPage({
 
           <button
             onClick={() => setOpen(true)}
-            className="bg-blue-800 text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-[#142f24]"
+            className="bg-blue-800 text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-blue-900"
           >
             {surat ? "Update Dokumen" : "+ Upload Dokumen"}
           </button>
@@ -149,11 +184,11 @@ export default function ClientPage({
                         file:mr-3
                         file:rounded-lg
                         file:border-0
-                        file:bg-[#1a3c2e]
+                        file:bg-blue-800
                         file:px-3
                         file:py-2
                         file:text-white
-                        hover:file:bg-[#244d3c]
+                        hover:file:bg-blue-900
                       "
                     />
 
@@ -184,12 +219,12 @@ export default function ClientPage({
                       disabled={isPending}
                       className="
                         rounded-xl
-                        bg-[#1a3c2e]
+                        bg-blue-800
                         px-5 py-2.5
                         text-sm
                         font-medium
                         text-white
-                        hover:bg-[#244d3c]
+                        hover:bg-blue-900
                         disabled:opacity-50
                       "
                     >

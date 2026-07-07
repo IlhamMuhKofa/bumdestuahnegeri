@@ -23,6 +23,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import NotifikasiBell from "@/app/Component/NotifikasiBell";
+import Swal from "sweetalert2";
+import { toast } from "react-toastify";
 
 type Props = {
   children: ReactNode;
@@ -147,21 +149,35 @@ export default function DashboardLayout({ children }: Props) {
   const { push } = useToast();
 
   async function handleLogout() {
-    const ok = confirm("Apakah Anda yakin ingin keluar?");
-    if (!ok) return;
+const result = await Swal.fire({
+  title: "Keluar?",
+  text: "Apakah Anda yakin ingin keluar?",
+  icon: "question",
+  showCancelButton: true,
+  confirmButtonText: "Ya, keluar",
+  cancelButtonText: "Batal",
+});
 
-    push({
-      type: "info",
-      message: "Sedang keluar...",
-      duration: 5000,
-    });
+if (!result.isConfirmed) return;
 
-    // beri sedikit delay biar toast sempat muncul
-    setTimeout(() => {
-      signOut({
-        callbackUrl: "/",
-      });
-    }, 800);
+toast.info("Sedang keluar...");
+
+setTimeout(() => {
+  signOut({ callbackUrl: "/" });
+}, 800);
+
+    // push({
+    //   type: "info",
+    //   message: "Sedang keluar...",
+    //   duration: 5000,
+    // });
+
+    // // beri sedikit delay biar toast sempat muncul
+    // setTimeout(() => {
+    //   signOut({
+    //     callbackUrl: "/",
+    //   });
+    // }, 800);
   }
 
   return (

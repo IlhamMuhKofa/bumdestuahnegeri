@@ -22,14 +22,11 @@ export const authOptions: NextAuthOptions = {
 
     if (!email || !password) return null;
 
-    const user = await prisma.anggota.findFirst({
-      where: {
-        OR: [
-          { email },
-          { username: email },
-        ],
-      },
-    });
+const user = await prisma.anggota.findUnique({
+  where: {
+    email,
+  },
+});
 
     if (!user) return null;
 

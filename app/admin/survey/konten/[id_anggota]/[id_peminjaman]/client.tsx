@@ -1,16 +1,9 @@
 "use client";
 
-import {
-  useState,
-} from "react";
-
-import {
-  useRouter,
-} from "next/navigation";
-
-import {
-  createJadwalSurvey,
-} from "./action";
+import {useState,} from "react";
+import {useRouter,} from "next/navigation";
+import {createJadwalSurvey,} from "./action";
+import { toast } from "react-toastify";
 
 type Props = {
   peminjaman: any;
@@ -83,7 +76,7 @@ export default function ClientPage({
           !tanggalSurvey
         ) {
 
-          alert(
+          toast.error(
             "Tanggal survey wajib diisi"
           );
 
@@ -105,7 +98,7 @@ export default function ClientPage({
           catatan,
         });
 
-        alert(
+        toast.success(
           survey
             ? "Jadwal survey berhasil diperbarui"
             : "Jadwal survey berhasil dibuat"

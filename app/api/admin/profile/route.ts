@@ -27,7 +27,6 @@ export async function GET() {
         id: true,
         nama: true,
         email: true,
-        username: true,
         no_hp: true,
         role: true,
         createdAt: true,
@@ -45,7 +44,6 @@ export async function GET() {
         id: true,
         nama: true,
         email: true,
-        username: true,
         createdAt: true,
       },
       orderBy: {
@@ -87,7 +85,6 @@ export async function PUT(req: NextRequest) {
     const {
       nama,
       email,
-      username,
       no_hp,
     } = body;
 
@@ -127,25 +124,6 @@ export async function PUT(req: NextRequest) {
     }
 
     // cek username duplicate
-    if (
-      username &&
-      username !== currentUser.username
-    ) {
-      const existingUsername =
-        await prisma.anggota.findUnique({
-          where: { username },
-        });
-
-      if (existingUsername) {
-        return NextResponse.json(
-          {
-            error:
-              "Username sudah digunakan",
-          },
-          { status: 400 }
-        );
-      }
-    }
 
     const updated =
       await prisma.anggota.update({
@@ -155,7 +133,6 @@ export async function PUT(req: NextRequest) {
         data: {
           nama,
           email,
-          username,
           no_hp,
         },
       });
@@ -194,14 +171,12 @@ export async function POST(req: NextRequest) {
     const {
       nama,
       email,
-      username,
       password,
     } = body;
 
     if (
       !nama ||
       !email ||
-      !username ||
       !password
     ) {
       return NextResponse.json(
@@ -228,21 +203,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const existingUsername =
-      await prisma.anggota.findUnique({
-        where: { username },
-      });
-
-    if (existingUsername) {
-      return NextResponse.json(
-        {
-          error:
-            "Username sudah digunakan",
-        },
-        { status: 400 }
-      );
-    }
-
     const hashedPassword =
       await bcrypt.hash(password, 10);
 
@@ -251,7 +211,6 @@ export async function POST(req: NextRequest) {
         data: {
           nama,
           email,
-          username,
           password: hashedPassword,
           role: "admin",
           status: "active",

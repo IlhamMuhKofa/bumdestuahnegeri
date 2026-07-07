@@ -17,6 +17,9 @@ import Image from "next/image";
 import { AnimatePresence, motion, } from "framer-motion";
 import FormTambah from "./form_tambah/page";
 import ModalBayar from "./pembayaran/wajib/ModalBayar";
+import ModalTambah from "./form_tambah/page"
+
+
 
 import { useRouter, useSearchParams } from "next/navigation";
 
@@ -80,6 +83,9 @@ export default function Pengajuan({
     useState(false);
 
   const [openModalBayar, setOpenModalBayar] =
+    useState(false);
+
+  const [openModalTambah, setOpenModalTambah] =
     useState(false);
 
   const [openTabungan, setOpenTabungan] =
@@ -172,18 +178,18 @@ export default function Pengajuan({
     );
   };
 
-const tagihanModal =
-  semuaTagihan
-    .filter(
-      (item: any) =>
-        item.status !== "BERHASIL"
-    )
-    .map((item: any) => ({
-      id: item.id,
-      bulan_ke: item.bulan_ke,
-      nominal: item.nominal,
-      status: item.status,
-    }));
+  const tagihanModal =
+    semuaTagihan
+      .filter(
+        (item: any) =>
+          item.status !== "BERHASIL"
+      )
+      .map((item: any) => ({
+        id: item.id,
+        bulan_ke: item.bulan_ke,
+        nominal: item.nominal,
+        status: item.status,
+      }));
 
   return (
     <div className="min-h-screen bg-gray-50 px-4 py-5 sm:p-6">
@@ -375,6 +381,17 @@ shadow-sm"
                 </button>
               )}
 
+            {/* TAB PENDIDIKAN */}
+            {selectedFilter === "Pendidikan" && (
+              <button
+                onClick={() => setOpenForm(true)}
+                className="flex items-center gap-2 rounded-xl bg-[#1a3c2e] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#244d3c]"
+              >
+                <Plus className="h-4 w-4" />
+                Buat Tabungan
+              </button>
+            )}
+
           </div>
         </div>
 
@@ -388,81 +405,81 @@ shadow-sm"
             <div className="overflow-x-auto">
               <table className="min-w-[700px] w-full text-sm">
 
-              <thead>
-                <tr className="bg-[#1a3c2e] text-white">
+                <thead>
+                  <tr className="bg-[#1a3c2e] text-white">
 
-                  <th className="p-4">
-                    Tanggal
-                  </th>
+                    <th className="p-4">
+                      Tanggal
+                    </th>
 
-                  <th>Nominal</th>
+                    <th>Nominal</th>
 
-                  <th>Status</th>
+                    <th>Status</th>
 
-                  <th>Aksi</th>
+                    <th>Aksi</th>
 
-                </tr>
-              </thead>
+                  </tr>
+                </thead>
 
-              <tbody>
+                <tbody>
 
-                {paginatedData.map(
-                  (item: any) => (
-                    <tr
-                      key={
-                        item.id
-                      }
-                      className="border-t text-center hover:bg-gray-50"
-                    >
+                  {paginatedData.map(
+                    (item: any) => (
+                      <tr
+                        key={
+                          item.id
+                        }
+                        className="border-t text-center hover:bg-gray-50"
+                      >
 
-                      <td className="p-4">
-                        {formatTanggal(
-                          item.tanggal
-                        )}
-                      </td>
+                        <td className="p-4">
+                          {formatTanggal(
+                            item.tanggal
+                          )}
+                        </td>
 
 
-                      <td className="font-bold text-[#1a3c2e]">
-                        Rp{" "}
-                        {item.nominal?.toLocaleString(
-                          "id-ID"
-                        )}
-                      </td>
+                        <td className="font-bold text-[#1a3c2e]">
+                          Rp{" "}
+                          {item.nominal?.toLocaleString(
+                            "id-ID"
+                          )}
+                        </td>
 
-                      <td>
-                        <span
-                          className={`rounded-full px-3 py-1 text-xs font-medium ${item.status === "BERHASIL"
-                            ? "bg-green-100 text-green-700"
-                            : item.status === "MENUNGGU"
-                              ? "bg-yellow-100 text-yellow-700"
-                              : "bg-red-100 text-red-700"
-                            }`}
-                        >
-                          {item.status}
-                        </span>
-                      </td>
-
-                      <td className="text-center">
-                        {item.status === "BERHASIL" ? (
-                          <button
-                            className="rounded-xl border border-green-200 px-4 py-2 text-xs font-medium text-green-700 hover:bg-green-50"
+                        <td>
+                          <span
+                            className={`rounded-full px-3 py-1 text-xs font-medium ${item.status === "BERHASIL"
+                              ? "bg-green-100 text-green-700"
+                              : item.status === "MENUNGGU"
+                                ? "bg-yellow-100 text-yellow-700"
+                                : "bg-red-100 text-red-700"
+                              }`}
                           >
-                            Detail
-                          </button>
-                        ) : (
-                          <span className="text-gray-400">
-                            -
+                            {item.status}
                           </span>
-                        )}
-                      </td>
+                        </td>
 
-                    </tr>
-                  )
-                )}
+                        <td className="text-center">
+                          {item.status === "BERHASIL" ? (
+                            <button
+                              className="rounded-xl border border-green-200 px-4 py-2 text-xs font-medium text-green-700 hover:bg-green-50"
+                            >
+                              Detail
+                            </button>
+                          ) : (
+                            <span className="text-gray-400">
+                              -
+                            </span>
+                          )}
+                        </td>
 
-              </tbody>
+                      </tr>
+                    )
+                  )}
 
-            </table>
+                </tbody>
+
+              </table>
             </div>
 
           </div>
@@ -587,94 +604,94 @@ hover:bg-gray-50"
                     {isOpen && (
                       <div className="border-t border-gray-100">
 
-                      <div className="overflow-x-auto">
-                        <table className="min-w-[700px] w-full text-sm">
+                        <div className="overflow-x-auto">
+                          <table className="min-w-[700px] w-full text-sm">
 
-                          <thead>
-                            <tr className="bg-[#1a3c2e] text-white">
+                            <thead>
+                              <tr className="bg-[#1a3c2e] text-white">
 
-                              <th className="p-4">
-                                Tanggal</th>
+                                <th className="p-4">
+                                  Tanggal</th>
 
-                              <th>Nominal</th>
+                                <th>Nominal</th>
 
-                              <th>Status</th>
+                                <th>Status</th>
 
-                              <th>Aksi</th>
-
-                            </tr>
-                          </thead>
-
-                          <tbody>
-                            {tabungan.pembayaran.length === 0 ? (
-                              <tr>
-
-                                <td
-                                  colSpan={4}
-                                  className="py-8 text-center text-gray-500"
-                                >
-                                  Belum ada riwayat pembayaran
-                                </td>
+                                <th>Aksi</th>
 
                               </tr>
-                            ) : (
-                              tabungan.pembayaran.map(
-                                (bayar: any) => (
-                                  <tr
-                                    key={bayar.id}
-                                    className="border-t text-center hover:bg-gray-50"
+                            </thead>
+
+                            <tbody>
+                              {tabungan.pembayaran.length === 0 ? (
+                                <tr>
+
+                                  <td
+                                    colSpan={4}
+                                    className="py-8 text-center text-gray-500"
                                   >
+                                    Belum ada riwayat pembayaran
+                                  </td>
 
-                                    <td className="p-4">
-                                      {formatTanggal(
-                                        bayar.tanggal
-                                      )}
-                                    </td>
+                                </tr>
+                              ) : (
+                                tabungan.pembayaran.map(
+                                  (bayar: any) => (
+                                    <tr
+                                      key={bayar.id}
+                                      className="border-t text-center hover:bg-gray-50"
+                                    >
 
-                                    <td className="font-bold text-[#1a3c2e]">
-                                      Rp{" "}
-                                      {Number(
-                                        bayar.nominal
-                                      ).toLocaleString(
-                                        "id-ID"
-                                      )}
-                                    </td>
+                                      <td className="p-4">
+                                        {formatTanggal(
+                                          bayar.tanggal
+                                        )}
+                                      </td>
 
-                                    <td>
-                                      <span
-                                        className={`rounded-full px-3 py-1 text-xs font-medium ${bayar.status ===
-                                          "BERHASIL"
-                                          ? "bg-green-100 text-green-700"
-                                          : bayar.status ===
-                                            "MENUNGGU"
-                                            ? "bg-yellow-100 text-yellow-700"
-                                            : "bg-red-100 text-red-700"
-                                          }`}
-                                      >
-                                        {bayar.status}
-                                      </span>
-                                    </td>
+                                      <td className="font-bold text-[#1a3c2e]">
+                                        Rp{" "}
+                                        {Number(
+                                          bayar.nominal
+                                        ).toLocaleString(
+                                          "id-ID"
+                                        )}
+                                      </td>
 
-                                    <td>
-                                      <button
-                                        onClick={() =>
-                                          router.push(
-                                            `/nasabah/pembayaran/${bayar.id_pembayaran}`
-                                          )
-                                        }
-                                        className="rounded-xl border border-gray-200 px-3 py-1 text-xs"
-                                      >
-                                        Detail
-                                      </button>
-                                    </td>
+                                      <td>
+                                        <span
+                                          className={`rounded-full px-3 py-1 text-xs font-medium ${bayar.status ===
+                                            "BERHASIL"
+                                            ? "bg-green-100 text-green-700"
+                                            : bayar.status ===
+                                              "MENUNGGU"
+                                              ? "bg-yellow-100 text-yellow-700"
+                                              : "bg-red-100 text-red-700"
+                                            }`}
+                                        >
+                                          {bayar.status}
+                                        </span>
+                                      </td>
 
-                                  </tr>
+                                      <td>
+                                        <button
+                                          onClick={() =>
+                                            router.push(
+                                              `/nasabah/pembayaran/${bayar.id_pembayaran}`
+                                            )
+                                          }
+                                          className="rounded-xl border border-gray-200 px-3 py-1 text-xs"
+                                        >
+                                          Detail
+                                        </button>
+                                      </td>
+
+                                    </tr>
+                                  )
                                 )
-                              )
-                            )}
-                          </tbody>
+                              )}
+                            </tbody>
 
-                        </table>
+                          </table>
                         </div>
 
                       </div>
@@ -839,6 +856,13 @@ sm:justify-between mt-4 text-sm text-gray-500 px-1">
         }
         tagihan={tagihanModal}
       />
+
+      {openModalTambah && (
+        <ModalTambah
+          onClose={() => setOpenModalTambah(false)}
+          idAnggota={idAnggota}
+        />
+      )}
 
     </div>
   );

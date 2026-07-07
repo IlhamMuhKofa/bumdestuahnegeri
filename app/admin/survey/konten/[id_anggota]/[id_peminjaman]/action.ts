@@ -27,7 +27,7 @@ export async function createJadwalSurvey(
 
       // 🔥 cek existing survey
       const existingSurvey =
-        await tx.jadwalSurvey.findFirst({
+        await tx.jadwal_survey.findFirst({
           where: {
             id_peminjaman:
               idPeminjaman,
@@ -39,7 +39,7 @@ export async function createJadwalSurvey(
         existingSurvey
       ) {
 
-        await tx.jadwalSurvey.update({
+        await tx.jadwal_survey.update({
           where: {
             id_survey:
               existingSurvey.id_survey,
@@ -61,7 +61,7 @@ export async function createJadwalSurvey(
       // 🔥 kalau belum ada -> CREATE
       else {
 
-        await tx.jadwalSurvey.create({
+        await tx.jadwal_survey.create({
           data: {
             id_peminjaman:
               idPeminjaman,

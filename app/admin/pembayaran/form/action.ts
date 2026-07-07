@@ -48,7 +48,7 @@ export async function verifyPayment(
   });
 
   // update jadwal
-  await prisma.jadwalAngsuran.update({
+  await prisma.jadwal_angsuran.update({
     where: {
       id_jadwal:
         pembayaran.id_jadwal,
@@ -101,7 +101,7 @@ export async function createManualPayment(
 ) {
 
   const jadwal =
-    await prisma.jadwalAngsuran.findUnique({
+    await prisma.jadwal_angsuran.findUnique({
       where: {
         id_jadwal:
           payload.idJadwal,
@@ -147,7 +147,7 @@ export async function createManualPayment(
   });
 
   // update jadwal
-  await prisma.jadwalAngsuran.update({
+  await prisma.jadwal_angsuran.update({
     where: {
       id_jadwal:
         jadwal.id_jadwal,

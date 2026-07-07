@@ -63,7 +63,7 @@ export async function createSurat(formData: FormData) {
   try {
     const file = formData.get("file") as File;
     const existingSurat =
-      await prisma.suratTemplate.findUnique({
+      await prisma.surattemplate.findUnique({
         where: {
           kode: SURAT_KODE,
         },
@@ -75,7 +75,7 @@ export async function createSurat(formData: FormData) {
 
     const savedFile = await savePdfFile(file);
 
-    await prisma.suratTemplate.upsert({
+    await prisma.surattemplate.upsert({
       where: {
         kode: SURAT_KODE,
       },
@@ -110,7 +110,7 @@ export async function updateSurat(
 ) {
   try {
     const surat =
-      await prisma.suratTemplate.findUnique({
+      await prisma.surattemplate.findUnique({
         where: {
           id_surat,
         },
@@ -125,7 +125,7 @@ export async function updateSurat(
     const file = formData.get("file") as File;
     const savedFile = await savePdfFile(file);
 
-    await prisma.suratTemplate.update({
+    await prisma.surattemplate.update({
       where: {
         id_surat,
       },
@@ -153,7 +153,7 @@ export async function updateSurat(
 export async function deleteSurat(id_surat: number) {
   try {
     const surat =
-      await prisma.suratTemplate.findUnique({
+      await prisma.surattemplate.findUnique({
         where: {
           id_surat,
         },
@@ -165,7 +165,7 @@ export async function deleteSurat(id_surat: number) {
 
     await deletePhysicalFile(surat.file_url);
 
-    await prisma.suratTemplate.delete({
+    await prisma.surattemplate.delete({
       where: {
         id_surat,
       },

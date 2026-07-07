@@ -56,11 +56,11 @@ export default function UploadSurat({
             file:mr-3
             file:rounded-lg
             file:border-0
-            file:bg-[#1a3c2e]
+            file:bg-blue-800
             file:px-3
             file:py-2
             file:text-white
-            hover:file:bg-[#244d3c]
+            hover:file:bg-blue-900
           "
         />
 
@@ -74,13 +74,13 @@ export default function UploadSurat({
         disabled={isPending}
         className="
           w-full rounded-xl
-          bg-[#1a3c2e]
+          bg-blue-800
           py-3
           text-sm
           font-medium
           text-white
           transition
-          hover:bg-[#244d3c]
+          hover:bg-blue-900
           disabled:opacity-50
         "
       >

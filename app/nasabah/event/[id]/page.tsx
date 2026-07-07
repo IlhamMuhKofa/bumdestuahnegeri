@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 
 const DetailEvent = () => {
   const { id } = useParams() as { id: string };
@@ -83,11 +84,11 @@ useEffect(() => {
     const result = await res.json();
 
     if (!result.success) {
-      alert(result.message);
+      toast.error(result.message);
       return;
     }
 
-    alert("Berhasil daftar!");
+    toast.success(result.message);
     router.push("/nasabah/event");
   };
 

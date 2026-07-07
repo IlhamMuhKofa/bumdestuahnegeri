@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
+import Swal from "sweetalert2";
+import { toast } from "react-toastify";
 
 import {
   ArrowLeft,
@@ -43,24 +45,65 @@ export default function DetailPengajuan() {
 
   const detail = data.detail?.[0];
 
-  const handleAction = async (status: "APPROVED" | "REJECTED") => {
-    try {
-      const res = await fetch(`/api/peminjaman/${params.id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status }),
-      });
-      const result = await res.json();
-      if (result.success) {
-        alert(`Pengajuan ${status === "APPROVED" ? "disetujui" : "ditolak"}`);
-        router.push("/admin/pinjaman");
-      } else {
-        alert("Gagal update status");
-      }
-    } catch (err) {
-      console.error(err);
+const handleAction = async (
+  status: "APPROVED" | "REJECTED"
+) => {
+  const isApprove = status === "APPROVED";
+
+  const result = await Swal.fire({
+    title: isApprove
+      ? "Setujui Pengajuan?"
+      : "Tolak Pengajuan?",
+    text: isApprove
+      ? "Pengajuan pinjaman akan disetujui dan proses selanjutnya akan dimulai."
+      : "Pengajuan pinjaman akan ditolak. Tindakan ini tidak dapat dibatalkan.",
+    icon: "question",
+    showCancelButton: true,
+    confirmButtonText: isApprove
+      ? "Ya, Setujui"
+      : "Ya, Tolak",
+    cancelButtonText: "Batal",
+    reverseButtons: true,
+    confirmButtonColor: isApprove
+      ? "#15803d"
+      : "#dc2626",
+    cancelButtonColor: "#6b7280",
+    heightAuto: false,
+  });
+
+  if (!result.isConfirmed) return;
+
+  try {
+    const res = await fetch(`/api/peminjaman/${params.id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ status }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      toast.error(
+        data.error || "Gagal memperbarui status pengajuan."
+      );
+      return;
     }
-  };
+
+    toast.success(
+      isApprove
+        ? "Pengajuan berhasil disetujui."
+        : "Pengajuan berhasil ditolak."
+    );
+
+    router.push("/admin/pinjaman");
+  } catch (err) {
+    console.error(err);
+
+    toast.error("Terjadi kesalahan.");
+  }
+};
 
   const statusMap: Record<string, { label: string; cls: string }> = {
     PENDING:  { label: "Menunggu",  cls: "bg-amber-50 text-amber-700 border border-amber-200" },

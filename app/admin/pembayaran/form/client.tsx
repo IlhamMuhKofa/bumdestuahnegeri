@@ -3,6 +3,7 @@
 import {useMemo,useState,} from "react";
 
 import {createManualPayment,} from "../../cicilan/konten/[id_anggota]/[id_peminjaman]/action";
+import { toast } from "react-toastify";
 
 type Props = {
   data?: any[];
@@ -65,7 +66,7 @@ export default function ClientPage({
           !selectedId
         ) {
 
-          alert(
+          toast.error(
             "Pilih cicilan terlebih dahulu"
           );
 
@@ -73,7 +74,7 @@ export default function ClientPage({
         }
 
         if (!bukti) {
-          alert("Upload bukti pembayaran cash terlebih dahulu");
+          toast.error("Upload bukti pembayaran cash terlebih dahulu");
           return;
         }
 
@@ -105,7 +106,7 @@ export default function ClientPage({
           buktiBayar: uploadResult.url,
         });
 
-        alert(
+        toast.success(
           "Pembayaran berhasil disimpan"
         );
 
@@ -118,7 +119,7 @@ export default function ClientPage({
           error
         );
 
-        alert(
+        toast.error(
           error.message ||
           "Gagal menyimpan pembayaran"
         );
@@ -172,7 +173,7 @@ export default function ClientPage({
                 e.target.value
               )
             }
-            className="w-full mt-2 border rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-green-500"
+            className="w-full mt-2 border rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-blue-500"
           >
 
             <option value="">
@@ -327,7 +328,7 @@ export default function ClientPage({
               )
             }
             placeholder="Contoh: dibayar langsung di kantor..."
-            className="w-full mt-2 border rounded-xl p-4 text-sm min-h-[120px] outline-none focus:ring-2 focus:ring-green-500"
+            className="w-full mt-2 border rounded-xl p-4 text-sm min-h-[120px] outline-none focus:ring-2 focus:ring-blue-500"
           />
 
         </div>
@@ -348,7 +349,7 @@ export default function ClientPage({
           />
 
           {bukti && (
-            <p className="mt-2 text-xs text-green-700">
+            <p className="mt-2 text-xs text-blue-700">
               {bukti.name}
             </p>
           )}
@@ -365,7 +366,7 @@ export default function ClientPage({
             disabled={
               loading
             }
-            className="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-300 text-white rounded-xl py-3 text-sm font-medium transition"
+            className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 text-white rounded-xl py-3 text-sm font-medium transition"
           >
             {loading
               ? "Menyimpan..."

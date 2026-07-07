@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { createTabunganPendidikan } from "../action";
 import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 
 import {
   GraduationCap,
@@ -71,17 +72,18 @@ export default function FormSetoran({
 
         router.refresh();
 
-        alert(
-          "Tabungan pendidikan berhasil dibuat"
+        toast.success(
+          "Tabungan berhasil dibuat"
         );
 
         onClose();
       } catch (err) {
         console.error(err);
 
-        alert(
-          "Gagal membuat tabungan pendidikan"
+        toast.error(
+          "Gagal membuat tabungan"
         );
+        
       } finally {
         setLoading(false);
       }

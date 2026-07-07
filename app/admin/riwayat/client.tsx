@@ -159,12 +159,6 @@ export default function ClientPage({
         >
           Download Laporan Transaksi
         </button>
-        {/* <button
-          onClick={() => printPdf(filteredData, `Laporan Transaksi ${filter}`)}
-          className="rounded-xl border bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100"
-        >
-          Download Hasil Filter
-        </button> */}
       </div>
 
       <div className="overflow-hidden rounded-2xl border bg-white shadow-sm">

@@ -20,7 +20,7 @@ export default async function Page() {
 
   // ambil semua jadwal yang belum lunas
   const data =
-    await prisma.jadwalAngsuran.findMany({
+    await prisma.jadwal_angsuran.findMany({
       where: {
         status:
           "PENDING",
