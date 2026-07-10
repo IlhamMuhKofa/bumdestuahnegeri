@@ -1,85 +1,81 @@
 import { prisma } from "@/lib/prisma";
 import ClientPage from "./client";
+import Pagination from "../component/Pagination";
 
-export default async function Page() {
+const PAGE_SIZE = 7;
+
+type Props = {
+  searchParams?: Promise<{
+    page?: string;
+  }>;
+};
+
+export default async function Page({
+  searchParams,
+}: Props) {
+  const params = await searchParams;
+  const currentPage = Math.max(Number(params?.page || 1), 1);
+  const skip = (currentPage - 1) * PAGE_SIZE;
 
   // =========================
   // DATA NASABAH
   // =========================
-  const dataRaw =
-    await prisma.peminjaman.findMany({
+  const [anggotaRaw, totalNasabah] =
+    await Promise.all([
+      prisma.anggota.findMany({
       where: {
-        status: "APPROVED",
+        peminjaman: {
+          some: {
+            status: "APPROVED",
+          },
+        },
       },
 
       include: {
-        anggota: true,
-        jadwalSurvey: true,
+        peminjaman: {
+          where: {
+            status: "APPROVED",
+          },
+          include: {
+            jadwalSurvey: true,
+          },
+          orderBy: {
+            tanggal_pengajuan: "desc",
+          },
+        },
       },
 
       orderBy: {
-        tanggal_pengajuan: "desc",
+        id: "desc",
       },
-    });
-
-  // =========================
-  // GROUP NASABAH
-  // =========================
-  const grouped: any = {};
-
-  dataRaw.forEach((item) => {
-
-    const id =
-      item.id_anggota;
-
-    if (!grouped[id]) {
-
-      grouped[id] = {
-        id_anggota: id,
-
-        nama:
-          item.anggota?.nama ||
-          "Tanpa Nama",
-
-        total_pengajuan: 0,
-
-        terakhir:
-          item.tanggal_pengajuan,
-
-        latest_peminjaman:
-          item.id_peminjaman,
-
-        status_survey:
-          item.status_survey,
-
-        jadwalSurvey:
-          item.jadwalSurvey?.[0] || null,
-      };
-    }
-
-    grouped[id].total_pengajuan += 1;
-
-    if (
-      new Date(item.tanggal_pengajuan) >
-      new Date(grouped[id].terakhir)
-    ) {
-
-      grouped[id].terakhir =
-        item.tanggal_pengajuan;
-
-      grouped[id].latest_peminjaman =
-        item.id_peminjaman;
-
-      grouped[id].status_survey =
-        item.status_survey;
-
-      grouped[id].jadwalSurvey =
-        item.jadwalSurvey?.[0] || null;
-    }
-  });
+      skip,
+      take: PAGE_SIZE,
+    }),
+      prisma.anggota.count({
+        where: {
+          peminjaman: {
+            some: {
+              status: "APPROVED",
+            },
+          },
+        },
+      }),
+    ]);
 
   const dataNasabah =
-    Object.values(grouped);
+    anggotaRaw.map((item) => {
+      const latest = item.peminjaman[0];
+
+      return {
+        id_anggota: item.id,
+        nama: item.nama || "Tanpa Nama",
+        total_pengajuan: item.peminjaman.length,
+        terakhir: latest?.tanggal_pengajuan,
+        latest_peminjaman: latest?.id_peminjaman,
+        status_survey: latest?.status_survey,
+        jadwalSurvey: latest?.jadwalSurvey?.[0] || null,
+      };
+    });
 
   // =========================
   // DATA KALENDER
@@ -101,9 +97,20 @@ export default async function Page() {
     });
 
   return (
-    <ClientPage
-      dataPeminjaman={dataNasabah}
-      dataSurvey={dataSurvey}
-    />
+    <>
+      <ClientPage
+        dataPeminjaman={dataNasabah}
+        dataSurvey={dataSurvey}
+      />
+      <div className="bg-gray-50 px-4 pb-6 sm:px-6 lg:px-10">
+        <div className="mx-auto max-w-7xl">
+          <Pagination
+            currentPage={currentPage}
+            totalPages={Math.max(Math.ceil(totalNasabah / PAGE_SIZE), 1)}
+            basePath="/admin/survey"
+          />
+        </div>
+      </div>
+    </>
   );
 }

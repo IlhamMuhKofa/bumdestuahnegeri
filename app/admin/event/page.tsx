@@ -10,6 +10,7 @@ import {
   Star,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 
 type Event = {
   id_event: number;
@@ -34,20 +35,30 @@ export default function AdminEvent() {
   const [tab, setTab] = useState<"event" | "peserta">("event");
   const [events, setEvents] = useState<Event[]>([]);
   const [peserta, setPeserta] = useState<Peserta[]>([]);
+  const [totalPages, setTotalPages] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
   const router = useRouter();
 
   useEffect(() => {
-    fetch("/api/event")
+    setCurrentPage(
+      Math.max(Number(new URLSearchParams(window.location.search).get("page") || 1), 1)
+    );
+  }, []);
+
+  useEffect(() => {
+    fetch(`/api/event?page=${currentPage}`)
       .then((res) => res.json())
-      .then((data) => {
+      .then((result) => {
+        const data = result.data || [];
         const sorted = data.sort(
           (a: Event, b: Event) =>
             new Date(a.tanggal).getTime() -
             new Date(b.tanggal).getTime()
         );
         setEvents(sorted);
+        setTotalPages(result.totalPages || 1);
       });
-  }, []);
+  }, [currentPage]);
 
   useEffect(() => {
     fetch("/api/event-peserta")
@@ -65,28 +76,92 @@ export default function AdminEvent() {
     })}`;
   };
 
-  const handleDelete = async (id: number) => {
-    const res = await fetch(`/api/event/${id}`, { method: "DELETE" });
+const handleDelete = async (id: number) => {
+  const toastId = toast.loading("Menghapus event...");
+
+  try {
+    const res = await fetch(`/api/event/${id}`, {
+      method: "DELETE",
+    });
+
     const result = await res.json();
 
-    if (result.success) {
-      setEvents((prev) => prev.filter((e) => e.id_event !== id));
+    if (!res.ok || !result.success) {
+      throw new Error(result.error || "Gagal menghapus event");
     }
-  };
 
-  const handleFeature = async (id: number) => {
-    await fetch("/api/event", {
+    setEvents((prev) =>
+      prev.filter((e) => e.id_event !== id)
+    );
+
+    toast.update(toastId, {
+      render: "Event berhasil dihapus.",
+      type: "success",
+      isLoading: false,
+      autoClose: 2000,
+    });
+
+  } catch (error: any) {
+    toast.update(toastId, {
+      render:
+        error.message || "Gagal menghapus event.",
+      type: "error",
+      isLoading: false,
+      autoClose: 3000,
+    });
+  }
+};
+
+const handleFeature = async (id: number) => {
+  const toastId = toast.loading(
+    "Mengubah event unggulan..."
+  );
+
+  try {
+    const res = await fetch("/api/event", {
       method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify({ id }),
     });
+
+    const result = await res.json();
+
+    if (!res.ok || !result.success) {
+      throw new Error(
+        result.error || "Gagal mengubah event unggulan"
+      );
+    }
 
     setEvents((prev) =>
       prev.map((e) => ({
         ...e,
-        status: e.id_event === id ? "featured" : "published",
+        status:
+          e.id_event === id
+            ? "featured"
+            : "published",
       }))
     );
-  };
+
+    toast.update(toastId, {
+      render: "Event berhasil dijadikan unggulan.",
+      type: "success",
+      isLoading: false,
+      autoClose: 2000,
+    });
+
+  } catch (error: any) {
+    toast.update(toastId, {
+      render:
+        error.message ||
+        "Gagal mengubah event unggulan.",
+      type: "error",
+      isLoading: false,
+      autoClose: 3000,
+    });
+  }
+};
 
   const featured = events.filter((e) => e.status === "featured");
   const regular = events.filter((e) => e.status !== "featured");
@@ -335,6 +410,67 @@ export default function AdminEvent() {
             </div>
           )}
         </div>
+        {tab === "event" && (
+          <PaginationControls
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={(page) => {
+              setCurrentPage(page);
+              router.push(`/admin/event?page=${page}`);
+            }}
+          />
+        )}
+      </div>
+    </div>
+  );
+}
+
+function PaginationControls({
+  currentPage,
+  totalPages,
+  onPageChange,
+}: {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+}) {
+  if (totalPages <= 1) return null;
+
+  return (
+    <div className="mt-6 flex flex-col items-center justify-between gap-3 rounded-2xl border bg-white px-4 py-3 text-sm sm:flex-row">
+      <p className="text-gray-500">
+        Halaman {currentPage} dari {totalPages}
+      </p>
+      <div className="flex flex-wrap justify-center gap-2">
+        <button
+          disabled={currentPage <= 1}
+          onClick={() => onPageChange(currentPage - 1)}
+          className="rounded-lg border bg-white px-3 py-2 font-semibold text-gray-600 disabled:bg-gray-100 disabled:text-gray-400"
+        >
+          Previous
+        </button>
+        {Array.from({ length: totalPages }, (_, index) => index + 1).map(
+          (page) => (
+            <button
+              key={page}
+              onClick={() => onPageChange(page)}
+              className={`min-w-9 rounded-lg px-3 py-2 font-semibold ${
+                page === currentPage
+                  ? "bg-blue-700 text-white"
+                  : "border bg-white text-gray-600 hover:bg-gray-50"
+              }`}
+            >
+              {page}
+            </button>
+          )
+        )}
+        <button
+          disabled={currentPage >= totalPages}
+          onClick={() => onPageChange(currentPage + 1)}
+          className="rounded-lg border bg-white px-3 py-2 font-semibold text-gray-600 disabled:bg-gray-100 disabled:text-gray-400"
+        >
+          Next
+        </button>
       </div>
     </div>
   );

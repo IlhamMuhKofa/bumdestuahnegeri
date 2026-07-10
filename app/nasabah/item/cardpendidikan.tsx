@@ -62,47 +62,50 @@ export default function CardPendidikan({
   );
 
   return (
-    <div className="overflow-hidden rounded-3xl border border-gray-100 bg-white shadow-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+    <div className="overflow-hidden rounded-2xl sm:rounded-3xl border border-gray-100 bg-white shadow-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
 
       {/* HEADER */}
-      <div className="flex w-full items-center justify-between bg-white p-6">
+      <div className="p-4 sm:p-6">
 
-        <div className="flex flex-1 items-start gap-4">
+        {/* ICON + TITLE ROW */}
+        <div className="mb-4 flex items-center gap-3">
 
           {/* ICON */}
-          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-50">
+          <div className="flex h-11 w-11 sm:h-14 sm:w-14 flex-shrink-0 items-center justify-center rounded-2xl bg-emerald-50">
 
-            <GraduationCap className="h-7 w-7 text-green-700" />
+            <GraduationCap className="h-5 w-5 sm:h-7 sm:w-7 text-green-700" />
 
           </div>
 
-          {/* CONTENT */}
-          <div className="flex-1">
+          {/* TITLE */}
+          <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2 sm:gap-3">
 
-            {/* TITLE */}
-            <div className="mb-3 flex flex-wrap items-center gap-3">
+            <h3 className="text-base sm:text-xl font-bold text-gray-800">
+              {data.tujuan}
+            </h3>
 
-              <h3 className="text-xl font-bold text-gray-800">
-                {data.tujuan}
-              </h3>
+            <span className="rounded-full bg-[#1a3c2e] px-2.5 sm:px-3 py-1 text-[11px] sm:text-xs font-semibold text-white">
 
-              <span className="rounded-full bg-[#1a3c2e] px-3 py-1 text-xs font-semibold text-white">
+              {data.jangka_waktu} Bulan
 
-                {data.jangka_waktu} Bulan
+            </span>
 
-              </span>
+          </div>
 
-            </div>
+        </div>
+
+        {/* CONTENT (full width, no longer indented by the icon) */}
+        <div>
 
             {/* STATS */}
-            <div className="grid gap-3 sm:grid-cols-3">
+            <div className="grid gap-2.5 sm:gap-3 sm:grid-cols-3">
 
               {/* TARGET */}
-              <div className="rounded-2xl border border-gray-100 bg-gray-50 p-4">
+              <div className="rounded-2xl border border-gray-100 bg-gray-50 p-3.5 sm:p-4">
 
                 <div className="mb-2 flex items-center gap-2 text-gray-500">
 
-                  <Target className="h-4 w-4" />
+                  <Target className="h-4 w-4 flex-shrink-0" />
 
                   <span className="text-xs font-medium uppercase tracking-wide">
                     Target Dana
@@ -110,7 +113,7 @@ export default function CardPendidikan({
 
                 </div>
 
-                <p className="text-lg font-bold text-gray-800">
+                <p className="break-words text-base sm:text-lg font-bold text-gray-800">
 
                   Rp{" "}
                   {Number(
@@ -124,11 +127,11 @@ export default function CardPendidikan({
               </div>
 
               {/* TERKUMPUL */}
-              <div className="rounded-2xl border border-green-100 bg-green-50 p-4">
+              <div className="rounded-2xl border border-green-100 bg-green-50 p-3.5 sm:p-4">
 
                 <div className="mb-2 flex items-center gap-2 text-green-700">
 
-                  <Wallet className="h-4 w-4" />
+                  <Wallet className="h-4 w-4 flex-shrink-0" />
 
                   <span className="text-xs font-medium uppercase tracking-wide">
                     Terkumpul
@@ -136,7 +139,7 @@ export default function CardPendidikan({
 
                 </div>
 
-                <p className="text-lg font-bold text-green-700">
+                <p className="break-words text-base sm:text-lg font-bold text-green-700">
 
                   Rp{" "}
                   {Number(
@@ -150,11 +153,11 @@ export default function CardPendidikan({
               </div>
 
               {/* SARAN */}
-              <div className="rounded-2xl border border-gray-100 bg-gray-50 p-4">
+              <div className="rounded-2xl border border-gray-100 bg-gray-50 p-3.5 sm:p-4">
 
                 <div className="mb-2 flex items-center gap-2 text-gray-500">
 
-                  <Wallet className="h-4 w-4" />
+                  <Wallet className="h-4 w-4 flex-shrink-0" />
 
                   <span className="text-xs font-medium uppercase tracking-wide">
                     Saran / Bulan
@@ -162,7 +165,7 @@ export default function CardPendidikan({
 
                 </div>
 
-                <p className="text-lg font-bold text-gray-800">
+                <p className="break-words text-base sm:text-lg font-bold text-gray-800">
 
                   Rp{" "}
                   {saranSetoran.toLocaleString(
@@ -176,9 +179,9 @@ export default function CardPendidikan({
             </div>
 
             {/* PROGRESS BAR */}
-            <div className="mt-5">
+            <div className="mt-4 sm:mt-5">
 
-              <div className="mb-2 flex items-center justify-between text-xs text-gray-500">
+              <div className="mb-2 flex flex-wrap items-center justify-between gap-x-2 gap-y-1 text-xs text-gray-500">
 
                 <span>
 
@@ -190,7 +193,7 @@ export default function CardPendidikan({
 
                 </span>
 
-                <span>
+                <span className="font-semibold text-gray-600">
                   {progress}%
                 </span>
 
@@ -210,9 +213,9 @@ export default function CardPendidikan({
             </div>
 
             {/* FOOTER */}
-            <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
+            <div className="mt-4 sm:mt-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
 
-              <div className="text-sm text-gray-500">
+              <div className="text-xs sm:text-sm text-gray-500">
 
                 Sisa target:
 
@@ -232,14 +235,12 @@ export default function CardPendidikan({
                     `/nasabah/simpanan/pembayaran/pendidikan/${data.id_simpanan}`
                   )
                 }
-                className="w-full rounded-xl bg-[#1a3c2e] px-5 py-3 text-sm font-semibold text-white shadow-md shadow-emerald-500/20 transition-all hover:scale-[1.02] hover:shadow-lg"
+                className="w-full sm:w-auto rounded-xl bg-[#1a3c2e] px-5 py-2.5 sm:py-3 text-sm font-semibold text-white shadow-md shadow-emerald-500/20 transition-all hover:scale-[1.02] hover:shadow-lg"
               >
                 Bayar Setoran
               </button>
 
             </div>
-
-          </div>
 
         </div>
 

@@ -343,192 +343,284 @@ lg:items-center3">
 
         </div>
 
-        {/* TABLE */}
-        <div className="overflow-hidden rounded-3xl border border-gray-100 bg-white shadow-sm">
+{/* TABLE - DESKTOP */}
+<div className="hidden md:block overflow-hidden rounded-3xl border border-gray-100 bg-white shadow-sm">
 
-          <div className="overflow-x-auto">
-            <table className="min-w-[950px] w-full text-sm">
+  <div className="overflow-x-auto">
+    <table className="min-w-[950px] w-full text-sm">
 
-            <thead>
+    <thead>
 
-              <tr className="bg-[#1a3c2e]">
+      <tr className="bg-[#1a3c2e]">
 
-                {[
-                  "Tanggal",
-                  "Jenis Transaksi",
-                  "Nominal",
-                  "Status",
-                  "Keterangan",
-                  "Detail",
-                ].map(
-                  (
-                    col
-                  ) => (
+        {[
+          "Tanggal",
+          "Jenis Transaksi",
+          "Nominal",
+          "Status",
+          "Keterangan",
+          "Detail",
+        ].map(
+          (
+            col
+          ) => (
 
-                    <th
-                      key={
-                        col
-                      }
-                      className="text-white font-semibold text-center px-4 py-4"
-                    >
-                      {
-                        col
-                      }
-                    </th>
-                  )
+            <th
+              key={
+                col
+              }
+              className="text-white font-semibold text-center px-4 py-4"
+            >
+              {
+                col
+              }
+            </th>
+          )
+        )}
+
+      </tr>
+
+    </thead>
+
+    <tbody>
+
+      {filteredData.length ===
+      0 ? (
+
+        <tr>
+
+          <td
+            colSpan={6}
+          >
+
+            <div className="flex flex-col items-center justify-center py-20 px-6 text-center gap-4">
+
+              <div className="w-20 h-20 rounded-full bg-green-50 flex items-center justify-center">
+
+                <FileX className="w-10 h-10 text-green-400" />
+
+              </div>
+
+              <div>
+
+                <p className="text-gray-700 font-semibold text-base mb-1">
+                  Belum Ada
+                  Riwayat
+                  Transaksi
+                </p>
+
+                <p className="text-gray-400 text-sm max-w-xs leading-relaxed">
+                  Transaksi
+                  Anda akan
+                  muncul di
+                  sini
+                </p>
+
+              </div>
+
+            </div>
+
+          </td>
+
+        </tr>
+
+      ) : (
+
+        filteredData.map(
+          (
+            item
+          ) => (
+
+            <tr
+              key={
+                item.id_riwayat
+              }
+              className="border-t transition-colors hover:bg-gray-50"
+            >
+
+              {/* TANGGAL */}
+              <td className="px-4 py-4 text-center text-gray-700">
+
+                {new Date(
+                  item.tanggal
+                ).toLocaleDateString(
+                  "id-ID",
+                  {
+                    day:
+                      "numeric",
+                    month:
+                      "long",
+                    year:
+                      "numeric",
+                  }
                 )}
 
-              </tr>
+              </td>
 
-            </thead>
+              {/* JENIS */}
+              <td className="px-4 py-4 text-center font-medium text-gray-800">
 
-            <tbody>
+                {
+                  item.jenis_transaksi
+                }
 
-              {filteredData.length ===
-              0 ? (
+              </td>
 
-                <tr>
+              {/* NOMINAL */}
+              <td className="px-4 py-4 text-center font-semibold text-gray-800">
 
-                  <td
-                    colSpan={6}
-                  >
+                Rp{" "}
+                {item.nominal.toLocaleString(
+                  "id-ID"
+                )}
 
-                    <div className="flex flex-col items-center justify-center py-20 px-6 text-center gap-4">
+              </td>
 
-                      <div className="w-20 h-20 rounded-full bg-green-50 flex items-center justify-center">
+              {/* STATUS */}
+              <td className="px-4 py-4 text-center">
 
-                        <FileX className="w-10 h-10 text-green-400" />
+                <span className="bg-green-100 text-green-700 text-xs px-3 py-1 rounded-full font-medium">
+                  BERHASIL
+                </span>
 
-                      </div>
+              </td>
 
-                      <div>
+              {/* KETERANGAN */}
+              <td className="px-4 py-4 text-center text-gray-600">
 
-                        <p className="text-gray-700 font-semibold text-base mb-1">
-                          Belum Ada
-                          Riwayat
-                          Transaksi
-                        </p>
+                {
+                  item.keterangan
+                }
 
-                        <p className="text-gray-400 text-sm max-w-xs leading-relaxed">
-                          Transaksi
-                          Anda akan
-                          muncul di
-                          sini
-                        </p>
+              </td>
 
-                      </div>
-
-                    </div>
-
-                  </td>
-
-                </tr>
-
-              ) : (
-
-                filteredData.map(
-                  (
-                    item
-                  ) => (
-
-                    <tr
-                      key={
-                        item.id_riwayat
-                      }
-                      className="border-t transition-colors hover:bg-gray-50"
+              <td className="px-4 py-4 text-center">
+                {item.bukti_bayar ? (
+                  <div className="flex justify-center gap-2">
+                    <button
+                      onClick={() => setPreview(item.bukti_bayar)}
+                      className="inline-flex items-center gap-1 rounded-lg bg-blue-50 px-3 py-2 text-xs font-semibold text-blue-700 hover:bg-blue-100"
                     >
+                      <Eye className="h-4 w-4" />
+                      Lihat
+                    </button>
+                    
+                    <a
+                      href={item.bukti_bayar}
+                      download
+                      className="inline-flex items-center gap-1 rounded-lg bg-gray-100 px-3 py-2 text-xs font-semibold text-gray-700 hover:bg-gray-200"
+                    >
+                      <Download className="h-4 w-4" />
+                      Download
+                    </a>
+                  </div>
+                ) : (
+                  "-"
+                )}
+              </td>
 
-                      {/* TANGGAL */}
-                      <td className="px-4 py-4 text-center text-gray-700">
+            </tr>
+          )
+        )
+      )}
 
-                        {new Date(
-                          item.tanggal
-                        ).toLocaleDateString(
-                          "id-ID",
-                          {
-                            day:
-                              "numeric",
-                            month:
-                              "long",
-                            year:
-                              "numeric",
-                          }
-                        )}
+    </tbody>
 
-                      </td>
+  </table>
+  </div>
 
-                      {/* JENIS */}
-                      <td className="px-4 py-4 text-center font-medium text-gray-800">
+</div>
 
-                        {
-                          item.jenis_transaksi
-                        }
+{/* LIST - MOBILE (pengganti tabel) */}
+<div className="md:hidden space-y-3">
 
-                      </td>
+  {filteredData.length === 0 ? (
 
-                      {/* NOMINAL */}
-                      <td className="px-4 py-4 text-center font-semibold text-gray-800">
+    <div className="rounded-3xl border border-gray-100 bg-white shadow-sm flex flex-col items-center justify-center py-16 px-6 text-center gap-4">
 
-                        Rp{" "}
-                        {item.nominal.toLocaleString(
-                          "id-ID"
-                        )}
+      <div className="w-20 h-20 rounded-full bg-green-50 flex items-center justify-center">
+        <FileX className="w-10 h-10 text-green-400" />
+      </div>
 
-                      </td>
+      <div>
+        <p className="text-gray-700 font-semibold text-base mb-1">
+          Belum Ada Riwayat Transaksi
+        </p>
+        <p className="text-gray-400 text-sm max-w-xs leading-relaxed">
+          Transaksi Anda akan muncul di sini
+        </p>
+      </div>
 
-                      {/* STATUS */}
-                      <td className="px-4 py-4 text-center">
+    </div>
 
-                        <span className="bg-green-100 text-green-700 text-xs px-3 py-1 rounded-full font-medium">
-                          BERHASIL
-                        </span>
+  ) : (
 
-                      </td>
+    filteredData.map((item) => (
 
-                      {/* KETERANGAN */}
-                      <td className="px-4 py-4 text-center text-gray-600">
+      <div
+        key={item.id_riwayat}
+        className="rounded-2xl border border-gray-100 bg-white shadow-sm p-4"
+      >
 
-                        {
-                          item.keterangan
-                        }
+        {/* TOP: tanggal + status */}
+        <div className="flex items-start justify-between gap-2 mb-3">
+          <span className="text-xs text-gray-500">
+            {new Date(item.tanggal).toLocaleDateString("id-ID", {
+              day: "numeric",
+              month: "long",
+              year: "numeric",
+            })}
+          </span>
 
-                      </td>
-
-                      <td className="px-4 py-4 text-center">
-                        {item.bukti_bayar ? (
-                          <div className="flex justify-center gap-2">
-                            <button
-                              onClick={() => setPreview(item.bukti_bayar)}
-                              className="inline-flex items-center gap-1 rounded-lg bg-blue-50 px-3 py-2 text-xs font-semibold text-blue-700 hover:bg-blue-100"
-                            >
-                              <Eye className="h-4 w-4" />
-                              Lihat
-                            </button>
-                            <a
-                              href={item.bukti_bayar}
-                              download
-                              className="inline-flex items-center gap-1 rounded-lg bg-gray-100 px-3 py-2 text-xs font-semibold text-gray-700 hover:bg-gray-200"
-                            >
-                              <Download className="h-4 w-4" />
-                              Download
-                            </a>
-                          </div>
-                        ) : (
-                          "-"
-                        )}
-                      </td>
-
-                    </tr>
-                  )
-                )
-              )}
-
-            </tbody>
-
-          </table>
-          </div>
-
+          <span className="bg-green-100 text-green-700 text-xs px-2.5 py-1 rounded-full font-medium shrink-0">
+            BERHASIL
+          </span>
         </div>
+
+        {/* JENIS + NOMINAL */}
+        <div className="flex items-center justify-between gap-2 mb-1">
+          <span className="font-semibold text-gray-800 text-sm">
+            {item.jenis_transaksi}
+          </span>
+
+          <span className="font-bold text-emerald-700 text-sm shrink-0">
+            Rp {item.nominal.toLocaleString("id-ID")}
+          </span>
+        </div>
+
+        {/* KETERANGAN */}
+        {item.keterangan && (
+          <p className="text-xs text-gray-500 mt-1 mb-3">
+            {item.keterangan}
+          </p>
+        )}
+
+        {/* DETAIL / BUKTI BAYAR */}
+        {item.bukti_bayar && (
+          <div className="flex gap-2 pt-3 border-t border-gray-100">
+            <button
+              onClick={() => setPreview(item.bukti_bayar)}
+              className="flex-1 inline-flex items-center justify-center gap-1 rounded-lg bg-blue-50 px-3 py-2 text-xs font-semibold text-blue-700 hover:bg-blue-100"
+            >
+              <Eye className="h-4 w-4" />
+              Lihat
+            </button>
+            <a
+              href={item.bukti_bayar}
+              download
+              className="flex-1 inline-flex items-center justify-center gap-1 rounded-lg bg-gray-100 px-3 py-2 text-xs font-semibold text-gray-700 hover:bg-gray-200"
+            >
+              <Download className="h-4 w-4" />
+              Download
+            </a>
+          </div>
+        )}
+
+      </div>
+    ))
+  )}
+
+</div>
 
         {/* FOOTER */}
         <div className="flex items-center justify-between mt-4 text-sm text-gray-400 px-1">

@@ -2,9 +2,8 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-import fs from "fs";
-import path from "path";
 import { createNotifikasi } from "@/lib/notifikasi";
+import { uploadImage, uploadPdf } from "@/lib/storage";
 
 type SessionUserWithId = {
   id?: string | number;
@@ -32,38 +31,42 @@ export async function POST(req: Request) {
     const fotoAgunan = formData.get("fotoAgunan") as File;
     const fotoSurat = formData.get("fotoSurat") as File;
 
-    // 📁 folder upload
-    const uploadDir = path.join(process.cwd(), "public/uploads");
+    const fotoAgunanPath =
+      fotoAgunan && fotoAgunan.size > 0
+        ? await uploadImage(fotoAgunan, "agunan")
+        : null;
 
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
+    const fotoSuratPath =
+      fotoSurat && fotoSurat.size > 0
+        ? await uploadPdf(fotoSurat, "surat")
+        : null;
+
+    console.log("=== MASUK API PEMINJAMAN ===");
+
+const existing = await prisma.peminjaman.findFirst({
+  where: {
+    id_anggota: Number(sessionUser.id),
+    status: {
+      in: ["PENDING", "APPROVED"],
+    },
+  },
+});
+
+    console.log("EXISTING:", existing);
+
+    if (existing) {
+      return NextResponse.json(
+        {
+          error:
+            "Anda masih memiliki pinjaman yang sedang diproses atau masih aktif. Silakan selesaikan pinjaman tersebut sebelum mengajukan pinjaman baru.",
+        },
+        {
+          status: 400,
+        }
+      );
     }
 
-    // 🔥 HANDLE FOTO AGUNAN
-    let fotoAgunanPath: string | null = null;
-    if (fotoAgunan && fotoAgunan.size > 0) {
-      const bytes = await fotoAgunan.arrayBuffer();
-      const buffer = Buffer.from(bytes);
-
-      const fileName = Date.now() + "-" + fotoAgunan.name;
-      const filePath = path.join(uploadDir, fileName);
-
-      fs.writeFileSync(filePath, buffer);
-      fotoAgunanPath = "/uploads/" + fileName;
-    }
-
-    // 🔥 HANDLE FOTO SURAT
-    let fotoSuratPath: string | null = null;
-    if (fotoSurat && fotoSurat.size > 0) {
-      const bytes = await fotoSurat.arrayBuffer();
-      const buffer = Buffer.from(bytes);
-
-      const fileName = Date.now() + "-surat-" + fotoSurat.name;
-      const filePath = path.join(uploadDir, fileName);
-
-      fs.writeFileSync(filePath, buffer);
-      fotoSuratPath = "/uploads/" + fileName;
-    }
+    console.log("LANJUT CREATE");
 
     // 🔥 SIMPAN KE DB
     const peminjaman = await prisma.peminjaman.create({
@@ -77,24 +80,7 @@ export async function POST(req: Request) {
 
     // 🔥 CEK APAKAH SUDAH ADA PENGAJUAN PINJAMAN YANG PENDING
 
-    const existing = await prisma.peminjaman.findFirst({
-  where: {
-    id_anggota: Number(sessionUser.id),
-    status: "PENDING",
-  },
-});
 
-if (existing) {
-  return NextResponse.json(
-    {
-      error:
-        "Masih ada pengajuan pinjaman yang sedang diproses.",
-    },
-    {
-      status: 400,
-    }
-  );
-}
 
     await prisma.detail_peminjaman.create({
       data: {

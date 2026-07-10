@@ -88,7 +88,7 @@ export default function Client({ data }: any) {
             }`}
           >
             <LayoutList className="w-4 h-4" />
-            Monitoring
+            List Jadwal
           </button>
 
           <button
@@ -98,7 +98,7 @@ export default function Client({ data }: any) {
             }`}
           >
             <Settings2 className="w-4 h-4" />
-            Pengaturan
+            Form Jadwal
           </button>
         </div>
       </div>

@@ -31,6 +31,7 @@ const DetailArtikel = () => {
       year: "numeric",
     });
   };
+  
 
   if (!data) return <p className="p-6">Loading...</p>;
 

@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { UploadCloud, CalendarDays, MapPin } from "lucide-react";
+import { toast } from "react-toastify";
 
 const EditEvent = () => {
   const { id } = useParams() as { id: string };
@@ -52,7 +53,9 @@ const EditEvent = () => {
     const formData = new FormData();
     formData.append("file", file);
 
-    const res = await fetch("/api/event/upload", {
+    formData.append("folder", "event");
+
+    const res = await fetch("/api/upload/image", {
       method: "POST",
       body: formData,
     });
@@ -78,7 +81,7 @@ const EditEvent = () => {
       }),
     });
 
-    alert("Event berhasil diupdate!");
+    toast.success("Event berhasil diupdate!");
     router.push("/admin/event");
   };
 

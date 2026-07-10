@@ -1,9 +1,11 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 type Data = {
   id_peminjaman: number;
+  id_anggota: number;
   nama: string;
   jumlah: number;
   tenor: number;
@@ -14,22 +16,33 @@ type Data = {
 const AdminJadwal = () => {
   const [data, setData] = useState<Data[]>([]);
   const [loading, setLoading] = useState(true);
+  const [totalPages, setTotalPages] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
+  const router = useRouter();
 
   const [mainTab, setMainTab] = useState("cicilan");
   const [subTab, setSubTab] = useState("baru");
+
+  useEffect(() => {
+    setCurrentPage(
+      Math.max(Number(new URLSearchParams(window.location.search).get("page") || 1), 1)
+    );
+  }, []);
 
   // =========================
   // 🔥 FETCH API
   // =========================
   useEffect(() => {
-    fetch("/api/jadwal")
+    setLoading(true);
+    fetch(`/api/jadwal?page=${currentPage}`)
       .then((res) => res.json())
       .then((res) => {
-        setData(res);
+        setData(res.data || []);
+        setTotalPages(res.totalPages || 1);
         setLoading(false);
       })
       .catch(() => setLoading(false));
-  }, []);
+  }, [currentPage]);
 
   // =========================
   // 🔥 FILTER
@@ -167,19 +180,28 @@ const AdminJadwal = () => {
                     {/* ACTION */}
                     <div className="flex items-center">
                       {item.status === "baru" && (
-                        <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm">
+                        <button
+                          onClick={() => router.push(`/admin/cicilan/konten/${item.id_anggota}/${item.id_peminjaman}`)}
+                          className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm"
+                        >
                           Buat Jadwal
                         </button>
                       )}
 
                       {item.status === "aktif" && (
-                        <button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm">
+                        <button
+                          onClick={() => router.push(`/admin/cicilan/konten/${item.id_anggota}/${item.id_peminjaman}`)}
+                          className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm"
+                        >
                           Detail
                         </button>
                       )}
 
                       {item.status === "telat" && (
-                        <button className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm">
+                        <button
+                          onClick={() => router.push(`/admin/cicilan/konten/${item.id_anggota}/${item.id_peminjaman}`)}
+                          className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm"
+                        >
                           Hubungi
                         </button>
                       )}
@@ -190,6 +212,15 @@ const AdminJadwal = () => {
               );
             })}
           </div>
+
+          <PaginationControls
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={(page) => {
+              setCurrentPage(page);
+              router.push(`/admin/jadwal?page=${page}`);
+            }}
+          />
         </>
       )}
 
@@ -204,3 +235,54 @@ const AdminJadwal = () => {
 };
 
 export default AdminJadwal;
+
+function PaginationControls({
+  currentPage,
+  totalPages,
+  onPageChange,
+}: {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+}) {
+  if (totalPages <= 1) return null;
+
+  return (
+    <div className="mt-6 flex flex-col items-center justify-between gap-3 rounded-2xl border bg-white px-4 py-3 text-sm sm:flex-row">
+      <p className="text-gray-500">
+        Halaman {currentPage} dari {totalPages}
+      </p>
+      <div className="flex flex-wrap justify-center gap-2">
+        <button
+          disabled={currentPage <= 1}
+          onClick={() => onPageChange(currentPage - 1)}
+          className="rounded-lg border bg-white px-3 py-2 font-semibold text-gray-600 disabled:bg-gray-100 disabled:text-gray-400"
+        >
+          Previous
+        </button>
+        {Array.from({ length: totalPages }, (_, index) => index + 1).map(
+          (page) => (
+            <button
+              key={page}
+              onClick={() => onPageChange(page)}
+              className={`min-w-9 rounded-lg px-3 py-2 font-semibold ${
+                page === currentPage
+                  ? "bg-blue-700 text-white"
+                  : "border bg-white text-gray-600 hover:bg-gray-50"
+              }`}
+            >
+              {page}
+            </button>
+          )
+        )}
+        <button
+          disabled={currentPage >= totalPages}
+          onClick={() => onPageChange(currentPage + 1)}
+          className="rounded-lg border bg-white px-3 py-2 font-semibold text-gray-600 disabled:bg-gray-100 disabled:text-gray-400"
+        >
+          Next
+        </button>
+      </div>
+    </div>
+  );
+}

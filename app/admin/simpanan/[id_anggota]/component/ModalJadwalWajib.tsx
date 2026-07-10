@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { createPortal } from "react-dom";
+import { toast } from "react-toastify";
 
 import {
   X,
@@ -52,11 +53,11 @@ export default function ModalJadwalWajib({
           );
 
         if (!result.success) {
-          alert(result.message);
+          toast.error(result.message);
           return;
         }
 
-        alert(result.message);
+        toast.success(result.message);
 
         onClose();
 
@@ -66,7 +67,7 @@ export default function ModalJadwalWajib({
 
         console.error(error);
 
-        alert(
+        toast.error(
           "Gagal membuat jadwal simpanan wajib"
         );
 

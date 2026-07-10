@@ -192,10 +192,10 @@ export default function FormBayar({
     };
 
   return (
-    <div className="relative overflow-hidden rounded-[30px]">
+    <div className="relative overflow-hidden rounded-2xl sm:rounded-[30px]">
 
       {/* HEADER */}
-      <div className="relative overflow-hidden bg-[#1a3c2e] px-7 py-7">
+      <div className="relative overflow-hidden bg-[#1a3c2e] px-5 py-6 sm:px-7 sm:py-7">
 
         <div className="absolute -top-10 -right-10 h-48 w-48 rounded-full bg-white/5" />
 
@@ -203,19 +203,19 @@ export default function FormBayar({
 
         <div className="relative z-10">
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3 sm:gap-4">
 
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/10 backdrop-blur-sm">
-              <Wallet className="h-7 w-7 text-yellow-400" />
+            <div className="flex h-12 w-12 sm:h-14 sm:w-14 shrink-0 items-center justify-center rounded-2xl bg-white/10 backdrop-blur-sm">
+              <Wallet className="h-6 w-6 sm:h-7 sm:w-7 text-yellow-400" />
             </div>
 
-            <div>
+            <div className="min-w-0">
 
-              <p className="mb-1 text-xs font-semibold uppercase tracking-[3px] text-green-300">
+              <p className="mb-1 text-[10px] sm:text-xs font-semibold uppercase tracking-[2px] sm:tracking-[3px] text-green-300">
                 BUMDes · Pembayaran
               </p>
 
-              <h2 className="text-2xl font-bold text-white">
+              <h2 className="text-lg sm:text-2xl font-bold text-white">
                 Form Pembayaran Simpanan
               </h2>
 
@@ -223,7 +223,7 @@ export default function FormBayar({
 
           </div>
 
-          <p className="mt-4 max-w-2xl text-sm leading-relaxed text-gray-300">
+          <p className="mt-3 sm:mt-4 max-w-2xl text-xs sm:text-sm leading-relaxed text-gray-300">
             Lakukan pembayaran
             simpanan dengan mudah
             dan aman melalui sistem
@@ -235,22 +235,22 @@ export default function FormBayar({
       </div>
 
       {/* CONTENT */}
-      <div className="space-y-6 bg-white p-7">
+      <div className="space-y-5 sm:space-y-6 bg-white p-4 sm:p-7">
 
         {/* INFO */}
-        <div className="flex items-start gap-4 rounded-3xl border border-emerald-100 bg-gradient-to-r from-emerald-50 to-green-50 p-5">
+        <div className="flex items-start gap-3 sm:gap-4 rounded-2xl sm:rounded-3xl border border-emerald-100 bg-gradient-to-r from-emerald-50 to-green-50 p-4 sm:p-5">
 
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#1a3c2e]">
-            <BadgeCheck className="h-5 w-5 text-yellow-400" />
+          <div className="flex h-10 w-10 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-xl sm:rounded-2xl bg-[#1a3c2e]">
+            <BadgeCheck className="h-4 w-4 sm:h-5 sm:w-5 text-yellow-400" />
           </div>
 
-          <div>
+          <div className="min-w-0">
 
             <h3 className="mb-1 text-sm font-bold text-gray-800">
               Informasi Pembayaran
             </h3>
 
-            <p className="text-sm leading-relaxed text-gray-600">
+            <p className="text-xs sm:text-sm leading-relaxed text-gray-600">
               Setelah pembayaran
               berhasil diproses,
               status simpanan akan
@@ -263,42 +263,42 @@ export default function FormBayar({
         </div>
 
         {/* RINGKASAN TABUNGAN */}
-        <div className="rounded-3xl border border-blue-100 bg-blue-50 p-6">
+        <div className="rounded-2xl sm:rounded-3xl border border-blue-100 bg-blue-50 p-4 sm:p-6">
 
-          <h3 className="mb-4 text-lg font-bold text-gray-800">
+          <h3 className="mb-3 sm:mb-4 text-base sm:text-lg font-bold text-gray-800">
             Ringkasan Tabungan Pendidikan
           </h3>
 
-          <div className="grid gap-4 md:grid-cols-3">
+          <div className="grid gap-3 sm:gap-4 sm:grid-cols-3">
 
-            <div className="rounded-2xl bg-white p-4">
-              <p className="text-xs font-semibold uppercase text-gray-400">
+            <div className="rounded-xl sm:rounded-2xl bg-white p-3.5 sm:p-4">
+              <p className="text-[10px] sm:text-xs font-semibold uppercase text-gray-400">
                 Tujuan
               </p>
 
-              <p className="mt-1 font-semibold text-gray-800">
+              <p className="mt-1 font-semibold text-gray-800 text-sm sm:text-base break-words">
                 {simpanan.tujuan}
               </p>
             </div>
 
-            <div className="rounded-2xl bg-white p-4">
-              <p className="text-xs font-semibold uppercase text-gray-400">
+            <div className="rounded-xl sm:rounded-2xl bg-white p-3.5 sm:p-4">
+              <p className="text-[10px] sm:text-xs font-semibold uppercase text-gray-400">
                 Target Dana
               </p>
 
-              <p className="mt-1 font-semibold text-gray-800">
+              <p className="mt-1 font-semibold text-gray-800 text-sm sm:text-base break-words">
                 Rp{" "}
                 {(simpanan.target_dana ?? 0)
                   .toLocaleString("id-ID")}
               </p>
             </div>
 
-            <div className="rounded-2xl bg-white p-4">
-              <p className="text-xs font-semibold uppercase text-gray-400">
+            <div className="rounded-xl sm:rounded-2xl bg-white p-3.5 sm:p-4">
+              <p className="text-[10px] sm:text-xs font-semibold uppercase text-gray-400">
                 Sisa Target
               </p>
 
-              <p className="mt-1 font-semibold text-red-600">
+              <p className="mt-1 font-semibold text-red-600 text-sm sm:text-base break-words">
                 Rp{" "}
                 {sisaTarget.toLocaleString(
                   "id-ID"
@@ -312,21 +312,21 @@ export default function FormBayar({
 
         {/* REKENING TUJUAN */}
         {rekening && (
-          <div className="rounded-3xl border border-blue-100 bg-blue-50 p-6">
+          <div className="rounded-2xl sm:rounded-3xl border border-blue-100 bg-blue-50 p-4 sm:p-6">
 
-            <div className="mb-5 flex items-center gap-3">
+            <div className="mb-4 sm:mb-5 flex items-center gap-3">
 
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-100">
-                <CreditCard className="h-5 w-5 text-blue-700" />
+              <div className="flex h-10 w-10 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-xl sm:rounded-2xl bg-blue-100">
+                <CreditCard className="h-4 w-4 sm:h-5 sm:w-5 text-blue-700" />
               </div>
 
-              <div>
+              <div className="min-w-0">
 
-                <h3 className="text-lg font-bold text-gray-800">
+                <h3 className="text-base sm:text-lg font-bold text-gray-800">
                   Rekening Tujuan Transfer
                 </h3>
 
-                <p className="text-sm text-gray-500">
+                <p className="text-xs sm:text-sm text-gray-500">
                   Transfer pembayaran ke rekening berikut
                 </p>
 
@@ -334,42 +334,42 @@ export default function FormBayar({
 
             </div>
 
-            <div className="grid gap-4 md:grid-cols-3">
+            <div className="grid gap-3 sm:gap-4 sm:grid-cols-3">
 
               {/* BANK */}
-              <div className="rounded-2xl bg-white p-4">
+              <div className="rounded-xl sm:rounded-2xl bg-white p-3.5 sm:p-4">
 
-                <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-gray-400">
+                <p className="mb-1 text-[10px] sm:text-xs font-semibold uppercase tracking-wide text-gray-400">
                   Bank
                 </p>
 
-                <h4 className="text-lg font-bold text-gray-800">
+                <h4 className="text-base sm:text-lg font-bold text-gray-800 break-words">
                   {rekening.nama_bank}
                 </h4>
 
               </div>
 
               {/* REKENING */}
-              <div className="rounded-2xl bg-white p-4">
+              <div className="rounded-xl sm:rounded-2xl bg-white p-3.5 sm:p-4">
 
-                <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-gray-400">
+                <p className="mb-1 text-[10px] sm:text-xs font-semibold uppercase tracking-wide text-gray-400">
                   Nomor Rekening
                 </p>
 
-                <h4 className="text-lg font-bold text-[#1a3c2e]">
+                <h4 className="text-base sm:text-lg font-bold text-[#1a3c2e] break-words">
                   {rekening.no_rekening}
                 </h4>
 
               </div>
 
               {/* ATAS NAMA */}
-              <div className="rounded-2xl bg-white p-4">
+              <div className="rounded-xl sm:rounded-2xl bg-white p-3.5 sm:p-4">
 
-                <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-gray-400">
+                <p className="mb-1 text-[10px] sm:text-xs font-semibold uppercase tracking-wide text-gray-400">
                   Atas Nama
                 </p>
 
-                <h4 className="text-lg font-bold text-gray-800">
+                <h4 className="text-base sm:text-lg font-bold text-gray-800 break-words">
                   {rekening.atas_nama}
                 </h4>
 
@@ -404,7 +404,7 @@ export default function FormBayar({
             placeholder={`Maksimal Rp ${sisaTarget.toLocaleString(
               "id-ID"
             )}`}
-            className="w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-lg font-semibold text-gray-800 outline-none transition-all focus:border-[#1a3c2e] focus:bg-white"
+            className="w-full rounded-xl sm:rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-base sm:text-lg font-semibold text-gray-800 outline-none transition-all focus:border-[#1a3c2e] focus:bg-white"
           />
 
           <p className="text-xs text-gray-400">
@@ -424,7 +424,7 @@ export default function FormBayar({
 
           </label>
 
-          <div className="rounded-3xl border border-dashed border-gray-300 bg-gray-50 p-6 transition-all hover:border-[#1a3c2e] hover:bg-green-50">
+          <div className="rounded-2xl sm:rounded-3xl border border-dashed border-gray-300 bg-gray-50 p-4 sm:p-6 transition-all hover:border-[#1a3c2e] hover:bg-green-50">
 
             <input
               type="file"
@@ -435,20 +435,20 @@ export default function FormBayar({
                   null
                 )
               }
-              className="block w-full text-sm text-gray-600
-              file:mr-4
+              className="block w-full text-xs sm:text-sm text-gray-600
+              file:mr-3 sm:file:mr-4
               file:rounded-xl
               file:border-0
               file:bg-[#1a3c2e]
-              file:px-4
+              file:px-3 sm:file:px-4
               file:py-2
-              file:text-sm
+              file:text-xs sm:file:text-sm
               file:font-semibold
               file:text-white
               hover:file:bg-[#244d3c]"
             />
 
-            <p className="mt-3 text-xs leading-relaxed text-gray-500">
+            <p className="mt-3 text-[11px] sm:text-xs leading-relaxed text-gray-500">
               Upload screenshot atau foto bukti transfer pembayaran.
               Format JPG, PNG, atau JPEG.
             </p>
@@ -456,7 +456,7 @@ export default function FormBayar({
           </div>
 
           {buktiTransfer && (
-            <div className="rounded-2xl bg-green-50 px-4 py-3 text-sm font-medium text-green-700">
+            <div className="rounded-xl sm:rounded-2xl bg-green-50 px-4 py-3 text-xs sm:text-sm font-medium text-green-700 break-words">
 
               File dipilih:
               {" "}
@@ -483,19 +483,19 @@ export default function FormBayar({
               )
             }
             placeholder="Tambahkan catatan (opsional)"
-            className="w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-base font-medium text-gray-800 outline-none transition-all focus:border-[#1a3c2e] focus:bg-white"
+            className="w-full rounded-xl sm:rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm sm:text-base font-medium text-gray-800 outline-none transition-all focus:border-[#1a3c2e] focus:bg-white"
           />
 
         </div>
 
         {/* BUTTON */}
-        <div className="flex items-center gap-3 pt-2">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2">
 
           <button
             onClick={() =>
               router.back()
             }
-            className="flex-1 rounded-2xl border border-gray-200 py-3 font-medium text-gray-700 transition-all hover:bg-gray-50"
+            className="flex-1 rounded-xl sm:rounded-2xl border border-gray-200 py-3 text-sm sm:text-base font-medium text-gray-700 transition-all hover:bg-gray-50"
           >
             Batal
           </button>
@@ -503,7 +503,7 @@ export default function FormBayar({
           <button
             onClick={handleSubmit}
             disabled={loading}
-            className="flex flex-1 items-center justify-center gap-2 rounded-2xl bg-[#1a3c2e] py-3 font-semibold text-white transition-all hover:bg-[#244d3c] disabled:opacity-70"
+            className="flex flex-1 items-center justify-center gap-2 rounded-xl sm:rounded-2xl bg-[#1a3c2e] py-3 text-sm sm:text-base font-semibold text-white transition-all hover:bg-[#244d3c] disabled:opacity-70"
           >
 
             {loading ? (

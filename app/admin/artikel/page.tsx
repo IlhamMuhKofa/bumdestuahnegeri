@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { Calendar, Star, Pencil, Trash2, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 
 type Article = {
   id_artikel: number;
@@ -15,17 +16,25 @@ type Article = {
 
 const AdminArtikel = () => {
   const router = useRouter();
+  const [currentPage, setCurrentPage] = useState(1);
 
   const [articles, setArticles] = useState<Article[]>([]);
   const [mounted, setMounted] = useState(false);
   const [loading, setLoading] = useState(true);
-
-  useEffect(() => setMounted(true), []);
+  const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
-    fetch("/api/artikel")
+    setMounted(true);
+    setCurrentPage(
+      Math.max(Number(new URLSearchParams(window.location.search).get("page") || 1), 1)
+    );
+  }, []);
+
+  useEffect(() => {
+    fetch(`/api/artikel?page=${currentPage}`)
       .then((res) => res.json())
-      .then((data) => {
+      .then((result) => {
+        const data = result.data || [];
         const sorted = data.sort((a: Article, b: Article) => {
           if (a.status === "featured" && b.status !== "featured") return -1;
           if (a.status !== "featured" && b.status === "featured") return 1;
@@ -37,32 +46,101 @@ const AdminArtikel = () => {
         });
 
         setArticles(sorted);
+        setTotalPages(result.totalPages || 1);
         setLoading(false);
       });
-  }, []);
+  }, [currentPage]);
 
-  const handleDelete = async (id: number) => {
-    await fetch("/api/artikel", {
+const handleDelete = async (id: number) => {
+  const toastId = toast.loading("Menghapus artikel...");
+
+  try {
+    const res = await fetch("/api/artikel", {
       method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify({ id }),
     });
 
-    setArticles((prev) => prev.filter((a) => a.id_artikel !== id));
-  };
+    const result = await res.json();
 
-  const handleFeature = async (id: number) => {
-    await fetch("/api/artikel", {
+    if (!res.ok || !result.success) {
+      throw new Error(result.error || "Gagal menghapus artikel");
+    }
+
+    setArticles((prev) =>
+      prev.filter((a) => a.id_artikel !== id)
+    );
+
+    toast.update(toastId, {
+      render: "Artikel berhasil dihapus.",
+      type: "success",
+      isLoading: false,
+      autoClose: 2000,
+    });
+
+  } catch (error: any) {
+    toast.update(toastId, {
+      render:
+        error.message || "Gagal menghapus artikel.",
+      type: "error",
+      isLoading: false,
+      autoClose: 3000,
+    });
+  }
+};
+
+const handleFeature = async (id: number) => {
+  const toastId = toast.loading(
+    "Mengubah artikel unggulan..."
+  );
+
+  try {
+    const res = await fetch("/api/artikel", {
       method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify({ id }),
     });
+
+    const result = await res.json();
+
+    if (!res.ok || !result.success) {
+      throw new Error(
+        result.error || "Gagal mengubah artikel unggulan"
+      );
+    }
 
     setArticles((prev) =>
       prev.map((a) => ({
         ...a,
-        status: a.id_artikel === id ? "featured" : "published",
+        status:
+          a.id_artikel === id
+            ? "featured"
+            : "published",
       }))
     );
-  };
+
+    toast.update(toastId, {
+      render: "Artikel berhasil dijadikan unggulan.",
+      type: "success",
+      isLoading: false,
+      autoClose: 2000,
+    });
+
+  } catch (error: any) {
+    toast.update(toastId, {
+      render:
+        error.message ||
+        "Gagal mengubah artikel unggulan.",
+      type: "error",
+      isLoading: false,
+      autoClose: 3000,
+    });
+  }
+};
 
   const handleEdit = (id: number) => {
     router.push(`/admin/artikel/edit/${id}`);
@@ -295,9 +373,68 @@ const AdminArtikel = () => {
           </div>
 
         </div>
+        <PaginationControls
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={(page) => {
+            setCurrentPage(page);
+            router.push(`/admin/artikel?page=${page}`);
+          }}
+        />
       </div>
     </div>
   );
 };
 
 export default AdminArtikel;
+
+function PaginationControls({
+  currentPage,
+  totalPages,
+  onPageChange,
+}: {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+}) {
+  if (totalPages <= 1) return null;
+
+  return (
+    <div className="mt-6 flex flex-col items-center justify-between gap-3 rounded-2xl border bg-white px-4 py-3 text-sm sm:flex-row">
+      <p className="text-gray-500">
+        Halaman {currentPage} dari {totalPages}
+      </p>
+      <div className="flex flex-wrap justify-center gap-2">
+        <button
+          disabled={currentPage <= 1}
+          onClick={() => onPageChange(currentPage - 1)}
+          className="rounded-lg border bg-white px-3 py-2 font-semibold text-gray-600 disabled:bg-gray-100 disabled:text-gray-400"
+        >
+          Previous
+        </button>
+        {Array.from({ length: totalPages }, (_, index) => index + 1).map(
+          (page) => (
+            <button
+              key={page}
+              onClick={() => onPageChange(page)}
+              className={`min-w-9 rounded-lg px-3 py-2 font-semibold ${
+                page === currentPage
+                  ? "bg-blue-700 text-white"
+                  : "border bg-white text-gray-600 hover:bg-gray-50"
+              }`}
+            >
+              {page}
+            </button>
+          )
+        )}
+        <button
+          disabled={currentPage >= totalPages}
+          onClick={() => onPageChange(currentPage + 1)}
+          className="rounded-lg border bg-white px-3 py-2 font-semibold text-gray-600 disabled:bg-gray-100 disabled:text-gray-400"
+        >
+          Next
+        </button>
+      </div>
+    </div>
+  );
+}

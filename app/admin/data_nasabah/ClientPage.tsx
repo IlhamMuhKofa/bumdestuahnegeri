@@ -1,11 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function ClientPage({ nasabah }: any) {
   const [tab, setTab] = useState("semua");
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("terbaru");
+  const router = useRouter();
 
   // ✅ PAGINATION STATE
   const [currentPage, setCurrentPage] = useState(1);
@@ -82,9 +84,12 @@ export default function ClientPage({ nasabah }: any) {
           <h1 className="text-2xl font-bold text-gray-800">
             Data Nasabah
           </h1>
-          <button className="bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-900">
-            + Tambah Nasabah
-          </button>
+<button
+  onClick={() => router.push("/admin/data_nasabah/tambah")}
+  className="bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-900"
+>
+  + Tambah Nasabah
+</button>
         </div>
 
         {/* TABS */}

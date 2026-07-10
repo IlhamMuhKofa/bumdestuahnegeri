@@ -106,6 +106,23 @@ useEffect(() => {
     startIndex + itemsPerPage
   );
 
+  const statusLabel = (status?: string) => {
+    const s = status?.toUpperCase();
+    if (s === "PENDING") return "Menunggu";
+    if (s === "APPROVED") return "Disetujui";
+    if (s === "REJECTED") return "Ditolak";
+    if (s === "ACTIVE") return "Aktif";
+    return "-";
+  };
+
+  const statusClass = (status?: string) => {
+    const s = status?.toUpperCase();
+    if (s === "PENDING") return "bg-yellow-100 text-yellow-700";
+    if (s === "APPROVED") return "bg-blue-100 text-blue-700";
+    if (s === "ACTIVE") return "bg-green-100 text-green-700";
+    return "bg-red-100 text-red-700";
+  };
+
   return (
     <div className="bg-gray-50 px-4 py-5 sm:p-6">
       <div className="mx-auto w-full max-w-6xl">
@@ -129,7 +146,7 @@ useEffect(() => {
         </div>
 
         {/* BANNER */}
-        <div className="relative mb-6 overflow-hidden rounded-[32px] bg-[#1a3c2e] shadow-xl">
+        <div className="relative mb-6 overflow-hidden rounded-2xl sm:rounded-[32px] bg-[#1a3c2e] shadow-xl">
 
           {/* background */}
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(255,255,255,0.10),_transparent_35%)]" />
@@ -138,16 +155,16 @@ useEffect(() => {
 
           <div className="absolute bottom-0 left-1/3 h-28 w-28 rounded-full bg-white/[0.03]" />
 
-          <div className="relative z-10 flex flex-col lg:flex-row justify-between min-h-[220px] sm:flex-row">
+          <div className="relative z-10 flex flex-col lg:flex-row justify-between min-h-[200px] sm:min-h-[220px]">
 
             {/* LEFT */}
-            <div className="flex flex-1 flex-col justify-center px-8 py-8 sm:py-10">
+            <div className="flex flex-1 flex-col justify-center px-5 py-6 sm:px-8 sm:py-8 lg:py-10">
 
-              <p className="mb-3 text-xs font-semibold uppercase tracking-[3px] text-green-300">
+              <p className="mb-2 sm:mb-3 text-[10px] sm:text-xs font-semibold uppercase tracking-[2px] sm:tracking-[3px] text-green-300">
                 BUMDes · Layanan Pinjaman
               </p>
 
-              <h2 className="max-w-lg text-3xl font-bold leading-tight text-white">
+              <h2 className="max-w-lg text-2xl sm:text-3xl font-bold leading-tight text-white">
                 Kelola{" "}
                 <span className="text-yellow-400">
                   Pinjaman Anda
@@ -155,12 +172,12 @@ useEffect(() => {
                 dengan lebih nyaman
               </h2>
 
-              <p className="mt-4 max-w-xl text-sm leading-relaxed text-gray-300">
+              <p className="mt-3 sm:mt-4 max-w-xl text-sm leading-relaxed text-gray-300">
                 Tenang, prosesnya mudah dan cepat. Kami siap membantu kebutuhan usaha maupun pribadi Anda.
               </p>
 
               {/* badge */}
-              <div className="mt-5 flex flex-wrap gap-2">
+              <div className="mt-4 sm:mt-5 flex flex-wrap gap-2">
 
                 <span className="rounded-full border border-white/10 bg-white/10 px-3 py-1 text-xs text-white/80 backdrop-blur-sm">
                   Simpel tanpa ribet
@@ -196,20 +213,20 @@ useEffect(() => {
         </div>
 
 {/* DOKUMEN PERSYARATAN */}
-<div className="mb-6 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+<div className="mb-6 rounded-2xl border border-gray-200 bg-white p-4 sm:p-6 shadow-sm">
 
   {/* HEADER */}
-  <div className="mb-5 flex items-start justify-between">
+  <div className="mb-4 sm:mb-5 flex items-start justify-between gap-3">
     <div>
-      <h3 className="text-lg font-semibold text-gray-900">
+      <h3 className="text-base sm:text-lg font-semibold text-gray-900">
         Dokumen Persyaratan
       </h3>
-      <p className="mt-1 text-sm text-gray-500">
+      <p className="mt-1 text-xs sm:text-sm text-gray-500">
         Unduh dan lengkapi dokumen sebelum mengajukan pinjaman.
       </p>
     </div>
 
-    <span className="rounded-full bg-green-50 px-3 py-1 text-xs font-medium text-green-700">
+    <span className="rounded-full bg-green-50 px-3 py-1 text-xs font-medium text-green-700 shrink-0">
       Wajib
     </span>
   </div>
@@ -221,11 +238,12 @@ useEffect(() => {
       <a
         href={surat.file_url}
         target="_blank"
+        rel="noreferrer"
         download
         className="
-          group flex items-center justify-between
+          group flex items-center justify-between gap-3
           rounded-xl border border-gray-200 bg-white
-          p-4
+          p-3.5 sm:p-4
           transition-all duration-200
           hover:border-[#1a3c2e]/40
           hover:shadow-md
@@ -233,19 +251,19 @@ useEffect(() => {
         "
       >
         {/* LEFT */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 min-w-0">
           <div className="
-            flex h-10 w-10 items-center justify-center
+            flex h-10 w-10 shrink-0 items-center justify-center
             rounded-lg bg-[#1a3c2e]/10 text-[#1a3c2e]
           ">
             📄
           </div>
 
-          <div>
-            <p className="font-medium text-gray-900">
+          <div className="min-w-0">
+            <p className="font-medium text-gray-900 text-sm sm:text-base truncate">
               SP2K Pencairan
             </p>
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-gray-500 truncate">
               SP2K Pencairan.pdf
             </p>
           </div>
@@ -253,11 +271,11 @@ useEffect(() => {
 
         {/* RIGHT */}
         <div className="
-          flex items-center gap-2
-          text-sm font-medium text-[#1a3c2e]
+          flex items-center gap-1 sm:gap-2 shrink-0
+          text-xs sm:text-sm font-medium text-[#1a3c2e]
           opacity-80 transition group-hover:opacity-100
         ">
-          Download
+          <span className="hidden sm:inline">Download</span>
           <span className="transition group-hover:translate-x-1">
             →
           </span>
@@ -373,8 +391,8 @@ sm:justify-end">
           </div>
         </div>
 
-        {/* ── Table ── */}
-        <div className="overflow-hidden rounded 2xl border border-gray-100 bg-white shadow-sm">
+        {/* ── Table - DESKTOP ── */}
+        <div className="hidden md:block overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
           <div className="overflow-x-auto">
              <table className="min-w-[900px] w-full text-sm">
             <thead>
@@ -389,7 +407,7 @@ sm:justify-end">
             <tbody>
               {filteredPengajuan.length === 0 ? (
                 <tr>
-                  <td colSpan={5}>
+                  <td colSpan={6}>
                     <div className="flex flex-col items-center justify-center py-16 gap-4 text-center px-6">
                       <div className="w-16 h-16 rounded-2xl bg-gray-50 border border-gray-100 flex items-center justify-center">
                         <ClipboardList className="w-8 h-8 text-gray-300" />
@@ -442,30 +460,99 @@ sm:justify-end">
 
                     <td className="px-4 py-3 text-center">
                       <span
-                        className={`px-3 py-1 text-xs rounded-full ${item.status?.toUpperCase() === "PENDING"
-                            ? "bg-yellow-100 text-yellow-700"
-                            : item.status?.toUpperCase() === "APPROVED"
-                              ? "bg-blue-100 text-blue-700"
-                              : item.status?.toUpperCase() === "ACTIVE"
-                                ? "bg-green-100 text-green-700"
-                                : "bg-red-100 text-red-700"
-                          }`}
+                        className={`px-3 py-1 text-xs rounded-full ${statusClass(item.status)}`}
                       >
-                        {item.status?.toUpperCase() === "PENDING" && "Menunggu"}
-                        {item.status?.toUpperCase() === "APPROVED" && "Disetujui"}
-                        {item.status?.toUpperCase() === "REJECTED" && "Ditolak"}
-                        {item.status?.toUpperCase() === "ACTIVE" && "Aktif"}
+                        {statusLabel(item.status)}
                       </span>
                     </td>
-                    {/* <td className="px-4 py-3 text-center">
-          {item.detail?.[0]?.keterangan || "-"}
-        </td> */}
                   </tr>
                 ))
               )}
             </tbody>
           </table>
           </div>
+        </div>
+
+        {/* ── List - MOBILE (pengganti tabel) ── */}
+        <div className="md:hidden space-y-3">
+
+          {filteredPengajuan.length === 0 ? (
+
+            <div className="rounded-2xl border border-gray-100 bg-white shadow-sm flex flex-col items-center justify-center py-14 px-6 text-center gap-4">
+              <div className="w-16 h-16 rounded-2xl bg-gray-50 border border-gray-100 flex items-center justify-center">
+                <ClipboardList className="w-8 h-8 text-gray-300" />
+              </div>
+
+              <div>
+                <p className="text-gray-700 font-semibold text-sm mb-1">
+                  Belum ada pengajuan
+                </p>
+                <p className="text-gray-400 text-xs leading-relaxed max-w-xs">
+                  Pengajuan pinjaman akan muncul di sini.
+                </p>
+              </div>
+            </div>
+
+          ) : (
+
+            currentData.map((item: any) => (
+              <div
+                key={item.id_peminjaman}
+                className="rounded-2xl border border-gray-100 bg-white shadow-sm p-4"
+              >
+                {/* TOP: tanggal + status */}
+                <div className="flex items-start justify-between gap-2 mb-3">
+                  <div className="text-xs text-gray-500 leading-relaxed">
+                    <span className="block">
+                      {new Date(item.tanggal_pengajuan).toLocaleDateString("id-ID", {
+                        weekday: "long",
+                        day: "2-digit",
+                        month: "long",
+                        year: "numeric",
+                      })}
+                    </span>
+                    <span className="block text-[11px] text-gray-400">
+                      {new Date(item.tanggal_pengajuan).toLocaleTimeString("id-ID", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </span>
+                  </div>
+
+                  <span
+                    className={`px-2.5 py-1 text-xs rounded-full font-medium shrink-0 ${statusClass(item.status)}`}
+                  >
+                    {statusLabel(item.status)}
+                  </span>
+                </div>
+
+                {/* JENIS + JUMLAH */}
+                <div className="flex items-center justify-between gap-2 mb-2">
+                  <span className="font-semibold text-gray-800 text-sm">
+                    Pinjaman
+                  </span>
+                  <span className="font-bold text-emerald-700 text-sm shrink-0">
+                    Rp {item.total_pinjaman.toLocaleString()}
+                  </span>
+                </div>
+
+                {/* DETAIL: jangka waktu & agunan */}
+                <div className="grid grid-cols-2 gap-2 pt-3 mt-1 border-t border-gray-100 text-xs">
+                  <div>
+                    <p className="text-gray-400 mb-0.5">Jangka Waktu</p>
+                    <p className="text-gray-700 font-medium">{item.jangka_waktu} bulan</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-400 mb-0.5">Jenis Agunan</p>
+                    <p className="text-gray-700 font-medium truncate">
+                      {item.detail?.[0]?.jenis || "-"}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
+
         </div>
 
         {/* Pagination */}
@@ -479,7 +566,7 @@ mt-4
 px-1">
 
           {/* INFO */}
-          <span>
+          <span className="text-sm text-gray-500">
             Menampilkan {totalData === 0 ? 0 : startIndex + 1} -{" "}
             {Math.min(startIndex + itemsPerPage, totalData)} dari {totalData} pengajuan
           </span>
@@ -535,7 +622,7 @@ px-1">
 
             {/* Modal content */}
             <motion.div
-              className="relative w-full max-w-5xl max-h-[90vh] overflow-y-auto rounded-2xl bg-white shadow-xl sm:rounded 2xl"
+              className="relative w-full max-w-5xl max-h-[90vh] overflow-y-auto rounded-2xl bg-white shadow-xl"
               initial={{ y: 30, opacity: 0, scale: 0.95 }}
               animate={{ y: 0, opacity: 1, scale: 1 }}
               exit={{ y: 30, opacity: 0, scale: 0.95 }}

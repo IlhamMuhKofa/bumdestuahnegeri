@@ -2,7 +2,40 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
 // ===== GET ALL =====
-export async function GET() {
+const PAGE_SIZE = 7;
+
+export async function GET(req: Request) {
+  const { searchParams } = new URL(req.url);
+  const pageParam = searchParams.get("page");
+
+  if (pageParam) {
+    const page = Math.max(Number(pageParam || 1), 1);
+    const skip = (page - 1) * PAGE_SIZE;
+
+    const [data, total] = await Promise.all([
+      prisma.event.findMany({
+        orderBy: [
+          {
+            status: "asc",
+          },
+          {
+            tanggal: "asc",
+          },
+        ],
+        skip,
+        take: PAGE_SIZE,
+      }),
+      prisma.event.count(),
+    ]);
+
+    return NextResponse.json({
+      data,
+      total,
+      totalPages: Math.max(Math.ceil(total / PAGE_SIZE), 1),
+      page,
+    });
+  }
+
   const data = await prisma.event.findMany({
     orderBy: {
       tanggal: "asc", // event terdekat dulu

@@ -54,7 +54,7 @@ export default async function Page({
   }
 
   const data =
-    await prisma.jadwalAngsuran.findMany({
+    await prisma.jadwal_angsuran.findMany({
       where: {
         id_peminjaman:
           Number(

@@ -3,10 +3,12 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { UploadCloud } from "lucide-react";
+import { toast } from "react-toastify";
 
 const EditArtikel = () => {
   const { id } = useParams() as { id: string };
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
   const [file, setFile] = useState<File | null>(null);
 
@@ -30,20 +32,63 @@ const EditArtikel = () => {
     });
   };
 
-  const handleSubmit = async (e: any) => {
-    e.preventDefault();
+  const handleUpload = async () => {
+  if (!file) return form.gambar_konten;
 
-    await fetch(`/api/artikel/${id}`, {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  formData.append("folder", "artikel");
+
+  const res = await fetch("/api/upload/image", {
+    method: "POST",
+    body: formData,
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.error || "Gagal upload gambar");
+  }
+
+  return data.url;
+};
+
+const handleSubmit = async (e: any) => {
+  e.preventDefault();
+
+  if (loading) return;
+
+  try {
+    setLoading(true);
+
+    const imageUrl = await handleUpload();
+
+    const res = await fetch(`/api/artikel/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(form),
+      body: JSON.stringify({
+        ...form,
+        gambar_konten: imageUrl,
+      }),
     });
 
-    alert("Artikel berhasil diupdate!");
+    if (!res.ok) {
+      throw new Error("Gagal memperbarui artikel");
+    }
+
+    toast.success("Artikel berhasil diperbarui!");
+
     router.push("/admin/artikel");
-  };
+
+  } catch (err: any) {
+    toast.error(err.message);
+  } finally {
+    setLoading(false);
+  }
+};
 
   // preview prioritas: file baru → fallback ke gambar lama
   const previewImage = file
@@ -119,14 +164,6 @@ const EditArtikel = () => {
             </label>
 
             {/* INPUT URL (tetap dipertahankan karena logic kamu pakai ini) */}
-            <input
-              type="text"
-              name="gambar_konten"
-              value={form.gambar_konten}
-              onChange={handleChange}
-              className="mt-3 w-full border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 outline-none px-4 py-2.5 rounded-xl text-sm transition"
-              placeholder="URL gambar (opsional)"
-            />
           </div>
 
           {/* KONTEN */}
@@ -153,12 +190,15 @@ const EditArtikel = () => {
               Batal
             </button>
 
-            <button
-              type="submit"
-              className="px-6 py-2.5 text-sm rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white shadow transition"
-            >
-              Update Artikel
-            </button>
+<button
+  type="submit"
+  disabled={loading}
+  className="px-6 py-2.5 text-sm rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white shadow transition disabled:opacity-50"
+>
+  {loading
+    ? "Menyimpan..."
+    : "Update Artikel"}
+</button>
           </div>
         </form>
       </div>

@@ -4,6 +4,8 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { prisma } from "@/lib/prisma";
 import { createNotifikasi } from "@/lib/notifikasi";
 
+export const dynamic = "force-dynamic";
+
 type SessionUserWithId = {
   id?: string | number;
 };
@@ -33,7 +35,17 @@ export async function GET() {
       },
     });
 
-    return NextResponse.json({ success: true, data });
+    return NextResponse.json(
+  {
+    success: true,
+    data,
+  },
+  {
+    headers: {
+      "Cache-Control": "no-store",
+    },
+  }
+);
 
   } catch (error) {
     console.error(error);

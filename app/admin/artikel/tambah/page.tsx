@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { UploadCloud } from "lucide-react";
+import { toast } from "react-toastify";
 
 const TambahArtikel = () => {
   const router = useRouter();
@@ -23,14 +24,16 @@ const TambahArtikel = () => {
 
   const handleUpload = async () => {
     if (!file) {
-      alert("Upload gambar dulu!");
+      toast.error("Upload gambar dulu!");
       return null;
     }
 
     const formData = new FormData();
     formData.append("file", file);
 
-    const res = await fetch("/api/artikel/upload", {
+    formData.append("folder", "artikel");
+
+    const res = await fetch("/api/upload/image", {
       method: "POST",
       body: formData,
     });
@@ -45,7 +48,7 @@ const TambahArtikel = () => {
     try {
       const imageUrl = await handleUpload();
       if (!imageUrl) {
-        alert("Upload gagal");
+        toast.error("Upload gagal");
         return;
       }
 
@@ -61,15 +64,15 @@ const TambahArtikel = () => {
       });
 
       if (!res.ok) {
-        alert("Gagal simpan ke database!");
+        toast.error("Gagal simpan ke database!");
         return;
       }
 
-      alert("Artikel berhasil ditambahkan!");
+      toast.success("Artikel berhasil ditambahkan!");
       router.push("/admin/artikel");
     } catch (err) {
       console.error("ERROR:", err);
-      alert("Terjadi error!");
+      toast.error("Terjadi error!");
     }
   };
 

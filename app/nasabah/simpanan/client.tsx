@@ -42,6 +42,13 @@ type Tagihan = {
 };
 // ─────────────────────────────────────────────
 
+const statusClass = (status: string) =>
+  status === "BERHASIL"
+    ? "bg-green-100 text-green-700"
+    : status === "MENUNGGU"
+    ? "bg-yellow-100 text-yellow-700"
+    : "bg-red-100 text-red-700";
+
 export default function Pengajuan({
   dataWajib = [],
   dataPendidikan = [],
@@ -215,7 +222,7 @@ export default function Pengajuan({
         </div>
 
         {/* BANNER */}
-        <div className="relative overflow-hidden rounded-[32px] bg-[#1a3c2e] shadow-xl">
+        <div className="relative overflow-hidden rounded-2xl sm:rounded-[32px] bg-[#1a3c2e] shadow-xl">
 
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(255,255,255,0.10),_transparent_35%)]" />
 
@@ -229,16 +236,16 @@ flex
 flex-col
 lg:flex-row
 justify-between
-min-h-[220px]">
+min-h-[200px] sm:min-h-[220px]">
 
             {/* LEFT */}
             <div className="flex flex-1 flex-col justify-center px-5 py-6 sm:px-8 sm:py-10">
 
-              <p className="mb-3 text-xs font-semibold uppercase tracking-[3px] text-green-300">
+              <p className="mb-2 sm:mb-3 text-[10px] sm:text-xs font-semibold uppercase tracking-[2px] sm:tracking-[3px] text-green-300">
                 BUMDes · Layanan Simpanan
               </p>
 
-              <h2 className="max-w-lg text-3xl font-bold leading-tight text-white">
+              <h2 className="max-w-lg text-2xl sm:text-3xl font-bold leading-tight text-white">
                 Kelola{" "}
                 <span className="text-yellow-400">
                   Simpanan Anda
@@ -246,7 +253,7 @@ min-h-[220px]">
                 dengan lebih nyaman
               </h2>
 
-              <p className="mt-4 max-w-xl text-sm leading-relaxed text-gray-300">
+              <p className="mt-3 sm:mt-4 max-w-xl text-sm leading-relaxed text-gray-300">
                 Mulai rencanakan masa depan finansial Anda bersama BUMDes.
               </p>
 
@@ -374,7 +381,7 @@ shadow-sm"
                   onClick={() =>
                     setOpenModalBayar(true)
                   }
-                  className="flex items-center gap-2 rounded-xl bg-[#1a3c2e] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#244d3c]"
+                  className="flex items-center justify-center gap-2 rounded-xl bg-[#1a3c2e] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#244d3c]"
                 >
                   <Wallet className="h-4 w-4" />
                   Bayar Simpanan
@@ -385,7 +392,7 @@ shadow-sm"
             {selectedFilter === "Pendidikan" && (
               <button
                 onClick={() => setOpenForm(true)}
-                className="flex items-center gap-2 rounded-xl bg-[#1a3c2e] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#244d3c]"
+                className="flex items-center justify-center gap-2 rounded-xl bg-[#1a3c2e] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#244d3c]"
               >
                 <Plus className="h-4 w-4" />
                 Buat Tabungan
@@ -400,89 +407,138 @@ shadow-sm"
         {/* ================================================= */}
         {selectedFilter ===
           "Wajib" ? (
-          <div className="overflow-hidden rounded-3xl border border-gray-100 bg-white shadow-sm">
+          <>
+            {/* TABLE - DESKTOP */}
+            <div className="hidden md:block overflow-hidden rounded-3xl border border-gray-100 bg-white shadow-sm">
 
-            <div className="overflow-x-auto">
-              <table className="min-w-[700px] w-full text-sm">
+              <div className="overflow-x-auto">
+                <table className="min-w-[700px] w-full text-sm">
 
-                <thead>
-                  <tr className="bg-[#1a3c2e] text-white">
+                  <thead>
+                    <tr className="bg-[#1a3c2e] text-white">
 
-                    <th className="p-4">
-                      Tanggal
-                    </th>
+                      <th className="p-4">
+                        Tanggal
+                      </th>
 
-                    <th>Nominal</th>
+                      <th>Nominal</th>
 
-                    <th>Status</th>
+                      <th>Status</th>
 
-                    <th>Aksi</th>
+                      <th>Aksi</th>
 
-                  </tr>
-                </thead>
+                    </tr>
+                  </thead>
 
-                <tbody>
+                  <tbody>
 
-                  {paginatedData.map(
-                    (item: any) => (
-                      <tr
-                        key={
-                          item.id
-                        }
-                        className="border-t text-center hover:bg-gray-50"
-                      >
+                    {paginatedData.map(
+                      (item: any) => (
+                        <tr
+                          key={
+                            item.id
+                          }
+                          className="border-t text-center hover:bg-gray-50"
+                        >
 
-                        <td className="p-4">
-                          {formatTanggal(
-                            item.tanggal
-                          )}
-                        </td>
+                          <td className="p-4">
+                            {formatTanggal(
+                              item.tanggal
+                            )}
+                          </td>
 
 
-                        <td className="font-bold text-[#1a3c2e]">
-                          Rp{" "}
-                          {item.nominal?.toLocaleString(
-                            "id-ID"
-                          )}
-                        </td>
+                          <td className="font-bold text-[#1a3c2e]">
+                            Rp{" "}
+                            {item.nominal?.toLocaleString(
+                              "id-ID"
+                            )}
+                          </td>
 
-                        <td>
-                          <span
-                            className={`rounded-full px-3 py-1 text-xs font-medium ${item.status === "BERHASIL"
-                              ? "bg-green-100 text-green-700"
-                              : item.status === "MENUNGGU"
-                                ? "bg-yellow-100 text-yellow-700"
-                                : "bg-red-100 text-red-700"
-                              }`}
-                          >
-                            {item.status}
-                          </span>
-                        </td>
-
-                        <td className="text-center">
-                          {item.status === "BERHASIL" ? (
-                            <button
-                              className="rounded-xl border border-green-200 px-4 py-2 text-xs font-medium text-green-700 hover:bg-green-50"
+                          <td>
+                            <span
+                              className={`rounded-full px-3 py-1 text-xs font-medium ${statusClass(item.status)}`}
                             >
-                              Detail
-                            </button>
-                          ) : (
-                            <span className="text-gray-400">
-                              -
+                              {item.status}
                             </span>
-                          )}
-                        </td>
+                          </td>
 
-                      </tr>
-                    )
-                  )}
+                          <td className="text-center">
+                            {item.status === "BERHASIL" ? (
+  <button
+    onClick={() =>
+      router.push(
+        `/nasabah/simpanan/pembayaran/wajib/detail/${item.id}`
+      )
+    }
+    className="rounded-xl border border-green-200 px-4 py-2 text-xs font-medium text-green-700 hover:bg-green-50"
+  >
+    Detail
+  </button>
+                            ) : (
+                              <span className="text-gray-400">
+                                -
+                              </span>
+                            )}
+                          </td>
 
-                </tbody>
+                        </tr>
+                      )
+                    )}
 
-              </table>
+                  </tbody>
+
+                </table>
+              </div>
+
             </div>
 
-          </div>
+            {/* LIST - MOBILE (pengganti tabel) */}
+            <div className="md:hidden space-y-3">
+              {paginatedData.map((item: any) => (
+                <div
+                  key={item.id}
+                  className="rounded-2xl border border-gray-100 bg-white shadow-sm p-4"
+                >
+                  <div className="flex items-start justify-between gap-2 mb-3">
+                    <span className="text-xs text-gray-500">
+                      {formatTanggal(item.tanggal)}
+                    </span>
+
+                    <span
+                      className={`rounded-full px-2.5 py-1 text-xs font-medium shrink-0 ${statusClass(item.status)}`}
+                    >
+                      {item.status}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-sm text-gray-500">
+                      Nominal
+                    </span>
+                    <span className="font-bold text-[#1a3c2e] text-sm">
+                      Rp {item.nominal?.toLocaleString("id-ID")}
+                    </span>
+                  </div>
+
+                  {item.status === "BERHASIL" && (
+                    <div className="mt-3 pt-3 border-t border-gray-100">
+                      <button
+                        onClick={() =>
+                          router.push(
+                            `/nasabah/simpanan/pembayaran/wajib/detail/${item.id}`
+                          )
+                        }
+                        className="w-full rounded-xl border border-green-200 px-4 py-2 text-xs font-medium text-green-700 hover:bg-green-50"
+                      >
+                        Lihat Detail
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </>
         ) : (
           /* ================================================= */
           /* PENDIDIKAN */
@@ -491,17 +547,6 @@ shadow-sm"
 
             {paginatedData.map(
               (tabungan: any) => {
-
-                // const items = [
-                //   ...tabungan.items,
-                // ].sort(
-                //   (
-                //     a: any,
-                //     b: any
-                //   ) =>
-                //     a.bulan_ke -
-                //     b.bulan_ke
-                // );
 
                 const progress =
                   tabungan.target_dana > 0
@@ -542,45 +587,38 @@ sm:flex-row
 sm:items-center
 sm:justify-between
 bg-white
-p-5
+p-4
 sm:p-6
 transition-all
-hover:bg-gray-50"
+hover:bg-gray-50
+cursor-pointer"
                     >
 
                       <div className="flex flex-1 items-start gap-3 sm:gap-4">
 
                         {/* ICON */}
-                        <div className="flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-2xl bg-blue-50">
-                          <GraduationCap className="h-7 w-7 text-blue-700" />
+                        <div className="flex h-11 w-11 sm:h-14 sm:w-14 shrink-0 items-center justify-center rounded-2xl bg-blue-50">
+                          <GraduationCap className="h-6 w-6 sm:h-7 sm:w-7 text-blue-700" />
                         </div>
 
                         {/* CONTENT */}
-                        <div className="flex-1">
+                        <div className="flex-1 min-w-0">
 
-                          <div className="flex items-start justify-between">
+                          <div className="flex items-start justify-between gap-2">
 
-                            <div>
+                            <div className="min-w-0">
 
-                              <h3 className="text-lg font-bold uppercase text-gray-800">
+                              <h3 className="text-base sm:text-lg font-bold uppercase text-gray-800 break-words">
                                 {tabungan.tujuan}
                               </h3>
 
-                              <p className="mt-1 text-sm text-gray-500">
+                              <p className="mt-1 text-xs sm:text-sm text-gray-500">
                                 Dibuat :
                                 {" "}
                                 {formatTanggal(
                                   tabungan.created_at
                                 )}
                               </p>
-
-                              {/* <p className="mt-2 text-sm text-gray-700">
-        Tujuan :
-        {" "}
-        <span className="font-medium">
-          {tabungan.tujuan}
-        </span>
-      </p> */}
 
                             </div>
 
@@ -590,7 +628,7 @@ hover:bg-gray-50"
 
                       </div>
 
-                      <div className="ml-4">
+                      <div className="ml-4 shrink-0">
                         {isOpen ? (
                           <ChevronDownIcon className="h-5 w-5 text-gray-500" />
                         ) : (
@@ -600,11 +638,12 @@ hover:bg-gray-50"
 
                     </div>
 
-                    {/* TABLE */}
+                    {/* PEMBAYARAN */}
                     {isOpen && (
                       <div className="border-t border-gray-100">
 
-                        <div className="overflow-x-auto">
+                        {/* TABLE - DESKTOP */}
+                        <div className="hidden md:block overflow-x-auto">
                           <table className="min-w-[700px] w-full text-sm">
 
                             <thead>
@@ -659,14 +698,7 @@ hover:bg-gray-50"
 
                                       <td>
                                         <span
-                                          className={`rounded-full px-3 py-1 text-xs font-medium ${bayar.status ===
-                                            "BERHASIL"
-                                            ? "bg-green-100 text-green-700"
-                                            : bayar.status ===
-                                              "MENUNGGU"
-                                              ? "bg-yellow-100 text-yellow-700"
-                                              : "bg-red-100 text-red-700"
-                                            }`}
+                                          className={`rounded-full px-3 py-1 text-xs font-medium ${statusClass(bayar.status)}`}
                                         >
                                           {bayar.status}
                                         </span>
@@ -676,7 +708,7 @@ hover:bg-gray-50"
                                         <button
                                           onClick={() =>
                                             router.push(
-                                              `/nasabah/pembayaran/${bayar.id_pembayaran}`
+                                              `/nasabah/simpanan/pembayaran/pendidikan/detail/${bayar.id}`
                                             )
                                           }
                                           className="rounded-xl border border-gray-200 px-3 py-1 text-xs"
@@ -692,6 +724,54 @@ hover:bg-gray-50"
                             </tbody>
 
                           </table>
+                        </div>
+
+                        {/* LIST - MOBILE (pengganti tabel) */}
+                        <div className="md:hidden p-4 space-y-3">
+                          {tabungan.pembayaran.length === 0 ? (
+                            <p className="py-6 text-center text-sm text-gray-500">
+                              Belum ada riwayat pembayaran
+                            </p>
+                          ) : (
+                            tabungan.pembayaran.map((bayar: any) => (
+                              <div
+                                key={bayar.id}
+                                className="rounded-2xl border border-gray-100 bg-gray-50 p-4"
+                              >
+                                <div className="flex items-start justify-between gap-2 mb-3">
+                                  <span className="text-xs text-gray-500">
+                                    {formatTanggal(bayar.tanggal)}
+                                  </span>
+
+                                  <span
+                                    className={`rounded-full px-2.5 py-1 text-xs font-medium shrink-0 ${statusClass(bayar.status)}`}
+                                  >
+                                    {bayar.status}
+                                  </span>
+                                </div>
+
+                                <div className="flex items-center justify-between gap-2 mb-3">
+                                  <span className="text-sm text-gray-500">
+                                    Nominal
+                                  </span>
+                                  <span className="font-bold text-[#1a3c2e] text-sm">
+                                    Rp {Number(bayar.nominal).toLocaleString("id-ID")}
+                                  </span>
+                                </div>
+
+                                <button
+                                  onClick={() =>
+                                    router.push(
+                                      `/nasabah/simpanan/pembayaran/pendidikan/detail/${bayar.id}`
+                                    )
+                                  }
+                                  className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-xs font-medium"
+                                >
+                                  Lihat Detail
+                                </button>
+                              </div>
+                            ))
+                          )}
                         </div>
 
                       </div>

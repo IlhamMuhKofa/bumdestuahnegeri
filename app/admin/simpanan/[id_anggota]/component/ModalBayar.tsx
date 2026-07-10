@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { createPortal } from "react-dom";
+import { toast } from "react-toastify";
 import {
   X,
   CalendarDays,
@@ -102,14 +103,12 @@ export default function ModalBayar({
     if (
       selectedIds.length === 0
     ) {
-      alert(
-        "Pilih setoran terlebih dahulu"
-      );
+      toast.error("Pilih setoran terlebih dahulu");
       return;
     }
 
     if (!bukti) {
-      alert("Upload bukti pembayaran cash terlebih dahulu");
+      toast.error("Upload bukti pembayaran cash terlebih dahulu");
       return;
     }
 

@@ -62,7 +62,7 @@ function ScoreCard({
 
   return (
     <div
-      className={`group relative overflow-hidden rounded-3xl p-6 transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02] ${style.wrapper}`}
+      className={`group relative overflow-hidden rounded-2xl sm:rounded-3xl p-4 sm:p-5 md:p-6 transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02] ${style.wrapper}`}
     >
       {/* decorative glow */}
       <div
@@ -71,10 +71,10 @@ function ScoreCard({
 
       <div className="relative flex h-full flex-col justify-between">
         {/* TOP */}
-        <div className="flex items-start justify-between">
-          <div>
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
             <p
-              className={`text-sm font-medium ${
+              className={`text-xs sm:text-sm font-medium ${
                 variant === "primary"
                   ? "text-emerald-100"
                   : variant === "dark"
@@ -85,27 +85,27 @@ function ScoreCard({
               {title}
             </p>
 
-            <h3 className="mt-3 text-4xl font-bold tracking-tight md:text-5xl">
+            <h3 className="mt-2 sm:mt-3 text-2xl sm:text-3xl md:text-4xl xl:text-5xl font-bold tracking-tight break-words">
               {value}
             </h3>
           </div>
 
           <div
-            className={`flex h-12 w-12 items-center justify-center rounded-2xl ${style.iconBg}`}
+            className={`flex h-10 w-10 sm:h-11 sm:w-11 md:h-12 md:w-12 shrink-0 items-center justify-center rounded-xl sm:rounded-2xl ${style.iconBg}`}
           >
             <div className={style.icon}>{icon}</div>
           </div>
         </div>
 
         {/* BOTTOM */}
-        <div className="mt-6 flex items-center justify-between">
+        <div className="mt-4 sm:mt-5 md:mt-6 flex flex-wrap items-center justify-between gap-2">
           <span
-            className={`rounded-full px-3 py-1 text-xs font-medium ${style.badge}`}
+            className={`rounded-full px-2.5 py-1 sm:px-3 text-[11px] sm:text-xs font-medium ${style.badge}`}
           >
             {badge}
           </span>
 
-          <div className={`text-xs ${style.description}`}>
+          <div className={`text-[11px] sm:text-xs ${style.description}`}>
             {description}
           </div>
         </div>
@@ -126,14 +126,14 @@ export default function DashboardScoreCards({
   totalPengajuan,
 }: DashboardScoreCardsProps) {
   return (
-    <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
+    <div className="mt-4 sm:mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 xl:grid-cols-3">
       {/* SIMPANAN WAJIB (PRIMARY / HERO) */}
       <ScoreCard
         title="Saldo Simpanan Wajib"
         value={`Rp ${saldoWajib.toLocaleString("id-ID")}`}
         description="Update hari ini"
         badge="Simpanan Aktif"
-        icon={<Wallet className="h-6 w-6" />}
+        icon={<Wallet className="h-5 w-5 sm:h-6 sm:w-6" />}
         variant="primary"
       />
 
@@ -143,7 +143,7 @@ export default function DashboardScoreCards({
         value={`Rp ${saldoPendidikan.toLocaleString("id-ID")}`}
         description="Stabil"
         badge="Tabungan Pendidikan"
-        icon={<GraduationCap className="h-6 w-6" />}
+        icon={<GraduationCap className="h-5 w-5 sm:h-6 sm:w-6" />}
         variant="secondary"
       />
 
@@ -153,7 +153,7 @@ export default function DashboardScoreCards({
         value={totalPengajuan.toString()}
         description="Sedang diproses"
         badge="Pengajuan Aktif"
-        icon={<FileText className="h-6 w-6" />}
+        icon={<FileText className="h-5 w-5 sm:h-6 sm:w-6" />}
         variant="secondary"
       />
     </div>

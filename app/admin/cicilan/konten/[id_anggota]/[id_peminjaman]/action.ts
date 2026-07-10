@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { catatRiwayatTransaksi } from "@/lib/transaksi";
 import { createNotifikasi } from "@/lib/notifikasi";
-import { createWhatsAppReminderForJadwal } from "@/lib/whatsapp-reminder";
+import { syncPostgresSequence } from "@/lib/prisma-sequence";
 
 type CreateJadwalInput = {
   idPeminjaman: number;
@@ -28,74 +28,108 @@ export async function createJadwalAngsuran(
     catatan,
   } = payload;
 
+  if (!Number.isInteger(idPeminjaman) || idPeminjaman <= 0) {
+    throw new Error("ID peminjaman tidak valid");
+  }
+
+  if (!Number.isInteger(tenor) || tenor <= 0) {
+    throw new Error("Tenor tidak valid");
+  }
+
+  if (!Number.isInteger(cicilanPerBulan) || cicilanPerBulan <= 0) {
+    throw new Error("Nominal cicilan tidak valid");
+  }
+
   const startDate = new Date(tanggalMulai);
 
-let peminjaman;
+  if (Number.isNaN(startDate.getTime())) {
+    throw new Error("Tanggal mulai tidak valid");
+  }
 
-try {
-  peminjaman = await prisma.$transaction(async (tx) => {
+  try {
+    await prisma.$transaction(async (tx) => {
+      await tx.$queryRaw`SELECT "id_peminjaman" FROM "peminjaman" WHERE "id_peminjaman" = ${idPeminjaman} FOR UPDATE`;
 
-    const dataPeminjaman = await tx.peminjaman.findUnique({
-      where: {
-        id_peminjaman: idPeminjaman,
-      },
-      include: {
-        anggota: true,
-      },
-    });
+      const dataPeminjaman = await tx.peminjaman.findUnique({
+        where: {
+          id_peminjaman: idPeminjaman,
+        },
+        include: {
+          anggota: true,
+        },
+      });
 
-    if (!dataPeminjaman) {
-      throw new Error("Peminjaman tidak ditemukan");
-    }
+      if (!dataPeminjaman) {
+        throw new Error("Peminjaman tidak ditemukan");
+      }
 
-    for (let i = 0; i < tenor; i++) {
-      const dueDate = new Date(startDate);
-      dueDate.setMonth(dueDate.getMonth() + i);
+      const existingJadwal = await tx.jadwal_angsuran.count({
+        where: {
+          id_peminjaman: idPeminjaman,
+        },
+      });
 
-      console.log("Membuat jadwal ke:", i + 1);
+      if (existingJadwal > 0) {
+        throw new Error("Jadwal angsuran untuk pinjaman ini sudah dibuat");
+      }
 
-      const jadwal = await tx.jadwal_angsuran.create({
-        data: {
+      const jadwalData = Array.from({ length: tenor }, (_, i) => {
+        const dueDate = new Date(startDate);
+        dueDate.setMonth(dueDate.getMonth() + i);
+
+        return {
           id_peminjaman: idPeminjaman,
           cicilan_ke: i + 1,
           jumlah_cicilan: cicilanPerBulan,
           jumlah_tagihan: cicilanPerBulan,
           jatuh_tempo: dueDate,
           denda: denda || 0,
-          catatan,
+          catatan: catatan || null,
           status: "PENDING",
+        };
+      });
+
+      await syncPostgresSequence(tx, "jadwalAngsuran");
+
+      const created = await tx.jadwal_angsuran.createMany({
+        data: jadwalData,
+      });
+
+      if (created.count !== tenor) {
+        throw new Error("Jumlah jadwal yang dibuat tidak sesuai tenor");
+      }
+
+      const updatedPeminjaman = await tx.peminjaman.update({
+        where: {
+          id_peminjaman: idPeminjaman,
+        },
+        data: {
+          status: "ACTIVE",
         },
       });
 
-      console.log("Jadwal berhasil:", jadwal);
+      await tx.notifikasi.create({
+        data: {
+          id_anggota: updatedPeminjaman.id_anggota,
+          role_tujuan: "nasabah",
+          isi_notifikasi: "Jadwal angsuran pinjaman Anda telah dibuat",
+          jenis_notifikasi: "JADWAL_ANGSURAN",
+          url_tujuan: `/nasabah/cicilan/${idPeminjaman}`,
+        },
+      });
 
-      // sementara tetap dikomentari
-      // await createWhatsAppReminderForJadwal(tx, jadwal, dataPeminjaman.anggota);
-    }
+      return updatedPeminjaman;
 
-    return await tx.peminjaman.update({
-      where: {
-        id_peminjaman: idPeminjaman,
-      },
-      data: {
-        status: "ACTIVE",
-      },
+    }, {
+      isolationLevel: "Serializable",
+      maxWait: 10000,
+      timeout: 20000,
     });
-
-  });
-} catch (error) {
-  console.error("========== ERROR DETAIL ==========");
-  console.dir(error, { depth: null });
-  throw error;
-}
-  await createNotifikasi({
-    id_anggota: peminjaman.id_anggota,
-    role_tujuan: "nasabah",
-    isi: "Jadwal angsuran pinjaman Anda telah dibuat",
-    jenis: "JADWAL_ANGSURAN",
-    url: `/nasabah/cicilan/${idPeminjaman}`,
-  });
-
+  } catch (error) {
+    console.error("========== ERROR DETAIL ==========");
+    console.dir(error, { depth: null });
+    throw error;
+  }
   refreshPages();
 
   return {
@@ -287,15 +321,15 @@ export async function batalkanPembayaran(
         await tx.riwayat_transaksi.deleteMany({
           where: pembayaran
             ? {
-                ref_tabel: "pembayaran",
-                ref_id: pembayaran.id_pembayaran,
-              }
+              ref_tabel: "pembayaran",
+              ref_id: pembayaran.id_pembayaran,
+            }
             : {
-                id_anggota: jadwal.peminjaman.id_anggota,
-                keterangan: {
-                  contains: `cicilan ke-${jadwal.cicilan_ke}`,
-                },
+              id_anggota: jadwal.peminjaman.id_anggota,
+              keterangan: {
+                contains: `cicilan ke-${jadwal.cicilan_ke}`,
               },
+            },
         });
 
         return jadwal;
@@ -364,29 +398,53 @@ export async function createManualPayment(
           );
         }
 
+        await tx.$queryRaw`SELECT "id_jadwal" FROM "jadwal_angsuran" WHERE "id_jadwal" = ${idJadwal} FOR UPDATE`;
+
+        const existingPayment =
+          await tx.pembayaran.findFirst({
+            where: {
+              id_jadwal:
+                idJadwal,
+              status: {
+                in: [
+                  "MENUNGGU",
+                  "BERHASIL",
+                ],
+              },
+            },
+          });
+
+        if (existingPayment) {
+          throw new Error(
+            "Tagihan sudah dibayar atau sedang diverifikasi"
+          );
+        }
+
+        await syncPostgresSequence(tx, "pembayaran");
+
         // create pembayaran
         const pembayaran =
           await tx.pembayaran.create({
-          data: {
-            id_jadwal:
-              idJadwal,
+            data: {
+              id_jadwal:
+                idJadwal,
 
-            jumlah:
-              jadwal.jumlah_tagihan,
+              jumlah:
+                jadwal.jumlah_tagihan,
 
-            metode_bayar:
-              "CASH",
+              metode_bayar:
+                "CASH",
 
-            status:
-              "BERHASIL",
+              status:
+                "BERHASIL",
 
-            catatan:
-              catatan || null,
+              catatan:
+                catatan || null,
 
-            bukti_bayar:
-              buktiBayar,
-          },
-        });
+              bukti_bayar:
+                buktiBayar,
+            },
+          });
 
         // update jadwal
         await tx.jadwal_angsuran.update({
@@ -413,6 +471,12 @@ export async function createManualPayment(
         });
 
         return jadwal;
+      }
+      ,
+      {
+        isolationLevel: "Serializable",
+        maxWait: 10000,
+        timeout: 20000,
       }
     );
 

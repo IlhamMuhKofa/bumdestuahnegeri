@@ -96,10 +96,10 @@ export default function FormSetoran({
   );
 
   return (
-    <div className="relative overflow-hidden rounded-[30px]">
+    <div className="relative overflow-hidden rounded-2xl sm:rounded-[30px] max-h-[90vh] overflow-y-auto">
 
       {/* HEADER */}
-      <div className="relative overflow-hidden bg-[#1a3c2e] px-7 py-7">
+      <div className="relative overflow-hidden bg-[#1a3c2e] px-5 sm:px-7 py-5 sm:py-7">
 
         <div className="absolute -top-10 -right-10 h-48 w-48 rounded-full bg-white/5" />
 
@@ -107,25 +107,25 @@ export default function FormSetoran({
 
         <div className="relative z-10">
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3 sm:gap-4">
 
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/10 backdrop-blur-sm">
-              <GraduationCap className="h-7 w-7 text-yellow-400" />
+            <div className="flex h-11 w-11 sm:h-14 sm:w-14 flex-shrink-0 items-center justify-center rounded-2xl bg-white/10 backdrop-blur-sm">
+              <GraduationCap className="h-5 w-5 sm:h-7 sm:w-7 text-yellow-400" />
             </div>
 
-            <div>
-              <p className="mb-1 text-xs font-semibold uppercase tracking-[3px] text-green-300">
+            <div className="min-w-0">
+              <p className="mb-1 text-[10px] sm:text-xs font-semibold uppercase tracking-[2px] sm:tracking-[3px] text-green-300">
                 BUMDes · Simpanan Pendidikan
               </p>
 
-              <h2 className="text-2xl font-bold text-white">
+              <h2 className="text-lg sm:text-2xl font-bold text-white">
                 Buat Target Tabungan
               </h2>
             </div>
 
           </div>
 
-          <p className="mt-4 max-w-2xl text-sm leading-relaxed text-gray-300">
+          <p className="mt-3 sm:mt-4 max-w-2xl text-xs sm:text-sm leading-relaxed text-gray-300">
             Rencanakan tabungan pendidikan
             dengan lebih terarah untuk membantu
             kebutuhan masa depan keluarga Anda.
@@ -135,21 +135,21 @@ export default function FormSetoran({
       </div>
 
       {/* CONTENT */}
-      <div className="space-y-6 bg-white p-7">
+      <div className="space-y-5 sm:space-y-6 bg-white p-5 sm:p-7">
 
         {/* INFO */}
-        <div className="flex items-start gap-4 rounded-3xl border border-emerald-100 bg-gradient-to-r from-emerald-50 to-green-50 p-5">
+        <div className="flex items-start gap-3 sm:gap-4 rounded-2xl sm:rounded-3xl border border-emerald-100 bg-gradient-to-r from-emerald-50 to-green-50 p-4 sm:p-5">
 
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#1a3c2e]">
-            <Sparkles className="h-5 w-5 text-yellow-400" />
+          <div className="flex h-10 w-10 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-2xl bg-[#1a3c2e]">
+            <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 text-yellow-400" />
           </div>
 
-          <div>
+          <div className="min-w-0">
             <h3 className="mb-1 text-sm font-bold text-gray-800">
               Tabungan Fleksibel
             </h3>
 
-            <p className="text-sm leading-relaxed text-gray-600">
+            <p className="text-xs sm:text-sm leading-relaxed text-gray-600">
               Anda dapat melakukan setoran
               kapan saja sesuai kemampuan.
               Sistem akan membantu mencatat
@@ -164,7 +164,7 @@ export default function FormSetoran({
         <div className="space-y-2">
 
           <label className="flex items-center gap-2 text-sm font-semibold text-gray-700">
-            <Target className="h-4 w-4" />
+            <Target className="h-4 w-4 flex-shrink-0" />
             Target Dana
           </label>
 
@@ -213,25 +213,25 @@ export default function FormSetoran({
         </div>
 
 {/* REKOMENDASI SETORAN */}
-<div className="rounded-2xl border border-slate-200 bg-yellow-50 p-5 shadow-sm">
+<div className="rounded-2xl border border-slate-200 bg-yellow-50 p-4 sm:p-5 shadow-sm">
 
   <div className="flex items-center gap-2">
-    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white">
+    <div className="flex h-8 w-8 sm:h-9 sm:w-9 flex-shrink-0 items-center justify-center rounded-xl bg-white">
       <Wallet className="h-4 w-4 text-black" />
     </div>
 
-    <div>
-      <p className="text-xs font-medium uppercase tracking-wider text-slate-700">
+    <div className="min-w-0">
+      <p className="text-[11px] sm:text-xs font-medium uppercase tracking-wider text-slate-700">
         Rekomendasi Setoran
       </p>
-      <p className="text-[11px] text-slate-400">
+      <p className="text-[10px] sm:text-[11px] text-slate-400">
         Tidak wajib, hanya sebagai panduan
       </p>
     </div>
   </div>
 
-  <div className="mt-4">
-    <p className="text-3xl font-bold tracking-tight text-slate-900">
+  <div className="mt-3 sm:mt-4">
+    <p className="break-words text-2xl sm:text-3xl font-bold tracking-tight text-slate-900">
       Rp {formatRupiah(rekomendasiSetoran)}
     </p>
   </div>
@@ -242,11 +242,11 @@ export default function FormSetoran({
         <div className="space-y-2">
 
           <label className="flex items-center gap-2 text-sm font-semibold text-gray-700">
-            <CalendarDays className="h-4 w-4" />
+            <CalendarDays className="h-4 w-4 flex-shrink-0" />
             Rencana Durasi Menabung
           </label>
 
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <div className="grid grid-cols-2 gap-2.5 sm:gap-3 sm:grid-cols-4">
 
             {[
               "6",
@@ -260,7 +260,7 @@ export default function FormSetoran({
                 onClick={() =>
                   setJangkaWaktu(item)
                 }
-                className={`rounded-2xl border px-4 py-4 text-sm font-semibold transition-all ${
+                className={`rounded-2xl border px-3 py-3 sm:px-4 sm:py-4 text-xs sm:text-sm font-semibold transition-all ${
                   jangkaWaktu === item
                     ? "border-[#1a3c2e] bg-[#1a3c2e] text-white shadow-lg"
                     : "border-gray-200 bg-white text-gray-700 hover:border-[#1a3c2e]"
@@ -296,11 +296,11 @@ export default function FormSetoran({
         </div>
 
         {/* BUTTON */}
-        <div className="flex items-center gap-3 pt-2">
+        <div className="flex items-center gap-2.5 sm:gap-3 pt-2">
 
           <button
             onClick={onClose}
-            className="flex-1 rounded-2xl border border-gray-200 py-3 font-medium text-gray-700 transition-all hover:bg-gray-50"
+            className="flex-1 rounded-2xl border border-gray-200 py-2.5 sm:py-3 text-sm sm:text-base font-medium text-gray-700 transition-all hover:bg-gray-50"
           >
             Batal
           </button>
@@ -308,17 +308,17 @@ export default function FormSetoran({
           <button
             onClick={handleSubmit}
             disabled={loading}
-            className="flex flex-1 items-center justify-center gap-2 rounded-2xl bg-[#1a3c2e] py-3 font-semibold text-white transition-all hover:bg-[#244d3c] disabled:opacity-70"
+            className="flex flex-1 items-center justify-center gap-2 rounded-2xl bg-[#1a3c2e] py-2.5 sm:py-3 text-sm sm:text-base font-semibold text-white transition-all hover:bg-[#244d3c] disabled:opacity-70"
           >
             {loading ? (
               <>
-                <Loader2 className="h-4 w-4 animate-spin" />
-                Menyimpan...
+                <Loader2 className="h-4 w-4 flex-shrink-0 animate-spin" />
+                <span className="whitespace-nowrap">Menyimpan...</span>
               </>
             ) : (
               <>
-                <GraduationCap className="h-4 w-4" />
-                Buat Tabungan
+                <GraduationCap className="h-4 w-4 flex-shrink-0" />
+                <span className="whitespace-nowrap">Buat Tabungan</span>
               </>
             )}
           </button>

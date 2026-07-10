@@ -1,39 +1,77 @@
 import { prisma } from "@/lib/prisma";
 
 import Client from "./client";
+import Pagination from "../component/Pagination";
 
-export default async function Page() {
+const PAGE_SIZE = 7;
 
-  /* ======================================================
-     GET DATA ANGGOTA
-  ====================================================== */
-const anggota = await prisma.anggota.findMany({
-  where: {
+type Props = {
+  searchParams?: Promise<{
+    page?: string;
+    q?: string;
+  }>;
+};
+
+export default async function Page({
+  searchParams,
+}: Props) {
+  const params = await searchParams;
+  const currentPage = Math.max(Number(params?.page || 1), 1);
+  const query = params?.q?.trim() || "";
+  const skip = (currentPage - 1) * PAGE_SIZE;
+  const where = {
     role: "nasabah",
 
     status: {
       not: "disabled",
     },
 
-    // peminjaman: {
-    //   some: {
-    //     status: "APPROVED",
-    //   },
-    // },
-  },
+    ...(query
+      ? {
+          OR: [
+            {
+              nama: {
+                contains: query,
+                mode: "insensitive" as const,
+              },
+            },
+            {
+              email: {
+                contains: query,
+                mode: "insensitive" as const,
+              },
+            },
+          ],
+        }
+      : {}),
+  };
 
-  include: {
-    simpanans: {
-      include: {
-        pembayaranSimpanan: true,
+  /* ======================================================
+     GET DATA ANGGOTA
+  ====================================================== */
+const [anggota, totalData] = await Promise.all([
+  prisma.anggota.findMany({
+    where,
+
+    include: {
+      simpanans: {
+        include: {
+          pembayaranSimpanan: true,
+        },
       },
     },
-  },
 
-  orderBy: {
-    id: "desc",
-  },
-});
+    orderBy: {
+      id: "desc",
+    },
+
+    skip,
+    take: PAGE_SIZE,
+  }),
+  prisma.anggota.count({
+    where,
+  }),
+]);
 
   /* ======================================================
      FORMAT DATA
@@ -138,8 +176,25 @@ const pending =
     });
 
   return (
-    <Client
-      data={formattedData}
-    />
+    <>
+      <Client
+        data={formattedData}
+        search={query}
+      />
+      <div className="bg-gray-50 px-6 pb-6">
+        <div className="mx-auto max-w-7xl">
+          <Pagination
+            currentPage={currentPage}
+            totalPages={Math.max(Math.ceil(totalData / PAGE_SIZE), 1)}
+            basePath="/admin/simpanan"
+            totalItems={totalData}
+            pageSize={PAGE_SIZE}
+            searchParams={{
+              q: query,
+            }}
+          />
+        </div>
+      </div>
+    </>
   );
 }

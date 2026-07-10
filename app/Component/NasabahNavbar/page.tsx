@@ -194,7 +194,7 @@ export default function Navbar() {
 
       <div>
         <p className="font-semibold text-white">
-          Halo,
+          Halo {data?.user?.name}
         </p>
 
         <p className="text-sm text-gray-300">

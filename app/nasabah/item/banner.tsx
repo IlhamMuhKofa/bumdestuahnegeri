@@ -101,10 +101,10 @@ function AdaptiveBanner({ user }: { user: AnggotaLike }) {
 
   return (
     /* h-full makes the banner stretch to match the calendar's height */
-    <div className="relative overflow-hidden rounded-3xl border border-emerald-100 bg-gradient-to-br from-white via-emerald-50/40 to-emerald-100/40 shadow-sm">
+    <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl border border-emerald-100 bg-gradient-to-br from-white via-emerald-50/40 to-emerald-100/40 shadow-sm">
       {/* Decorative blobs */}
-<div className="pointer-events-none absolute -top-24 -right-16 h-64 w-64 rounded-full bg-emerald-200/40 blur-3xl" />
-<div className="pointer-events-none absolute -bottom-16 -left-16 h-52 w-52 rounded-full bg-green-100/40 blur-3xl" />
+      <div className="pointer-events-none absolute -top-24 -right-16 h-64 w-64 rounded-full bg-emerald-200/40 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-16 -left-16 h-52 w-52 rounded-full bg-green-100/40 blur-3xl" />
 
       {/* Subtle grid texture */}
       <div
@@ -120,7 +120,7 @@ function AdaptiveBanner({ user }: { user: AnggotaLike }) {
         Use flex-col + justify-between so content always fills the card top-to-bottom.
         min-h is kept as fallback but h-full (from parent) drives the real height.
       */}
-      <div className="relative flex flex-col gap-6 p-7 md:p-8">
+      <div className="relative flex flex-col gap-4 sm:gap-6 p-4 sm:p-6 md:p-8">
         {/* Badge */}
         <div>
           <div className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
@@ -139,9 +139,9 @@ function AdaptiveBanner({ user }: { user: AnggotaLike }) {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -12 }}
                 transition={{ duration: 0.3, ease: "easeOut" }}
-                className="mt-4"
+                className="mt-3 sm:mt-4"
               >
-                <h2 className="text-2xl font-extrabold leading-snug text-slate-900 leading-tight md:text-3xl">
+                <h2 className="text-xl sm:text-2xl md:text-3xl font-extrabold leading-snug text-slate-900">
                   Lengkapi Profil Anda 👋
                 </h2>
 
@@ -151,12 +151,12 @@ function AdaptiveBanner({ user }: { user: AnggotaLike }) {
                 </p>
 
                 {/* Progress card */}
-                <div className="mt-5 rounded-2xl border border-slate-100 bg-white/80 backdrop-blur-md shadow-sm p-5">
-                  <div className="flex items-center justify-between text-sm">
+                <div className="mt-4 sm:mt-5 rounded-2xl border border-slate-100 bg-white/80 backdrop-blur-md shadow-sm p-4 sm:p-5">
+                  <div className="flex items-center justify-between gap-2 text-sm">
                     <span className="font-medium text-slate-700">
                       Kelengkapan Profil
                     </span>
-                    <span className="rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-bold text-emerald-700">
+                    <span className="rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-bold text-emerald-700 whitespace-nowrap">
                       {progress.pct}%
                     </span>
                   </div>
@@ -173,7 +173,7 @@ function AdaptiveBanner({ user }: { user: AnggotaLike }) {
                   {progress.missing.length > 0 && (
                     <div className="mt-4">
                       <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-amber-600">
-                        <CircleAlert className="h-3.5 w-3.5" />
+                        <CircleAlert className="h-3.5 w-3.5 flex-shrink-0" />
                         Perlu dilengkapi
                       </div>
                       <div className="mt-2 flex flex-wrap gap-2">
@@ -207,9 +207,9 @@ function AdaptiveBanner({ user }: { user: AnggotaLike }) {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -12 }}
                 transition={{ duration: 0.3, ease: "easeOut" }}
-                className="mt-4"
+                className="mt-3 sm:mt-4"
               >
-                <h2 className="text-2xl font-extrabold leading-snug text-slate-900 md:text-3xl">
+                <h2 className="text-xl sm:text-2xl md:text-3xl font-extrabold leading-snug text-slate-900">
                   Profil Berhasil Dilengkapi 🎉
                 </h2>
 
@@ -220,8 +220,8 @@ function AdaptiveBanner({ user }: { user: AnggotaLike }) {
                 </p>
 
                 {/* Status pill */}
-                <div className="mt-5 flex flex-wrap items-center gap-3 rounded-2xl border border-emerald-200 bg-gradient-to-br from-emerald-50 to-teal-50 p-5">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-r from-emerald-600 to-green-500 shadow-md shadow-emerald-500/20 shadow-sm">
+                <div className="mt-4 sm:mt-5 flex flex-wrap items-center gap-3 rounded-2xl border border-emerald-200 bg-gradient-to-br from-emerald-50 to-teal-50 p-4 sm:p-5">
+                  <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-r from-emerald-600 to-green-500 shadow-md shadow-emerald-500/20">
                     <ShieldCheck className="h-5 w-5 text-white" />
                   </div>
                   <div>
@@ -235,19 +235,19 @@ function AdaptiveBanner({ user }: { user: AnggotaLike }) {
                 </div>
 
                 {/* Stats row */}
-                <div className="mt-4 grid grid-cols-2 gap-3">
+                <div className="mt-4 grid grid-cols-2 gap-2 sm:gap-3">
                   {[
                     { icon: CheckCircle2, label: "Profil", val: "100% Lengkap" },
                     { icon: TrendingUp, label: "Status", val: "Aktif" },
                   ].map(({ icon: Icon, label, val }) => (
                     <div
                       key={label}
-                      className="flex items-center gap-3 rounded-xl border border-slate-100 bg-white px-4 py-3 shadow-sm"
+                      className="flex items-center gap-2 sm:gap-3 rounded-xl border border-slate-100 bg-white px-3 py-2.5 sm:px-4 sm:py-3 shadow-sm"
                     >
-                      <Icon className="h-4 w-4 text-emerald-600" />
-                      <div>
+                      <Icon className="h-4 w-4 flex-shrink-0 text-emerald-600" />
+                      <div className="min-w-0">
                         <div className="text-xs text-slate-400">{label}</div>
-                        <div className="text-sm font-semibold text-slate-800">
+                        <div className="text-sm font-semibold text-slate-800 truncate">
                           {val}
                         </div>
                       </div>
@@ -267,25 +267,25 @@ function AdaptiveBanner({ user }: { user: AnggotaLike }) {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -12 }}
                 transition={{ duration: 0.3, ease: "easeOut" }}
-                className="mt-4"
+                className="mt-3 sm:mt-4"
               >
-                <h2 className="text-2xl font-extrabold leading-snug text-slate-900 md:text-3xl">
+                <h2 className="text-xl sm:text-2xl md:text-3xl font-extrabold leading-snug text-slate-900">
                   {greeting()}
                   {user.nama ? `, ${user.nama}` : ""} 👋
                 </h2>
 
-                <p className="mt-2 max-full text-sm leading-relaxed text-slate-500 md:text-base">
+                <p className="mt-2 line-clamp-3 max-w-full text-sm text-justify leading-relaxed text-slate-500 sm:line-clamp-none md:text-base">
                   Selamat datang kembali di layanan simpan pinjam BUMDes.
                   Kelola simpanan, pengajuan pinjaman, dan aktivitas keuangan
                   Anda dengan lebih mudah dan aman.
                 </p>
 
                 {/* Info card */}
-                <div className="mt-5 flex items-start gap-4 rounded-2xl border border-emerald-100 bg-gradient-to-br from-emerald-50/80 to-teal-50/50 p-5">
+                <div className="mt-3 sm:mt-5 flex items-start gap-3 sm:gap-4 rounded-2xl border border-emerald-100 bg-gradient-to-br from-emerald-50/80 to-teal-50/50 p-3.5 sm:p-5">
                   <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-600/10">
                     <Leaf className="h-5 w-5 text-emerald-700" />
                   </div>
-                  <p className="text-sm leading-relaxed text-slate-700">
+                  <p className="line-clamp-3 text-sm text-justify leading-relaxed text-slate-700 sm:line-clamp-none">
                     BUMDes hadir untuk mendukung kebutuhan dan perkembangan
                     masyarakat desa menuju ekonomi yang lebih mandiri dan
                     sejahtera.
@@ -319,13 +319,13 @@ function AdaptiveBanner({ user }: { user: AnggotaLike }) {
 
         {/* CTA — pinned to bottom for incomplete state */}
         {bannerState === "incomplete" && (
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <p className="text-xs text-slate-400">
               Selesaikan profil untuk membuka semua fitur
             </p>
             <Link
               href="/nasabah/profile"
-              className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-emerald-700 hover:shadow-md active:translate-y-0"
+              className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-emerald-700 hover:shadow-md active:translate-y-0"
             >
               Lengkapi Profil
               <ArrowRight className="h-4 w-4" />
@@ -381,10 +381,10 @@ function FriendlyCalendar() {
   const dayNames = ["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"];
 
   return (
-    <div className="h-full rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-      <div className="flex items-center justify-between">
+    <div className="h-full rounded-2xl sm:rounded-3xl border border-slate-200 bg-white p-4 sm:p-5 shadow-sm">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div className="flex items-center gap-2">
-          <CalendarDays className="h-5 w-5 text-emerald-700" />
+          <CalendarDays className="h-5 w-5 flex-shrink-0 text-emerald-700" />
           <div className="text-base font-bold text-slate-900">{monthLabel}</div>
         </div>
 
@@ -397,7 +397,7 @@ function FriendlyCalendar() {
           </button>
           <button
             onClick={() => setCursor(new Date())}
-            className="rounded-lg border px-2 py-1 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+            className="rounded-lg border px-2 py-1 text-xs sm:text-sm font-semibold text-slate-700 hover:bg-slate-50"
           >
             Hari ini
           </button>
@@ -410,20 +410,20 @@ function FriendlyCalendar() {
         </div>
       </div>
 
-      <div className="mt-4 grid grid-cols-7 gap-2 text-center text-xs font-semibold text-slate-500">
+      <div className="mt-4 grid grid-cols-7 gap-1 sm:gap-2 text-center text-xs font-semibold text-slate-500">
         {dayNames.map((d) => (
           <div key={d}>{d}</div>
         ))}
       </div>
 
-      <div className="mt-2 grid grid-cols-7 gap-2">
+      <div className="mt-2 grid grid-cols-7 gap-1 sm:gap-2">
         {cells.map(({ date, inMonth }, idx) => {
           const isToday = isSameDay(date, today);
           return (
             <button
               key={idx}
               className={[
-                "h-10 rounded-xl text-sm font-semibold transition",
+                "h-9 sm:h-10 rounded-xl text-xs sm:text-sm font-semibold transition",
                 inMonth ? "text-slate-900" : "text-slate-400",
                 isToday
                   ? "bg-emerald-700 text-white hover:bg-emerald-800"
@@ -442,7 +442,7 @@ function FriendlyCalendar() {
 // ---- Layout ----
 export default function DashboardHeader({ user }: { user: AnggotaLike }) {
   return (
-        <div className="w-full">
+    <div className="w-full">
       <AdaptiveBanner user={user} />
     </div>
   );

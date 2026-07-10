@@ -13,10 +13,12 @@ import {
 
 type Props = {
   data: any[];
+  search?: string;
 };
 
 export default function Client({
   data,
+  search = "",
 }: Props) {
   return (
     <div className="min-h-screen bg-gray-50 p-6">
@@ -41,17 +43,19 @@ export default function Client({
           </div>
 
           {/* SEARCH */}
-          <div className="relative w-full lg:w-96">
+          <form action="/admin/simpanan" className="relative w-full lg:w-96">
 
             <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
 
             <input
               type="text"
+              name="q"
+              defaultValue={search}
               placeholder="Cari nama nasabah..."
               className="w-full rounded-2xl border border-gray-200 bg-white py-3 pl-11 pr-4 text-sm outline-none transition-all focus:border-[#1a3c2e]"
             />
 
-          </div>
+          </form>
 
         </div>
 

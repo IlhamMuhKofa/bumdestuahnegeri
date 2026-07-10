@@ -2,12 +2,12 @@
 import React from "react";
 
 const services = [
-  { title: "Simpan Pinjam", img: "/icon/sp.jpg", alt: "Simpan Pinjam" },
-  { title: "Peternakan", img: "/icon/petani.jpg", alt: "Peternakan" },
-  { title: "Jasa Angkutan", img: "/icon/angkutan.jpg", alt: "Jasa Angkutan" },
-  { title: "Pariwisata", img: "/icon/tour.jpg", alt: "Pariwisata" },
-  { title: "Usaha Pasar", img: "/icon/pasar.png", alt: "Usaha Pasar" },
-  { title: "Penyedia Tenaga Kerja", img: "/icon/pyk.png", alt: "Penyedia Tenaga Kerja" },
+  { title: "Simpan Pinjam", img: "/icon/sp.jpg", alt: "Simpan Pinjam", scale: "scale-[1.25]" },
+  { title: "Peternakan", img: "/icon/petani.jpg", alt: "Peternakan", scale: "scale-[1.25]" },
+  { title: "Jasa Angkutan", img: "/icon/angkutan.jpg", alt: "Jasa Angkutan", scale: "scale-[1.25]" },
+  { title: "Pariwisata", img: "/icon/tour.jpg", alt: "Pariwisata", scale: "scale-[1.25]" },
+  { title: "Usaha Pasar", img: "/icon/pas32.jpg", alt: "Usaha Pasar", scale: "scale-[1.35]" },
+  { title: "Penyedia Tenaga Kerja", img: "/icon/pyk.png", alt: "Penyedia Tenaga Kerja", scale: "scale-[1.25]" },
 ];
 
 const Layanan: React.FC = () => {
@@ -51,19 +51,20 @@ const Layanan: React.FC = () => {
                 active:scale-[0.97]
               "
             >
-              {/* ICON (NO BG) */}
-              <img
-                src={service.img}
-                alt={service.alt}
-                className="
-                  mb-4
-                  object-contain
-                  
-                  h-14 w-14          /* mobile */
-                  md:h-16 md:w-16    /* tablet */
-                  lg:h-20 lg:w-20    /* desktop */
-                "
-              />
+{/* ICON (NO BG) */}
+<div className="
+  mb-4
+  h-14 w-14
+  md:h-16 md:w-16
+  lg:h-20 lg:w-20
+  flex items-center justify-center
+">
+<img
+  src={service.img}
+  alt={service.alt}
+  className={`max-h-full max-w-full object-contain ${service.scale}`}
+/>
+</div>
 
               {/* TITLE */}
               <span

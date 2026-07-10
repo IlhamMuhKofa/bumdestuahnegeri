@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/prisma";
 import { createNotifikasi } from "@/lib/notifikasi";
 import { revalidatePath } from "next/cache";
+import { syncPostgresSequence } from "@/lib/prisma-sequence";
 
 type TransferPayload = {
   idJadwal: number;
@@ -52,40 +53,47 @@ export async function submitTransferPayment(
     );
   }
 
-  // create pembayaran
-  await prisma.pembayaran.create({
-    data: {
-      id_jadwal:
-        jadwal.id_jadwal,
+  await prisma.$transaction(async (tx) => {
+    await tx.$queryRaw`SELECT "id_jadwal" FROM "jadwal_angsuran" WHERE "id_jadwal" = ${payload.idJadwal} FOR UPDATE`;
+    await syncPostgresSequence(tx, "pembayaran");
 
-      jumlah:
-        jadwal.jumlah_tagihan,
+    await tx.pembayaran.create({
+      data: {
+        id_jadwal:
+          jadwal.id_jadwal,
 
-      metode_bayar:
-        "TRANSFER",
+        jumlah:
+          jadwal.jumlah_tagihan,
 
-      status:
-        "MENUNGGU",
+        metode_bayar:
+          "TRANSFER",
 
-      bukti_bayar:
-        payload.buktiBayar,
+        status:
+          "MENUNGGU",
 
-      catatan:
-        payload.catatan,
-    },
-  });
+        bukti_bayar:
+          payload.buktiBayar,
 
-  // update status jadwal
-  await prisma.jadwal_angsuran.update({
-    where: {
-      id_jadwal:
-        payload.idJadwal,
-    },
+        catatan:
+          payload.catatan,
+      },
+    });
 
-    data: {
-      status:
-        "MENUNGGU",
-    },
+    await tx.jadwal_angsuran.update({
+      where: {
+        id_jadwal:
+          payload.idJadwal,
+      },
+
+      data: {
+        status:
+          "MENUNGGU",
+      },
+    });
+  }, {
+    isolationLevel: "Serializable",
+    maxWait: 10000,
+    timeout: 20000,
   });
 
   await createNotifikasi({
@@ -144,37 +152,44 @@ export async function submitCashPayment(
     );
   }
 
-  // create pembayaran cash
-  await prisma.pembayaran.create({
-    data: {
-      id_jadwal:
-        jadwal.id_jadwal,
+  await prisma.$transaction(async (tx) => {
+    await tx.$queryRaw`SELECT "id_jadwal" FROM "jadwal_angsuran" WHERE "id_jadwal" = ${idJadwal} FOR UPDATE`;
+    await syncPostgresSequence(tx, "pembayaran");
 
-      jumlah:
-        jadwal.jumlah_tagihan,
+    await tx.pembayaran.create({
+      data: {
+        id_jadwal:
+          jadwal.id_jadwal,
 
-      metode_bayar:
-        "CASH",
+        jumlah:
+          jadwal.jumlah_tagihan,
 
-      status:
-        "MENUNGGU",
+        metode_bayar:
+          "CASH",
 
-      catatan:
-        "Pembayaran di kantor",
-    },
-  });
+        status:
+          "MENUNGGU",
 
-  // update status jadwal
-  await prisma.jadwal_angsuran.update({
-    where: {
-      id_jadwal:
-        idJadwal,
-    },
+        catatan:
+          "Pembayaran di kantor",
+      },
+    });
 
-    data: {
-      status:
-        "MENUNGGU",
-    },
+    await tx.jadwal_angsuran.update({
+      where: {
+        id_jadwal:
+          idJadwal,
+      },
+
+      data: {
+        status:
+          "MENUNGGU",
+      },
+    });
+  }, {
+    isolationLevel: "Serializable",
+    maxWait: 10000,
+    timeout: 20000,
   });
 
   revalidatePath(

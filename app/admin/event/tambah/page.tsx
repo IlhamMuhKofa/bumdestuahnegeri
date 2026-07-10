@@ -3,6 +3,7 @@
 import React, { useEffect, useState, ChangeEvent, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { UploadCloud, CalendarDays, MapPin } from "lucide-react";
+import { toast } from "react-toastify";
 
 const TambahEvent = () => {
   const router = useRouter();
@@ -47,20 +48,22 @@ const TambahEvent = () => {
 
   const handleUpload = async () => {
     if (!file) {
-      alert("Upload gambar dulu!");
+      toast.error("Upload gambar dulu!");
       return null;
     }
 
     const formData = new FormData();
     formData.append("file", file);
 
-    const res = await fetch("/api/event/upload", {
+    formData.append("folder", "event");
+
+    const res = await fetch("/api/upload/image", {
       method: "POST",
       body: formData,
     });
 
     if (!res.ok) {
-      alert("Upload gambar gagal!");
+      toast.error("Upload gambar gagal!");
       return null;
     }
 
@@ -92,16 +95,16 @@ const TambahEvent = () => {
       });
 
       if (!res.ok) {
-        alert("Gagal menambahkan event");
+        toast.error("Gagal menambahkan event");
         setLoading(false);
         return;
       }
 
-      alert("Event berhasil ditambahkan!");
+      toast.success("Event berhasil ditambahkan!");
       router.push("/admin/event");
     } catch (error) {
       console.error(error);
-      alert("Terjadi kesalahan");
+      toast.error("Terjadi kesalahan");
     } finally {
       setLoading(false);
     }

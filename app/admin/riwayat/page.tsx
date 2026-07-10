@@ -5,8 +5,22 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { prisma } from "@/lib/prisma";
 
 import ClientPage from "./client";
+import Pagination from "../component/Pagination";
 
-export default async function Page() {
+const PAGE_SIZE = 10;
+
+type Props = {
+  searchParams?: Promise<{
+    page?: string;
+  }>;
+};
+
+export default async function Page({
+  searchParams,
+}: Props) {
+  const params = await searchParams;
+  const currentPage = Math.max(Number(params?.page || 1), 1);
+  const skip = (currentPage - 1) * PAGE_SIZE;
 
   // cek login
   const session =
@@ -19,8 +33,9 @@ export default async function Page() {
   }
 
   // ambil riwayat transaksi
-  const data =
-    await prisma.riwayat_transaksi.findMany({
+  const [data, totalData] =
+    await Promise.all([
+      prisma.riwayat_transaksi.findMany({
       include: {
         anggota: true,
       },
@@ -28,11 +43,26 @@ export default async function Page() {
       orderBy: {
         tanggal: "desc",
       },
-    });
+      skip,
+      take: PAGE_SIZE,
+    }),
+      prisma.riwayat_transaksi.count(),
+    ]);
 
   return (
-    <ClientPage
-      data={data}
-    />
+    <>
+      <ClientPage
+        data={data}
+      />
+      <div className="bg-gray-50 px-6 pb-6">
+        <Pagination
+          currentPage={currentPage}
+          totalPages={Math.max(Math.ceil(totalData / PAGE_SIZE), 1)}
+          basePath="/admin/riwayat"
+          totalItems={totalData}
+          pageSize={PAGE_SIZE}
+        />
+      </div>
+    </>
   );
 }
