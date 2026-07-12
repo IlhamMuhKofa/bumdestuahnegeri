@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { submitTransferPayment } from "../../cicilan/action";
+import { toast } from "react-toastify";
 
 type Props = {
   jadwal: any;
@@ -55,7 +56,7 @@ export default function ClientPage({ jadwal }: Props) {
       setBuktiBayar(result.url);
     } catch (error: any) {
       console.error(error);
-      alert("Gagal upload gambar");
+      toast.error("Gagal upload gambar");
       setPreview("");
       setBuktiBayar("");
     } finally {
@@ -67,7 +68,7 @@ export default function ClientPage({ jadwal }: Props) {
   const handleSubmit = async () => {
     try {
       if (!buktiBayar) {
-        alert("Upload bukti pembayaran terlebih dahulu");
+        toast.error("Upload bukti pembayaran terlebih dahulu");
         return;
       }
 
@@ -79,11 +80,11 @@ export default function ClientPage({ jadwal }: Props) {
         catatan,
       });
 
-      alert("Pembayaran berhasil dikirim");
+      toast.success("Pembayaran berhasil dikirim");
 
       router.push(`/nasabah/cicilan/${jadwal.id_peminjaman}`);
     } catch (err: any) {
-      alert(err.message);
+      toast.error(err.message);
     } finally {
       setLoading(false);
     }
