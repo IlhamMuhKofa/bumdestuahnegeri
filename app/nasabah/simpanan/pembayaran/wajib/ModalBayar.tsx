@@ -175,7 +175,6 @@ const handleSubmit = async () => {
     toast.error(
       "Gagal mengirim pembayaran"
     );
-    return;
 
   }
 
