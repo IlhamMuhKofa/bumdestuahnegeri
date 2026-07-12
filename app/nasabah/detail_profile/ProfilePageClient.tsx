@@ -126,7 +126,7 @@ export default function ProfilePageClient({ initialUser }: { initialUser: User }
   async function saveProfile() {
     try {
       setSaving(true);
-      const res = await fetch("/api/nasabah/profile", {
+      const res = await fetch("/api/upload/image", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
