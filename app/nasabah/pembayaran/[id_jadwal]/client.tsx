@@ -40,7 +40,7 @@ export default function ClientPage({ jadwal }: Props) {
       const formData = new FormData();
       formData.append("file", file);
 
-      const res = await fetch("/api/upload", {
+      const res = await fetch("/api/upload/image", {
         method: "POST",
         body: formData,
       });

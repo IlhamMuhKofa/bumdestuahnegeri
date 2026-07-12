@@ -85,7 +85,7 @@ export default function ClientPage({
         const formData = new FormData();
         formData.append("file", bukti);
 
-        const upload = await fetch("/api/upload", {
+        const upload = await fetch("/api/upload/image", {
           method: "POST",
           body: formData,
         });

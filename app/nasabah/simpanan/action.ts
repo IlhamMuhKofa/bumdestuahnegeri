@@ -4,10 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { createNotifikasi } from "@/lib/notifikasi";
 
 import { revalidatePath } from "next/cache";
-
-import fs from "fs/promises";
-
-import path from "path";
+import { uploadImage } from "@/lib/storage";
 
 /// ===============================
 /// BAYAR SIMPANAN
@@ -78,37 +75,10 @@ export async function bayarSimpanan(
     // ===============================
     // UPLOAD FILE
     // ===============================
-    const bytes =
-      await file.arrayBuffer();
-
-    const buffer =
-      Buffer.from(bytes);
-
-    const fileName = `${Date.now()}-${file.name}`;
-
-    const uploadDir = path.join(
-      process.cwd(),
-      "public",
-      "uploads",
-      "bukti-transfer"
-    );
-
-    await fs.mkdir(uploadDir, {
-      recursive: true,
-    });
-
-    const filePath = path.join(
-      uploadDir,
-      fileName
-    );
-
-    await fs.writeFile(
-      filePath,
-      buffer
-    );
-
-    const fileUrl =
-      `/uploads/bukti-transfer/${fileName}`;
+const fileUrl = await uploadImage(
+  file,
+  "bukti-transfer"
+);
 
     const bulanKe =
       (await prisma.pembayaran_simpanan.count(

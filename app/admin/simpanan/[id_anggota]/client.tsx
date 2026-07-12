@@ -163,7 +163,7 @@ const [selectedPendidikan, setSelectedPendidikan] =
 
           const upload =
             await fetch(
-              "/api/upload/",
+              "/api/upload/image",
               {
                 method: "POST",
                 body: formData,
