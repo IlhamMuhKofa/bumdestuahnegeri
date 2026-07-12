@@ -160,7 +160,7 @@ export default function ProfilePageClient({ initialUser }: { initialUser: User }
     const fd = new FormData();
     fd.append("file", file);
 
-    const res = await fetch("/api/nasabah/profile/photo", {
+    const res = await fetch("/api/upload/image", {
       method: "POST",
       body: fd,
     });
