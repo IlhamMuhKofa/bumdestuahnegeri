@@ -97,7 +97,9 @@ const handleAction = async (
         : "Pengajuan berhasil ditolak."
     );
 
-    router.push("/admin/pinjaman");
+    setTimeout(() => {
+  window.location.href = "/admin/pinjaman";
+}, 800);
   } catch (err) {
     console.error(err);
 
