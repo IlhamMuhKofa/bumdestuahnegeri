@@ -5,40 +5,130 @@ import jwt from "jsonwebtoken";
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  // 1. IZINKAN halaman public
-  const publicPaths = ["/login", "/register", "/", "/artikel", "/panduan"];
-  if (publicPaths.some((p) => pathname.startsWith(p))) {
-    return NextResponse.next();
-  }
+  // =====================================================
+  // 1. AMBIL TOKEN
+  // =====================================================
 
-  // 2. AMBIL token
   const token = req.cookies.get("token")?.value;
 
+  // =====================================================
+  // 2. JIKA TIDAK ADA TOKEN
+  // =====================================================
+
   if (!token) {
-    return NextResponse.redirect(new URL("/login", req.url));
+    const response = NextResponse.redirect(
+      new URL("/login", req.url)
+    );
+
+    response.headers.set(
+      "Cache-Control",
+      "no-store, no-cache, must-revalidate, proxy-revalidate"
+    );
+
+    response.headers.set("Pragma", "no-cache");
+    response.headers.set("Expires", "0");
+
+    return response;
   }
 
-  // 3. VERIFIKASI token
+  // =====================================================
+  // 3. VERIFIKASI TOKEN
+  // =====================================================
+
   try {
-    const decoded: any = jwt.verify(token, process.env.JWT_SECRET!);
+    const decoded: any = jwt.verify(
+      token,
+      process.env.JWT_SECRET!
+    );
 
-    // ROLE CHECKING
-    if (pathname.startsWith("/admin") && decoded.role !== "admin") {
-      return NextResponse.redirect(new URL("/login", req.url));
+    const role = decoded.role?.toString().toLowerCase();
+
+    // ===================================================
+    // 4. PROTEKSI HALAMAN ADMIN
+    // ===================================================
+
+    if (pathname.startsWith("/admin")) {
+      if (role !== "admin") {
+        const response = NextResponse.redirect(
+          new URL("/login", req.url)
+        );
+
+        response.headers.set(
+          "Cache-Control",
+          "no-store, no-cache, must-revalidate, proxy-revalidate"
+        );
+
+        response.headers.set("Pragma", "no-cache");
+        response.headers.set("Expires", "0");
+
+        return response;
+      }
     }
 
-    if (pathname.startsWith("/nasabah") && decoded.role !== "nasabah") {
-      return NextResponse.redirect(new URL("/login", req.url));
+    // ===================================================
+    // 5. PROTEKSI HALAMAN NASABAH
+    // ===================================================
+
+    if (pathname.startsWith("/nasabah")) {
+      if (role !== "nasabah") {
+        const response = NextResponse.redirect(
+          new URL("/login", req.url)
+        );
+
+        response.headers.set(
+          "Cache-Control",
+          "no-store, no-cache, must-revalidate, proxy-revalidate"
+        );
+
+        response.headers.set("Pragma", "no-cache");
+        response.headers.set("Expires", "0");
+
+        return response;
+      }
     }
 
-    return NextResponse.next();
+    // ===================================================
+    // 6. TOKEN VALID → LANJUT KE HALAMAN
+    // ===================================================
+
+    const response = NextResponse.next();
+
+    // Jangan cache halaman protected
+    response.headers.set(
+      "Cache-Control",
+      "no-store, no-cache, must-revalidate, proxy-revalidate"
+    );
+
+    response.headers.set("Pragma", "no-cache");
+    response.headers.set("Expires", "0");
+
+    return response;
+
   } catch (error) {
-    return NextResponse.redirect(new URL("/login", req.url));
+    console.error(
+      "JWT verification failed:",
+      error
+    );
+
+    const response = NextResponse.redirect(
+      new URL("/login", req.url)
+    );
+
+    response.headers.set(
+      "Cache-Control",
+      "no-store, no-cache, must-revalidate, proxy-revalidate"
+    );
+
+    response.headers.set("Pragma", "no-cache");
+    response.headers.set("Expires", "0");
+
+    return response;
   }
 }
 
-
 export const config = {
-  matcher: ["/nasabah/:path*", "/admin/:path*"],
+  matcher: [
+    "/admin/:path*",
+    "/nasabah/:path*",
+  ],
 };
-

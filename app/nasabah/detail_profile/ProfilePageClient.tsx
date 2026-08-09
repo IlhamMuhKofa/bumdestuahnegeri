@@ -19,7 +19,6 @@ type User = {
   tanggal_lahir: Date | string | null;
   nik: string | null;
   foto_diri: string | null;
-  // jenis_agunan: string | null;
   isProfileComplete: boolean;
 };
 
@@ -88,6 +87,7 @@ export default function ProfilePageClient({ initialUser }: { initialUser: User }
   const [user, setUser] = useState<User>(initialUser);
   const [openEdit, setOpenEdit] = useState(false);
   const [saving, setSaving] = useState(false);
+    useState<File | null>(null);
 
   const progress = useMemo(() => calcProgress(user), [user]);
   const { update } = useSession(); // penting untuk refresh session (avatar navbar)
@@ -126,86 +126,150 @@ export default function ProfilePageClient({ initialUser }: { initialUser: User }
   async function saveProfile() {
     try {
       setSaving(true);
-      const res = await fetch("/api/upload/image", {
+
+      const res = await fetch("/api/nasabah/profile", {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify(form),
       });
+
       const data = await res.json().catch(() => ({}));
 
-      if (!res.ok) throw new Error(data?.message || "Gagal menyimpan");
+      if (!res.ok) {
+        throw new Error(
+          data?.message || "Gagal menyimpan profil."
+        );
+      }
 
       setUser(data.user);
       setOpenEdit(false);
 
-      // ✅ TOAST SUCCESS
       toast.success("Profil berhasil disimpan.", {
         position: "top-right",
         autoClose: 3500,
       });
 
-      await update(); // optional refresh session
+      await update();
     } catch (e: any) {
-      // ✅ TOAST ERROR (ganti alert)
-      toast.error(e?.message || "Gagal menyimpan.", {
-        position: "top-right",
-        autoClose: 3500
-      });
+      toast.error(
+        e?.message || "Gagal menyimpan profil.",
+        {
+          position: "top-right",
+          autoClose: 3500,
+        }
+      );
     } finally {
       setSaving(false);
     }
   }
 
   async function onUploadPhoto(file: File) {
-    const fd = new FormData();
-    fd.append("file", file);
+    try {
+      const formData = new FormData();
 
-    const res = await fetch("/api/upload/image", {
-      method: "POST",
-      body: fd,
-    });
+      formData.append("file", file);
 
-    const data = await res.json().catch(() => ({}));
-    if (!res.ok) {
-      toast.error(data?.message || "Gagal upload foto profil.", {
-        position: "top-right",
-        autoClose: 3500,
+      const res = await fetch(
+        "/api/nasabah/profile",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      const data =
+        await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        throw new Error(
+          data?.message ||
+          "Gagal mengunggah foto profil."
+        );
+      }
+
+      /*
+       * Update foto pada halaman
+       * menggunakan URL dari Supabase.
+       */
+      setUser((prev) => ({
+        ...prev,
+        foto_diri: data.url,
+      }));
+
+      /*
+       * Refresh session agar foto pada
+       * navbar/avatar ikut diperbarui.
+       */
+      await update({
+        image: data.url,
       });
-      return;
+
+      toast.success(
+        "Foto profil berhasil diperbarui.",
+        {
+          position: "top-right",
+          autoClose: 3500,
+        }
+      );
+    } catch (error: any) {
+      toast.error(
+        error?.message ||
+        "Gagal mengunggah foto profil.",
+        {
+          position: "top-right",
+          autoClose: 3500,
+        }
+      );
     }
-
-    setUser((prev) => ({ ...prev, foto_diri: data.url }));
-
-    toast.success("Foto profil berhasil diunggah.", {
-      position: "top-right",
-      autoClose: 3500,
-    });
-
-    await update({ image: data.url }); // navbar ikut berubah
   }
 
   async function removePhoto() {
-    const res = await fetch("/api/nasabah/profile/photo", {
-      method: "DELETE",
-    });
-    const data = await res.json().catch(() => ({}));
+    try {
+      const res = await fetch(
+        "/api/nasabah/profile",
+        {
+          method: "DELETE",
+        }
+      );
 
-    if (!res.ok) {
-      toast.error(data?.message || "Gagal hapus foto profil.", {
-        position: "top-right",
-        autoClose: 3500,
+      const data =
+        await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        throw new Error(
+          data?.message ||
+          "Gagal menghapus foto profil."
+        );
+      }
+
+      setUser((prev) => ({
+        ...prev,
+        foto_diri: null,
+      }));
+
+      await update({
+        image: null,
       });
-      return;
+
+      toast.success(
+        "Foto profil berhasil dihapus.",
+        {
+          position: "top-right",
+          autoClose: 3500,
+        }
+      );
+    } catch (error: any) {
+      toast.error(
+        error?.message ||
+        "Gagal menghapus foto profil.",
+        {
+          position: "top-right",
+          autoClose: 3500,
+        }
+      );
     }
-
-    setUser((prev) => ({ ...prev, foto_diri: null }));
-
-    toast.success("Foto profil berhasil dihapus.", {
-      position: "top-right",
-      autoClose: 3500,
-    });
-
-    await update({ image: null });
   }
 
   async function handleLogout() {
@@ -216,7 +280,7 @@ export default function ProfilePageClient({ initialUser }: { initialUser: User }
       showCancelButton: true,
       confirmButtonText: "Ya, keluar",
       cancelButtonText: "Batal",
-      
+
     });
 
     if (!result.isConfirmed) return;

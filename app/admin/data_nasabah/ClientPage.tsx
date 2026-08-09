@@ -21,7 +21,7 @@ export default function ClientPage({ nasabah }: any) {
       (p: any) => p.status === "APPROVED"
     );
 
-    if (hasApproved) return "aktif";
+    if (hasApproved) return "ACTIVE";
 
     return "new";
   };
@@ -30,7 +30,7 @@ export default function ClientPage({ nasabah }: any) {
   const filteredNasabah = nasabah.filter((item: any) => {
     const status = getStatus(item);
 
-    if (tab === "aktif") return status === "aktif";
+    if (tab === "ACTIVE") return status === "ACTIVE";
     if (tab === "calon") return status === "new";
     if (tab === "nonaktif") return status === "nonaktif";
 
@@ -96,7 +96,7 @@ export default function ClientPage({ nasabah }: any) {
         <div className="flex gap-2 mb-4">
           {[
             { label: "Semua", value: "semua" },
-            { label: "Aktif", value: "aktif" },
+            { label: "Aktif", value: "ACTIVE" },
             { label: "Pendaftar", value: "calon" },
             { label: "Non Aktif", value: "nonaktif" },
           ].map((t) => (
@@ -182,7 +182,7 @@ export default function ClientPage({ nasabah }: any) {
                       {/* <td className="px-4 py-3">{user.alamat || "-"}</td> */}
 
                       <td className="px-4 py-3 text-center">
-                        {status === "aktif" && (
+                        {status === "ACTIVE" && (
                           <span className="px-4 py-1 text-xs rounded-xl bg-green-100 text-green-700">
                             Aktif
                           </span>

@@ -5,12 +5,18 @@ import { Calculator, Handshake, Wallet } from 'lucide-react';
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 
-const FormPengajuan = () => {
+type FormPengajuanProps = {
+  onSuccess?: () => void;
+};
+
+const FormPengajuan = ({
+  onSuccess,
+}: FormPengajuanProps) => {
   const [jumlahPinjaman, setJumlahPinjaman] = useState('10000000');
   const [jangkaWaktu, setJangkaWaktu] = useState('12');
   const [pekerjaan, setPekerjaan] = useState('');
   const [penghasilan, setPenghasilan] = useState('');
-  const [jenisAgunan, setJenisAgunan] = useState('');
+  const [jenis, setJenis] = useState('');
   const [rencanaUsaha, setRencanaUsaha] = useState('');
   const [fotoAgunan, setFotoAgunan] = useState<File | null>(null);
   const [fotoSurat, setFotoSurat] = useState<File | null>(null);
@@ -26,6 +32,37 @@ const FormPengajuan = () => {
     const input = document.getElementById(id);
     if (input) input.click();
   };
+
+    useEffect(() => {
+    async function loadProfile() {
+      try {
+        const res = await fetch("/api/nasabah/profile", {
+          method: "GET",
+        });
+
+        if (!res.ok) {
+          console.error("Gagal mengambil data profile.");
+          return;
+        }
+
+        const data = await res.json();
+
+        // Sesuaikan dengan struktur response API profile kamu
+        const pekerjaanProfile = data?.user?.pekerjaan;
+
+        if (pekerjaanProfile) {
+          setPekerjaan(pekerjaanProfile);
+        }
+      } catch (error) {
+        console.error(
+          "Gagal mengambil pekerjaan dari profile:",
+          error
+        );
+      }
+    }
+
+    loadProfile();
+  }, []);
 
   // Kalkulasi
   const calculateLoan = () => {
@@ -83,69 +120,235 @@ const FormPengajuan = () => {
     setFile(file);
   };
 
-  async function handleSubmit(e: any) {
-    e.preventDefault();
+async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  e.preventDefault();
 
-    if (loading) return;
+  if (loading) return;
 
-    setLoading(true);
+  setLoading(true);
 
+  // =========================
+  // VALIDASI FILE
+  // =========================
 
-    //validasi
-    if (!fotoAgunan) {
-      toast.error("Foto agunan wajib diisi!");
-      setLoading(false);
+  if (!fotoAgunan) {
+    toast.error("Foto agunan wajib diisi.", {
+      position: "top-right",
+      autoClose: 3500,
+    });
+
+    setLoading(false);
+    return;
+  }
+
+  if (!fotoSurat) {
+    toast.error("Surat usaha wajib diisi.", {
+      position: "top-right",
+      autoClose: 3500,
+    });
+
+    setLoading(false);
+    return;
+  }
+
+  // =========================
+  // VALIDASI DATA FORM
+  // =========================
+
+  if (!pekerjaan.trim()) {
+    toast.error("Pekerjaan wajib diisi.", {
+      position: "top-right",
+      autoClose: 3500,
+    });
+
+    setLoading(false);
+    return;
+  }
+
+  if (!penghasilan.trim()) {
+    toast.error("Penghasilan wajib diisi.", {
+      position: "top-right",
+      autoClose: 3500,
+    });
+
+    setLoading(false);
+    return;
+  }
+
+  if (!jenis.trim()) {
+    toast.error("Jenis agunan wajib diisi.", {
+      position: "top-right",
+      autoClose: 3500,
+    });
+
+    setLoading(false);
+    return;
+  }
+
+  if (!rencanaUsaha.trim()) {
+    toast.error("Rencana usaha wajib diisi.", {
+      position: "top-right",
+      autoClose: 3500,
+    });
+
+    setLoading(false);
+    return;
+  }
+
+  try {
+    // =========================
+    // BENTUK FORM DATA
+    // =========================
+
+    const formData = new FormData();
+
+    formData.append(
+      "jumlahPinjaman",
+      jumlahPinjamanInput
+    );
+
+    formData.append(
+      "jangkaWaktu",
+      jangkaWaktu
+    );
+
+    formData.append(
+      "pekerjaan",
+      pekerjaan
+    );
+
+    formData.append(
+      "penghasilan",
+      penghasilan
+    );
+
+    // Frontend tetap menggunakan nama jenisAgunan.
+    // API akan menyimpannya ke kolom database "jenis".
+    formData.append(
+      "jenis",
+      jenis
+    );
+
+    formData.append(
+      "rencanaUsaha",
+      rencanaUsaha
+    );
+
+    // =========================
+    // FILE AGUNAN
+    // =========================
+
+    formData.append(
+      "fotoAgunan",
+      fotoAgunan
+    );
+
+    // =========================
+    // FILE SURAT
+    // =========================
+
+    formData.append(
+      "fotoSurat",
+      fotoSurat
+    );
+
+    console.log(
+      "=== MENGIRIM PENGAJUAN ==="
+    );
+
+    console.log({
+      jumlahPinjaman: jumlahPinjamanInput,
+      jangkaWaktu,
+      pekerjaan,
+      penghasilan,
+      jenis,
+      rencanaUsaha,
+      fotoAgunan: fotoAgunan.name,
+      fotoSurat: fotoSurat.name,
+    });
+
+    // =========================
+    // KIRIM KE API
+    // =========================
+
+    const res = await fetch(
+      "/api/peminjaman",
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
+
+    // Ambil response dengan aman
+    const data = await res
+      .json()
+      .catch(() => null);
+
+    console.log(
+      "STATUS API:",
+      res.status
+    );
+
+    console.log(
+      "RESPONSE API:",
+      data
+    );
+
+    // =========================
+    // JIKA API GAGAL
+    // =========================
+
+    if (!res.ok) {
+      toast.error(
+        data?.error ||
+          "Terjadi kesalahan saat mengajukan pinjaman.",
+        {
+          position: "top-right",
+          autoClose: 4000,
+        }
+      );
+
       return;
     }
 
-    try {
-      const formData = new FormData();
+    // =========================
+    // BERHASIL
+    // =========================
 
-      formData.append("jumlahPinjaman", jumlahPinjamanInput);
-      formData.append("jangkaWaktu", jangkaWaktu);
-      formData.append("pekerjaan", pekerjaan);
-      formData.append("penghasilan", penghasilan);
-      formData.append("jenisAgunan", jenisAgunan);
-      formData.append("rencanaUsaha", rencanaUsaha);
+setSubmitted(true);
 
-      if (fotoAgunan) {
-        formData.append("fotoAgunan", fotoAgunan);
-      }
-
-      if (fotoSurat) {
-        formData.append("fotoSurat", fotoSurat);
-      }
-
-      const res = await fetch("/api/peminjaman", {
-        method: "POST",
-        body: formData,
-      });
-
-      const data = await res.json();
-
-      console.log("Status:", res.status);
-      console.log("Response:", data);
-
-      if (!res.ok) {
-        toast.error(data.error || "Terjadi kesalahan saat mengajukan pinjaman.");
-        return;
-      }
-
-      setSubmitted(true);
-
-      toast.success("Pengajuan pinjaman berhasil dikirim!");
-      // tunggu sebentar agar toast sempat terlihat
-      setTimeout(() => {
-        router.push("/nasabah/cicilan");
-      }, 1200);
-
-    } catch (err) {
-      console.error(err);
-    }
-    finally {
-      setLoading(false);
-    }
+toast.success(
+  data?.message ||
+    "Pengajuan pinjaman berhasil dikirim!",
+  {
+    position: "top-right",
+    autoClose: 1200,
   }
+);
+
+setTimeout(() => {
+  onSuccess?.();
+}, 1200);
+
+  } catch (error) {
+
+    console.error(
+      "ERROR HANDLE SUBMIT:",
+      error
+    );
+
+    toast.error(
+      "Terjadi kesalahan saat mengirim pengajuan.",
+      {
+        position: "top-right",
+        autoClose: 4000,
+      }
+    );
+
+  } finally {
+    setLoading(false);
+  }
+}
 
   useEffect(() => {
     return () => {
@@ -167,7 +370,7 @@ const FormPengajuan = () => {
             Masukkan data berikut untuk menghitung estimasi angsuran
           </p>
 
-<div className="grid sm:grid-cols-2 gap-4 sm:gap-6 mb-6">
+          <div className="grid sm:grid-cols-2 gap-4 sm:gap-6 mb-6">
             {/* Jumlah Pinjaman */}
             <div>
               <label className="block text-gray-700 font-medium mb-2 text-sm">
@@ -253,11 +456,10 @@ outline-none text-gray-800 text-sm sm:text-base transition-all duration-200"
                     type="button"
                     disabled={loading || submitted}
                     onClick={() => setJangkaWaktu(bulan)}
-                    className={`py-3 rounded-xl font-semibold text-sm transition-all ${
-                      jangkaWaktu === bulan
+                    className={`py-3 rounded-xl font-semibold text-sm transition-all ${jangkaWaktu === bulan
                         ? "bg-green-600 text-white shadow-md"
                         : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                    }`}
+                      }`}
                   >
                     {bulan} Bln
                   </button>
@@ -406,8 +608,8 @@ outline-none text-gray-800 text-sm sm:text-base transition-all duration-200"
                 </label>
                 <select
                   disabled={loading || submitted}
-                  value={jenisAgunan}
-                  onChange={(e) => setJenisAgunan(e.target.value)}
+                  value={jenis}
+                  onChange={(e) => setJenis(e.target.value)}
                   className="w-full px-4 py-3 bg-gray-100 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:outline-none text-gray-800 text-sm sm:text-base"
                 >
                   <option value="">Pilih jenis agunan</option>
@@ -465,7 +667,7 @@ outline-none text-gray-800 text-sm sm:text-base transition-all duration-200"
                             setPreviewFile(url);
                             setPreviewType(fotoAgunan.type);
                           }}
-                          className="text-xs text-[#1a3c2e] font-medium hover:underline whitespace-nowrap"
+                          className="text-xs text-blue-600 font-medium hover:underline whitespace-nowrap"
                         >
                           Preview
                         </button>

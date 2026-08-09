@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { catatRiwayatTransaksi } from "@/lib/transaksi";
 import { createNotifikasi } from "@/lib/notifikasi";
 import { syncPostgresSequence } from "@/lib/prisma-sequence";
+import { createWhatsAppRemindersForJadwal } from "@/lib/whatsapp-reminder";
 
 type CreateJadwalInput = {
   idPeminjaman: number;
@@ -16,6 +17,7 @@ type CreateJadwalInput = {
 };
 
 // ================= CREATE JADWAL =================
+// Fungsi utama admin untuk membuat seluruh jadwal angsuran dan menyiapkan reminder WhatsApp H-2.
 export async function createJadwalAngsuran(
   payload: CreateJadwalInput
 ) {
@@ -99,6 +101,20 @@ export async function createJadwalAngsuran(
         throw new Error("Jumlah jadwal yang dibuat tidak sesuai tenor");
       }
 
+      const createdJadwal = await tx.jadwal_angsuran.findMany({
+        where: {
+          id_peminjaman: idPeminjaman,
+        },
+        orderBy: {
+          cicilan_ke: "asc",
+        },
+      });
+
+      await createWhatsAppRemindersForJadwal(tx, createdJadwal, {
+        nama: dataPeminjaman.anggota.nama,
+        no_hp: dataPeminjaman.anggota.no_hp,
+      });
+
       const updatedPeminjaman = await tx.peminjaman.update({
         where: {
           id_peminjaman: idPeminjaman,
@@ -138,6 +154,7 @@ export async function createJadwalAngsuran(
 }
 
 // ================= HELPER =================
+// Helper revalidate halaman admin agar data cicilan terbaru langsung tampil setelah aksi server selesai.
 function refreshPages() {
   revalidatePath("/admin/cicilan");
   revalidatePath(
@@ -146,6 +163,7 @@ function refreshPages() {
   );
 }
 
+// Helper untuk menyinkronkan status pinjaman: LUNAS jika seluruh jadwal angsuran sudah lunas.
 async function syncStatusPeminjaman(
   idPeminjaman: number
 ) {
@@ -178,6 +196,7 @@ async function syncStatusPeminjaman(
 }
 
 // ================= KONFIRMASI =================
+// Fungsi admin untuk menyetujui pembayaran nasabah dan menutup satu jadwal angsuran.
 export async function konfirmasiPembayaran(
   idJadwal: number
 ) {
@@ -277,6 +296,7 @@ export async function konfirmasiPembayaran(
 }
 
 // ================= BATALKAN =================
+// Fungsi admin untuk membatalkan status lunas agar cicilan kembali tercatat PENDING.
 export async function batalkanPembayaran(
   idJadwal: number
 ) {
@@ -348,6 +368,7 @@ export async function batalkanPembayaran(
 }
 
 // ================= MANUAL PAYMENT =================
+// Fungsi admin untuk mencatat pembayaran cash lengkap dengan bukti pembayaran.
 export async function createManualPayment(
   payload: {
     idJadwal: number;

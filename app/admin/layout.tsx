@@ -56,13 +56,13 @@ const navItems = [
     icon: <CalendarDays size={18} />,
     children: [
       {
-        label: "Jadwal Cicilan",
-        href: "/admin/cicilan",
+        label: "Jadwal Survey",
+        href: "/admin/survey",
 
       },
       {
-        label: "Jadwal Survey",
-        href: "/admin/survey",
+        label: "Jadwal Cicilan",
+        href: "/admin/cicilan",
 
       },
     ],

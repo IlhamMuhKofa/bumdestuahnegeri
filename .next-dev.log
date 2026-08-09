@@ -1,0 +1,20 @@
+
+> bumdes-apps@0.1.0 dev
+> next dev
+
+   ▲ Next.js 15.5.20
+   - Local:        http://localhost:3001
+   - Network:      http://192.168.1.5:3001
+   - Environments: .env
+
+ ✓ Starting...
+ ✓ Ready in 5.8s
+ ✓ Compiled /middleware in 492ms (194 modules)
+ ○ Compiling /admin/whatsapp ...
+ ✓ Compiled /admin/whatsapp in 9.3s (1612 modules)
+ ✓ Compiled in 1984ms (736 modules)
+ GET /admin/whatsapp 200 in 13213ms
+ ○ Compiling /api/whatsapp/send-now ...
+ ✓ Compiled /api/whatsapp/send-now in 2.5s (1850 modules)
+ POST /api/whatsapp/send-now 400 in 2945ms
+ ✓ Compiled in 245ms

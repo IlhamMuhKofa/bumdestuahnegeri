@@ -41,7 +41,7 @@ export default function Pengajuan() {
   // ✅ FETCH DATA
   const fetchPengajuan = async () => {
     try {
-      const res = await fetch("/api/nasabah/peminjaman");
+      const res = await fetch("/api/peminjaman");
       const result = await res.json();
 
       console.log("DATA NASABAH:", result); // debug
@@ -627,7 +627,11 @@ px-1">
               animate={{ y: 0, opacity: 1, scale: 1 }}
               exit={{ y: 30, opacity: 0, scale: 0.95 }}
             >
-              <FormPengajuan />
+              <FormPengajuan
+  onSuccess={() => {
+    setOpenForm(false);
+  }}
+/>
 
               {/* Tombol close */}
               <button

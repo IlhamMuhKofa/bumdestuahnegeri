@@ -155,6 +155,7 @@ function LoginContent() {
             <motion.input
               variants={itemVariants}
               type="email"
+              name="email"
               placeholder="Email"
               className="w-full p-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow"
               value={email}
@@ -165,6 +166,7 @@ function LoginContent() {
             <motion.div variants={itemVariants} className="relative">
               <input
                 type={showPassword ? "text" : "password"}
+                name="password"
                 placeholder="Password"
                 className="w-full p-3 pr-11 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow"
                 value={password}

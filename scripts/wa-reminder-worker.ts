@@ -1,38 +1,40 @@
-import "@/worker-api/server";
+import { loadEnvConfig } from "@next/env";
 
-import { prisma } from "@/lib/prisma";
-import { processDueWhatsAppReminders } from "@/lib/whatsapp-reminder";
-import { connectWhatsApp } from "@/lib/whatsapp";
+loadEnvConfig(process.cwd());
 
 const intervalMs = Number(process.env.WA_REMINDER_INTERVAL_MS || 60_000);
 
-async function runOnce() {
-  try {
-    const result = await processDueWhatsAppReminders(prisma);
+// Fungsi bootstrap worker Meta Cloud API; tidak perlu scan QR karena memakai token resmi Meta.
+async function main() {
+  const [{ prisma }, { processDueWhatsAppReminders }] = await Promise.all([
+    import("@/lib/prisma"),
+    import("@/lib/whatsapp-reminder"),
+  ]);
 
-    if (result && result.checked > 0) {
-      console.log(
-        `[WA Reminder] checked=${result.checked} sent=${result.sent} failed=${result.failed}`
+  // Fungsi satu ronde worker untuk memproses reminder H-2 yang sudah waktunya dikirim.
+  async function runOnce() {
+    try {
+      const result = await processDueWhatsAppReminders(prisma);
+
+      if (result && result.checked > 0) {
+        console.log(
+          `[WA Reminder] checked=${result.checked} sent=${result.sent} failed=${result.failed}`
+        );
+      }
+    } catch (error) {
+      console.error(
+        "[WA Reminder] Gagal memproses antrean pada ronde ini:",
+        error
       );
     }
-  } catch (error) {
-    console.error("[WA Reminder] Gagal memproses antrean pada ronde ini:", error);
   }
-}
 
-async function main() {
-console.log("WA reminder worker berjalan.");
-console.log("Menghubungkan WhatsApp...");
+  console.log("WA reminder worker berjalan.");
+  console.log("Meta Cloud API siap dipakai melalui kredensial environment.");
+  console.log("Menunggu antrean otomatis berdasarkan basis data...");
 
-await connectWhatsApp();
+  await runOnce();
 
-console.log("WhatsApp siap.");
-console.log("Menunggu antrean otomatis berdasarkan basis data...");
-
-// Eksekusi pertama saat worker dinyalakan
-await runOnce();
-
-  // Menggunakan fungsi rekursif agar tidak terjadi tabrakan proses (Overlapping)
   async function workerLoop() {
     await runOnce();
     setTimeout(workerLoop, intervalMs);
