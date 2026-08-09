@@ -1,129 +1,54 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import jwt from "jsonwebtoken";
+import { getToken } from "next-auth/jwt";
 
-export function middleware(req: NextRequest) {
+export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  // =====================================================
-  // 1. AMBIL TOKEN
-  // =====================================================
+  const token = await getToken({
+    req,
+    secret: process.env.NEXTAUTH_SECRET,
+  });
 
-  const token = req.cookies.get("token")?.value;
-
-  // =====================================================
-  // 2. JIKA TIDAK ADA TOKEN
-  // =====================================================
-
+  // Belum login
   if (!token) {
-    const response = NextResponse.redirect(
+    return NextResponse.redirect(
       new URL("/login", req.url)
     );
-
-    response.headers.set(
-      "Cache-Control",
-      "no-store, no-cache, must-revalidate, proxy-revalidate"
-    );
-
-    response.headers.set("Pragma", "no-cache");
-    response.headers.set("Expires", "0");
-
-    return response;
   }
 
-  // =====================================================
-  // 3. VERIFIKASI TOKEN
-  // =====================================================
+  const role = token.role?.toString().toLowerCase();
 
-  try {
-    const decoded: any = jwt.verify(
-      token,
-      process.env.JWT_SECRET!
-    );
-
-    const role = decoded.role?.toString().toLowerCase();
-
-    // ===================================================
-    // 4. PROTEKSI HALAMAN ADMIN
-    // ===================================================
-
-    if (pathname.startsWith("/admin")) {
-      if (role !== "admin") {
-        const response = NextResponse.redirect(
-          new URL("/login", req.url)
-        );
-
-        response.headers.set(
-          "Cache-Control",
-          "no-store, no-cache, must-revalidate, proxy-revalidate"
-        );
-
-        response.headers.set("Pragma", "no-cache");
-        response.headers.set("Expires", "0");
-
-        return response;
-      }
+  // Proteksi admin
+  if (pathname.startsWith("/admin")) {
+    if (role !== "admin") {
+      return NextResponse.redirect(
+        new URL("/login", req.url)
+      );
     }
-
-    // ===================================================
-    // 5. PROTEKSI HALAMAN NASABAH
-    // ===================================================
-
-    if (pathname.startsWith("/nasabah")) {
-      if (role !== "nasabah") {
-        const response = NextResponse.redirect(
-          new URL("/login", req.url)
-        );
-
-        response.headers.set(
-          "Cache-Control",
-          "no-store, no-cache, must-revalidate, proxy-revalidate"
-        );
-
-        response.headers.set("Pragma", "no-cache");
-        response.headers.set("Expires", "0");
-
-        return response;
-      }
-    }
-
-    // ===================================================
-    // 6. TOKEN VALID → LANJUT KE HALAMAN
-    // ===================================================
-
-    const response = NextResponse.next();
-
-    // Jangan cache halaman protected
-    response.headers.set(
-      "Cache-Control",
-      "no-store, no-cache, must-revalidate, proxy-revalidate"
-    );
-
-    response.headers.set("Pragma", "no-cache");
-    response.headers.set("Expires", "0");
-
-    return response;
-
-  } catch (error) {
-    console.error(
-      "JWT verification failed:",
-      error
-    );
-
-    const response = NextResponse.redirect(
-      new URL("/login", req.url)
-    );
-
-    response.headers.set(
-      "Cache-Control",
-      "no-store, no-cache, must-revalidate, proxy-revalidate"
-    );
-
-    response.headers.set("Pragma", "no-cache");
-    response.headers.set("Expires", "0");
-
-    return response;
   }
+
+  // Proteksi nasabah
+  if (pathname.startsWith("/nasabah")) {
+    if (role !== "nasabah") {
+      return NextResponse.redirect(
+        new URL("/login", req.url)
+      );
+    }
+  }
+
+  const response = NextResponse.next();
+
+  // Jangan cache halaman protected
+  response.headers.set(
+    "Cache-Control",
+    "private, no-store, no-cache, must-revalidate"
+  );
+
+  response.headers.set("Pragma", "no-cache");
+  response.headers.set("Expires", "0");
+
+  return response;
 }
 
 export const config = {
