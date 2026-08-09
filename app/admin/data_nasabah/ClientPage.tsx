@@ -11,14 +11,14 @@ export default function ClientPage({ nasabah }: any) {
 
   // ✅ PAGINATION STATE
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 7;
+  const itemsPerPage = 10;
 
   // 🔥 STATUS LOGIC
   const getStatus = (user: any) => {
     if (user.status === "disabled") return "nonaktif";
 
     const hasApproved = user.peminjaman?.some(
-      (p: any) => p.status === "APPROVED"
+      (p: any) => p.status === "ACTIVE"
     );
 
     if (hasApproved) return "ACTIVE";

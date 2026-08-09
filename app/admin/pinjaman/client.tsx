@@ -18,7 +18,7 @@ export default function PengajuanPinjamanPage({ data }: any) {
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("terbaru");
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 7;
+  const itemsPerPage = 10;
 
   const tabs = ["Semua", "Menunggu", "Diterima", "Ditolak", "Aktif"];
 

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
+import { toast } from "react-toastify";
 
 import {
   ArrowLeft,
@@ -20,6 +21,7 @@ export default function DetailNasabah() {
   const router = useRouter();
   const params = useParams();
   const id = Array.isArray(params?.id) ? params.id[0] : params?.id;
+  const [updatingStatus, setUpdatingStatus] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -64,26 +66,71 @@ export default function DetailNasabah() {
   };
   const statusInfo = statusMap[data.status] ?? { label: data.status, cls: "bg-gray-100 text-gray-600" };
 
-  const handleToggleStatus = async (newStatus: "active" | "disabled") => {
-    try {
-      const res = await fetch(`/api/nasabah/${params.id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: newStatus }),
-      });
+const handleToggleStatus = async (
+  newStatus: "active" | "disabled"
+) => {
+  if (updatingStatus) return;
 
-      const result = await res.json();
+  try {
+    setUpdatingStatus(true);
 
-      if (result.success) {
-        alert("Status berhasil diupdate");
-        window.location.reload(); // refresh biar update
-      } else {
-        alert("Gagal update status");
-      }
-    } catch (err) {
-      console.error(err);
+    const res = await fetch(`/api/nasabah/${id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        status: newStatus,
+      }),
+    });
+
+    const result = await res.json().catch(() => ({}));
+
+    // =========================
+    // API GAGAL
+    // =========================
+    if (!res.ok || !result.success) {
+      throw new Error(
+        result?.message ||
+          result?.error ||
+          "Gagal memperbarui status akun."
+      );
     }
-  };
+
+    // =========================
+    // API BERHASIL
+    // =========================
+
+    const message =
+      newStatus === "active"
+        ? "Akun nasabah berhasil diaktifkan."
+        : "Akun nasabah berhasil dinonaktifkan.";
+
+    toast.success(message, {
+      position: "top-right",
+      autoClose: 2500,
+    });
+
+    // Beri waktu toast terlihat
+    setTimeout(() => {
+      router.push("/admin/data_nasabah");
+    }, 1200);
+
+  } catch (error: any) {
+    console.error("ERROR UPDATE STATUS:", error);
+
+    toast.error(
+      error?.message ||
+        "Terjadi kesalahan saat memperbarui status akun.",
+      {
+        position: "top-right",
+        autoClose: 3500,
+      }
+    );
+  } finally {
+    setUpdatingStatus(false);
+  }
+};
 
   return (
     <>
