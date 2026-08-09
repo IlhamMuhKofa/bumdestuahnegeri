@@ -19,10 +19,19 @@ export default async function Page({
   searchParams,
 }: Props) {
   const params = await searchParams;
-  const currentPage = Math.max(Number(params?.page || 1), 1);
-  const skip = (currentPage - 1) * PAGE_SIZE;
 
-  // cek login
+  const currentPage = Math.max(
+    Number(params?.page || 1),
+    1
+  );
+
+  const skip =
+    (currentPage - 1) * PAGE_SIZE;
+
+  // =====================================================
+  // CEK LOGIN
+  // =====================================================
+
   const session =
     await getServerSession(
       authOptions
@@ -32,10 +41,21 @@ export default async function Page({
     redirect("/auth/login");
   }
 
-  // ambil riwayat transaksi
-  const [data, totalData] =
-    await Promise.all([
-      prisma.riwayat_transaksi.findMany({
+  // =====================================================
+  // AMBIL DATA
+  // =====================================================
+
+  const [
+    data,
+    allData,
+    totalData,
+  ] = await Promise.all([
+
+    // ===================================================
+    // 1. DATA UNTUK TABEL / PAGINATION
+    // ===================================================
+
+    prisma.riwayat_transaksi.findMany({
       include: {
         anggota: true,
       },
@@ -43,26 +63,57 @@ export default async function Page({
       orderBy: {
         tanggal: "desc",
       },
+
       skip,
+
       take: PAGE_SIZE,
     }),
-      prisma.riwayat_transaksi.count(),
-    ]);
+
+    // ===================================================
+    // 2. SELURUH DATA UNTUK SUMMARY + PDF
+    // ===================================================
+
+    prisma.riwayat_transaksi.findMany({
+      include: {
+        anggota: true,
+      },
+
+      orderBy: {
+        tanggal: "desc",
+      },
+    }),
+
+    // ===================================================
+    // 3. TOTAL DATA UNTUK PAGINATION
+    // ===================================================
+
+    prisma.riwayat_transaksi.count(),
+
+  ]);
+
+  // =====================================================
+  // KIRIM KE CLIENT
+  // =====================================================
 
   return (
     <>
       <ClientPage
         data={data}
+        allData={allData}
       />
-      <div className="bg-gray-50 px-6 pb-6">
-        <Pagination
-          currentPage={currentPage}
-          totalPages={Math.max(Math.ceil(totalData / PAGE_SIZE), 1)}
-          basePath="/admin/riwayat"
-          totalItems={totalData}
-          pageSize={PAGE_SIZE}
-        />
-      </div>
+
+      <Pagination
+        currentPage={currentPage}
+        totalPages={Math.max(
+          Math.ceil(
+            totalData / PAGE_SIZE
+          ),
+          1
+        )}
+        basePath="/admin/riwayat"
+        totalItems={totalData}
+        pageSize={PAGE_SIZE}
+      />
     </>
   );
 }

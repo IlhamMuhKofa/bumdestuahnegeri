@@ -59,108 +59,90 @@ export default function Client({
 
         </div>
 
-        {/* =======================================================
-            SUMMARY CARD
-        ======================================================= */}
-        <div className="grid gap-4 md:grid-cols-3">
+{/* =======================================================
+    SUMMARY CARD
+======================================================= */}
 
-          {/* TOTAL SIMPANAN WAJIB */}
-          <div className="rounded-3xl bg-white p-6 shadow-sm border border-gray-100">
+<div className="grid gap-4 md:grid-cols-3">
 
-            <div className="flex items-center justify-between">
+  {/* TOTAL SIMPANAN WAJIB */}
+  <div className="rounded-3xl bg-white p-6 shadow-sm border border-gray-100">
+    <div className="flex items-center justify-between">
 
-              <div>
+      <div>
+        <p className="text-sm font-medium text-gray-500">
+          Simpanan Wajib
+        </p>
 
-                <p className="text-sm font-medium text-gray-500">
-                  Simpanan Wajib
-                </p>
+        <h2 className="mt-2 text-3xl font-bold text-gray-800">
+          {
+            data.filter(
+              (x) => x.total_wajib > 0
+            ).length
+          }
+        </h2>
+      </div>
 
-                <h2 className="mt-2 text-3xl font-bold text-gray-800">
-                  {
-                    data.filter(
-                      (x) =>
-                        x.total_wajib > 0
-                    ).length
-                  }
-                </h2>
+      <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-green-100">
+        <Wallet className="h-6 w-6 text-green-700" />
+      </div>
 
-              </div>
+    </div>
+  </div>
 
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-green-100">
 
-                <Wallet className="h-6 w-6 text-green-700" />
+  {/* TOTAL PENDIDIKAN */}
+  <div className="rounded-3xl bg-white p-6 shadow-sm border border-gray-100">
+    <div className="flex items-center justify-between">
 
-              </div>
+      <div>
+        <p className="text-sm font-medium text-gray-500">
+          Tabungan Pendidikan
+        </p>
 
-            </div>
+        <h2 className="mt-2 text-3xl font-bold text-gray-800">
+          {
+            data.filter(
+              (x) => x.total_pendidikan > 0
+            ).length
+          }
+        </h2>
+      </div>
 
-          </div>
+      <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-purple-100">
+        <GraduationCap className="h-6 w-6 text-purple-700" />
+      </div>
 
-          {/* TOTAL PENDIDIKAN */}
-          <div className="rounded-3xl bg-white p-6 shadow-sm border border-gray-100">
+    </div>
+  </div>
 
-            <div className="flex items-center justify-between">
 
-              <div>
+  {/* MENUNGGU VERIFIKASI */}
+  <div className="rounded-3xl bg-white p-6 shadow-sm border border-gray-100">
+    <div className="flex items-center justify-between">
 
-                <p className="text-sm font-medium text-gray-500">
-                  Tabungan Pendidikan
-                </p>
+      <div>
+        <p className="text-sm font-medium text-gray-500">
+          Menunggu Verifikasi
+        </p>
 
-                <h2 className="mt-2 text-3xl font-bold text-gray-800">
-                  {
-                    data.filter(
-                      (x) =>
-                        x.total_pendidikan > 0
-                    ).length
-                  }
-                </h2>
+        <h2 className="mt-2 text-3xl font-bold text-gray-800">
+          {
+            data.filter(
+              (x) => x.pending > 0
+            ).length
+          }
+        </h2>
+      </div>
 
-              </div>
+      <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-orange-100">
+        <Clock3 className="h-6 w-6 text-orange-700" />
+      </div>
 
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-purple-100">
+    </div>
+  </div>
 
-                <GraduationCap className="h-6 w-6 text-purple-700" />
-
-              </div>
-
-            </div>
-
-          </div>
-
-          {/* MENUNGGU VERIFIKASI */}
-          <div className="rounded-3xl bg-white p-6 shadow-sm border border-gray-100">
-
-            <div className="flex items-center justify-between">
-
-              <div>
-
-                <p className="text-sm font-medium text-gray-500">
-                  Menunggu Verifikasi
-                </p>
-
-                <h2 className="mt-2 text-3xl font-bold text-gray-800">
-                  {
-                    data.filter(
-                      (x) =>
-                        x.pending > 0
-                    ).length
-                  }
-                </h2>
-
-              </div>
-
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-orange-100">
-
-                <Clock3 className="h-6 w-6 text-orange-700" />
-
-              </div>
-
-            </div>
-
-          </div>
-
-        </div>
+</div>
 
         {/* =======================================================
             TABLE

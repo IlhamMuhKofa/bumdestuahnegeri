@@ -6,6 +6,7 @@ import CardSimpanan from "./component/CardSimpanan";
 import TabelSimpanan from "./component/TabelSimpanan";
 import { bayarCashMassal, buatTabunganPendidikan, updateStatusPembayaran } from "./action";
 import { toast } from "react-toastify";
+import Swal from "sweetalert2";
 import ModalJadwalWajib from "./component/ModalJadwalWajib";
 import ModalBayar from "./component/ModalBayar";
 import ModalDetail from "./component/ModalDetail";
@@ -81,47 +82,75 @@ const [selectedPendidikan, setSelectedPendidikan] =
     setOpenDetail(true);
   };
 
-  const handleApprove = async (
-    id: number
-  ) => {
-    const ok = window.confirm(
-      "Approve pembayaran ini?"
-    );
+const handleApprove = async (id: number) => {
+  const result = await Swal.fire({
+    title: "Approve pembayaran?",
+    text: "Pembayaran ini akan disetujui dan statusnya menjadi BERHASIL.",
+    icon: "question",
+    showCancelButton: true,
+    confirmButtonText: "Ya, Approve",
+    cancelButtonText: "Batal",
+    reverseButtons: true,
+    confirmButtonColor: "#15803d",
+    cancelButtonColor: "#6b7280",
+    heightAuto: false,
+  });
 
-    if (!ok) return;
+  if (!result.isConfirmed) return;
 
-    const result =
-      await updateStatusPembayaran(
-        id,
-        "BERHASIL"
-      );
+  const updateResult = await updateStatusPembayaran(
+    id,
+    "BERHASIL"
+  );
 
-    if (result.success) {
-      toast.success("Pembayaran berhasil disetujui.");
+  if (updateResult.success) {
+    toast.success("Pembayaran berhasil disetujui.");
+
+    setTimeout(() => {
       window.location.reload();
-    }
-  };
-
-  const handleReject = async (
-    id: number
-  ) => {
-    const ok = window.confirm(
-      "Tolak pembayaran ini?"
+    }, 800);
+  } else {
+    toast.error(
+      updateResult.message ||
+        "Gagal menyetujui pembayaran."
     );
+  }
+};
 
-    if (!ok) return;
+const handleReject = async (id: number) => {
+  const result = await Swal.fire({
+    title: "Tolak pembayaran?",
+    text: "Pembayaran ini akan ditolak. Tindakan ini tidak dapat dibatalkan.",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: "Ya, Tolak",
+    cancelButtonText: "Batal",
+    reverseButtons: true,
+    confirmButtonColor: "#dc2626",
+    cancelButtonColor: "#6b7280",
+    heightAuto: false,
+  });
 
-    const result =
-      await updateStatusPembayaran(
-        id,
-        "DITOLAK"
-      );
+  if (!result.isConfirmed) return;
 
-    if (result.success) {
-      toast.success("Pembayaran berhasil ditolak.");
+  const updateResult = await updateStatusPembayaran(
+    id,
+    "DITOLAK"
+  );
+
+  if (updateResult.success) {
+    toast.success("Pembayaran berhasil ditolak.");
+
+    setTimeout(() => {
       window.location.reload();
-    }
-  };
+    }, 800);
+  } else {
+    toast.error(
+      updateResult.message ||
+        "Gagal menolak pembayaran."
+    );
+  }
+};
 
   const hasJadwalWajib =
     simpananWajib.length > 0;
