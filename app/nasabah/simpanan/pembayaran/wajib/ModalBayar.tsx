@@ -100,9 +100,7 @@ export default function ModalBayar({
   
 
 const handleSubmit = async () => {
-
   try {
-
     if (selectedIds.length === 0) {
       toast.error("Pilih setoran terlebih dahulu");
       return;
@@ -117,22 +115,17 @@ const handleSubmit = async () => {
     // UPLOAD FILE
     // =====================
 
-    const formData =
-      new FormData();
+    const formData = new FormData();
 
-    formData.append(
-      "file",
-      bukti
+    formData.append("file", bukti);
+
+    const upload = await fetch(
+      "/api/upload/image",
+      {
+        method: "POST",
+        body: formData,
+      }
     );
-
-    const upload =
-      await fetch(
-        "/api/upload/image",
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
 
     const resultUpload =
       await upload.json();
@@ -140,13 +133,12 @@ const handleSubmit = async () => {
     if (!upload.ok) {
       toast.error(
         resultUpload.error ||
-        "Upload gagal"
+          "Upload gagal"
       );
       return;
     }
 
-    const buktiUrl =
-      resultUpload.url;
+    const buktiUrl = resultUpload.url;
 
     // =====================
     // SIMPAN PEMBAYARAN
@@ -159,25 +151,40 @@ const handleSubmit = async () => {
         buktiUrl
       );
 
+    // =====================
+    // GAGAL
+    // =====================
+
     if (!result.success) {
-      toast.info(result.message);
+      toast.error(
+        result.message ||
+          "Pembayaran gagal"
+      );
       return;
     }
 
-    toast.success(result.message);
+    // =====================
+    // BERHASIL
+    // =====================
 
-    window.location.reload();
+    // 1. TUTUP MODAL DULU
+    onClose();
+
+    // 2. BARU TAMPILKAN TOAST
+    setTimeout(() => {
+      toast.success(
+        result.message ||
+          "Pembayaran berhasil dikirim."
+      );
+    }, 150);
 
   } catch (error) {
-
     console.error(error);
 
     toast.error(
       "Gagal mengirim pembayaran"
     );
-
   }
-
 };
 
   if (!open) return null;

@@ -66,6 +66,38 @@ export default function Pengajuan() {
   }
 };
 
+const handleDownload = async () => {
+  if (!surat) return;
+
+  try {
+    const response = await fetch(surat.file_url);
+
+    if (!response.ok) {
+      throw new Error("Gagal mengambil file");
+    }
+
+    const blob = await response.blob();
+
+    const url = window.URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+
+    link.href = url;
+    link.download =
+      surat.nama_file || "SP2K Pencairan.pdf";
+
+    document.body.appendChild(link);
+
+    link.click();
+
+    link.remove();
+
+    window.URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error("Gagal download surat:", error);
+  }
+};
+
 useEffect(() => {
   fetchPengajuan();
   fetchSurat();
@@ -231,73 +263,100 @@ useEffect(() => {
     </span>
   </div>
 
-  {/* CONTENT */}
-  <div className="grid gap-4 md:grid-cols-1">
+{/* CONTENT */}
 
-    {surat ? (
-      <a
-        href={surat.file_url}
-        target="_blank"
-        rel="noreferrer"
-        download
-        className="
-          group flex items-center justify-between gap-3
-          rounded-xl border border-gray-200 bg-white
-          p-3.5 sm:p-4
-          transition-all duration-200
-          hover:border-[#1a3c2e]/40
-          hover:shadow-md
-          hover:-translate-y-[2px]
-        "
-      >
-        {/* LEFT */}
-        <div className="flex items-center gap-3 min-w-0">
-          <div className="
-            flex h-10 w-10 shrink-0 items-center justify-center
-            rounded-lg bg-[#1a3c2e]/10 text-[#1a3c2e]
-          ">
-            📄
-          </div>
+{surat ? (
+  <div
+    className="
+      group flex items-center justify-between gap-3
+      rounded-xl border border-gray-200 bg-white
+      p-3.5 sm:p-4
+      transition-all duration-200
+      hover:border-[#1a3c2e]/40
+      hover:shadow-md
+      hover:-translate-y-[2px]
+    "
+  >
 
-          <div className="min-w-0">
-            <p className="font-medium text-gray-900 text-sm sm:text-base truncate">
-              SP2K Pencairan
-            </p>
-            <p className="text-xs text-gray-500 truncate">
-              SP2K Pencairan.pdf
-            </p>
-          </div>
-        </div>
+    {/* LEFT */}
+    <div className="flex items-center gap-3 min-w-0">
 
-        {/* RIGHT */}
-        <div className="
-          flex items-center gap-1 sm:gap-2 shrink-0
-          text-xs sm:text-sm font-medium text-[#1a3c2e]
-          opacity-80 transition group-hover:opacity-100
-        ">
-          <span className="hidden sm:inline">Download</span>
-          <span className="transition group-hover:translate-x-1">
-            →
-          </span>
-        </div>
-      </a>
-    ) : (
+      {/* ICON */}
       <div className="
-        flex flex-col items-center justify-center
-        rounded-xl border border-dashed border-gray-300
-        p-6 text-center
+        flex h-10 w-10 shrink-0 items-center justify-center
+        rounded-lg bg-[#1a3c2e]/10 text-[#1a3c2e]
       ">
-        <div className="mb-2 text-2xl">📂</div>
-        <p className="text-sm font-medium text-gray-500">
-          Dokumen belum tersedia
-        </p>
-        <p className="text-xs text-gray-400 mt-1">
-          Silakan hubungi admin
-        </p>
+        📄
       </div>
-    )}
+
+      {/* DOCUMENT INFO */}
+      <div className="min-w-0">
+
+        <p className="font-medium text-gray-900 text-sm sm:text-base truncate">
+          SP2K Pencairan
+        </p>
+
+        <p className="text-xs text-gray-500 truncate">
+          {surat.nama_file || "SP2K Pencairan.pdf"}
+        </p>
+
+      </div>
+
+    </div>
+
+    {/* RIGHT / DOWNLOAD */}
+    <button
+      type="button"
+      onClick={handleDownload}
+      className="
+        flex items-center gap-1 sm:gap-2 shrink-0
+        text-xs sm:text-sm font-medium text-[#1a3c2e]
+        opacity-80 transition
+        hover:opacity-100
+        cursor-pointer
+      "
+    >
+
+      <span className="hidden sm:inline">
+        Download
+      </span>
+
+      <span className="transition group-hover:translate-x-1">
+        →
+      </span>
+
+    </button>
 
   </div>
+
+) : (
+
+  /* DOCUMENT BELUM TERSEDIA */
+
+  <div className="
+    flex flex-col items-center justify-center
+    rounded-xl border border-dashed border-gray-300
+    p-6 text-center
+  ">
+
+    {/* ICON */}
+    <div className="mb-2 text-2xl">
+      📂
+    </div>
+
+    {/* TITLE */}
+    <p className="text-sm font-medium text-gray-500">
+      Dokumen belum tersedia
+    </p>
+
+    {/* DESCRIPTION */}
+    <p className="text-xs text-gray-400 mt-1">
+      Silakan hubungi admin
+    </p>
+
+  </div>
+
+)}
 </div>
 
         {/* ── Toolbar ── */}
