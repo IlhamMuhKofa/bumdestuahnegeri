@@ -104,7 +104,7 @@ export default function Cicilan({
             data={nasabah}
           />
         ) : (
-<Kalender data={jadwal} />
+          <Kalender data={jadwal} />
         )}
 
       </div>
