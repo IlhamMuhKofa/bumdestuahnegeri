@@ -12,314 +12,418 @@ type Props = {
 export default function ClientPage({
   data = [],
 }: Props) {
+  const router = useRouter();
 
-  const router =
-    useRouter();
+  const [loadingId, setLoadingId] =
+    useState<number | null>(null);
 
-  const [
-    loadingId,
-    setLoadingId,
-  ] = useState<
-    number | null
-  >(null);
-
+  // =========================
+  // FORMAT RUPIAH
+  // =========================
   const formatRupiah = (
     value?: number
   ) =>
     "Rp " +
-    (
-      value || 0
-    ).toLocaleString(
-      "id-ID"
-    );
+    (value || 0).toLocaleString("id-ID");
 
-  const getStatus = (
-    item: any
-  ) => {
-
-    // admin approve
-    if (
-      item?.status ===
-      "LUNAS"
-    ) {
+  // =========================
+  // STATUS
+  // =========================
+  const getStatus = (item: any) => {
+    // Sudah lunas
+    if (item?.status === "LUNAS") {
       return "LUNAS";
     }
 
-    const payment =
-      item?.pembayaran?.[0];
+    // User sudah mengajukan pembayaran
+    const payment = item?.pembayaran?.[0];
 
-    // user sudah submit pembayaran
     if (
       payment &&
-      payment.status ===
-        "MENUNGGU"
+      payment.status === "MENUNGGU"
     ) {
       return "MENUNGGU";
     }
 
-    const today =
-      new Date();
+    const today = new Date();
 
-    const due =
-      new Date(
-        item?.jatuh_tempo
-      );
-
-    today.setHours(
-      0,
-      0,
-      0,
-      0
+    const due = new Date(
+      item?.jatuh_tempo
     );
 
-    due.setHours(
-      0,
-      0,
-      0,
-      0
-    );
+    today.setHours(0, 0, 0, 0);
+    due.setHours(0, 0, 0, 0);
 
-    if (
-      due < today
-    ) {
+    if (due < today) {
       return "TELAT";
     }
 
     return "PENDING";
   };
 
-  const sorted =
-    useMemo(
-      () =>
-        Array.isArray(
-          data
-        )
-          ? [...data].sort(
-              (
-                a,
-                b
-              ) =>
-                new Date(
-                  a.jatuh_tempo
-                ).getTime() -
-                new Date(
-                  b.jatuh_tempo
-                ).getTime()
-            )
-          : [],
-      [data]
+  // =========================
+  // SORT DATA
+  // =========================
+  const sorted = useMemo(
+    () =>
+      Array.isArray(data)
+        ? [...data].sort(
+            (a, b) =>
+              new Date(
+                a.jatuh_tempo
+              ).getTime() -
+              new Date(
+                b.jatuh_tempo
+              ).getTime()
+          )
+        : [],
+    [data]
+  );
+
+  // =========================
+  // STATUS DATA
+  // =========================
+  const processedData = useMemo(() => {
+    return sorted.map((item) => ({
+      ...item,
+      currentStatus: getStatus(item),
+    }));
+  }, [sorted]);
+
+  // =========================
+  // TAGIHAN SAAT INI
+  // =========================
+  const currentBill = useMemo(() => {
+    return processedData.find(
+      (item) =>
+        item.currentStatus ===
+          "TELAT" ||
+        item.currentStatus ===
+          "MENUNGGU" ||
+        item.currentStatus ===
+          "PENDING"
     );
+  }, [processedData]);
 
-  const handleCashPayment =
-    async (
-      idJadwal: number
-    ) => {
-      try {
+  // =========================
+  // RIWAYAT LUNAS
+  // =========================
+  const history = useMemo(() => {
+    return processedData.filter(
+      (item) =>
+        item.currentStatus === "LUNAS"
+    );
+  }, [processedData]);
 
-        setLoadingId(
-          idJadwal
-        );
+  // =========================
+  // BAYAR DI KANTOR
+  // =========================
+  const handleCashPayment = async (
+    idJadwal: number
+  ) => {
+    try {
+      setLoadingId(idJadwal);
 
-        await submitCashPayment(
-          idJadwal
-        );
+      await submitCashPayment(idJadwal);
 
-        alert(
-          "Permintaan pembayaran berhasil dikirim"
-        );
+      alert(
+        "Permintaan pembayaran berhasil dikirim"
+      );
+    } catch (err: any) {
+      alert(err.message);
+    } finally {
+      setLoadingId(null);
+    }
+  };
 
-      } catch (
-        err: any
-      ) {
-
-        alert(
-          err.message
-        );
-
-      } finally {
-
-        setLoadingId(
-          null
-        );
-
+  // =========================
+  // FORMAT TANGGAL
+  // =========================
+  const formatTanggal = (
+    tanggal: string | Date
+  ) => {
+    return new Date(
+      tanggal
+    ).toLocaleDateString(
+      "id-ID",
+      {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
       }
-    };
+    );
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 p-5 md:p-10">
+      {/* =========================
+          TAGIHAN SAAT INI
+      ========================= */}
+      <section className="mb-8">
 
-      {/* HEADER */}
-      <div className="mb-6">
+        <div className="mb-4">
+          <h2 className="text-lg font-bold text-gray-800">
+            Tagihan Saat Ini
+          </h2>
 
-        <h1 className="text-2xl font-bold text-gray-800">
-          Tagihan Cicilan
-        </h1>
+          <p className="mt-1 text-sm text-gray-500">
+            Tagihan yang perlu Anda perhatikan saat ini.
+          </p>
+        </div>
 
-        <p className="text-sm text-gray-500 mt-1">
-          Pantau dan bayar
-          cicilan anda
-        </p>
+        {currentBill ? (
+          <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
 
-      </div>
+            {/* TABLE */}
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[700px] text-sm">
 
-      {/* CARD */}
-      <div className="grid md:grid-cols-2 gap-5">
+                <thead>
+                  <tr className="border-b border-gray-100 bg-gray-50 text-left text-xs uppercase tracking-wide text-gray-500">
 
-        {sorted.map(
-          (item) => {
+                    <th className="px-5 py-4 font-semibold">
+                      Cicilan
+                    </th>
 
-            const status =
-              getStatus(
-                item
-              );
+                    <th className="px-5 py-4 font-semibold">
+                      Jatuh Tempo
+                    </th>
 
-            return (
-              <div
-                key={
-                  item.id_jadwal
-                }
-                className="bg-white rounded-2xl border p-5 shadow-sm hover:shadow-lg transition"
-              >
+                    <th className="px-5 py-4 font-semibold">
+                      Nominal
+                    </th>
 
-                {/* TOP */}
-                <div className="flex justify-between items-start">
+                    <th className="px-5 py-4 font-semibold">
+                      Status
+                    </th>
 
-                  <div>
+                    <th className="px-5 py-4 text-right font-semibold">
+                      Aksi
+                    </th>
 
-                    <p className="text-lg font-bold text-gray-800">
-                      Cicilan ke-
-                      {
-                        item.cicilan_ke
-                      }
-                    </p>
+                  </tr>
+                </thead>
 
-                    <p className="text-xs text-gray-400 mt-1">
-                      {new Date(
-                        item.jatuh_tempo
-                      ).toLocaleDateString(
-                        "id-ID",
-                        {
-                          day:
-                            "numeric",
-                          month:
-                            "long",
-                          year:
-                            "numeric",
-                        }
+                <tbody>
+                  <tr className="border-b border-gray-100 last:border-0">
+
+                    {/* CICILAN */}
+                    <td className="px-5 py-5">
+                      <p className="font-semibold text-gray-800">
+                        Cicilan ke-
+                        {currentBill.cicilan_ke}
+                      </p>
+                    </td>
+
+                    {/* JATUH TEMPO */}
+                    <td className="px-5 py-5 text-gray-600">
+                      {formatTanggal(
+                        currentBill.jatuh_tempo
                       )}
-                    </p>
+                    </td>
 
-                  </div>
+                    {/* NOMINAL */}
+                    <td className="px-5 py-5">
+                      <p className="font-bold text-gray-800">
+                        {formatRupiah(
+                          currentBill.jumlah_tagihan
+                        )}
+                      </p>
+                    </td>
 
-                  <span
-                    className={`text-xs px-3 py-1 rounded-full font-medium ${
-                      status ===
-                      "LUNAS"
-                        ? "bg-green-100 text-green-700"
-                        : status ===
-                          "MENUNGGU"
-                        ? "bg-yellow-100 text-yellow-700"
-                        : status ===
+                    {/* STATUS */}
+                    <td className="px-5 py-5">
+
+                      <span
+                        className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${
+                          currentBill.currentStatus ===
                           "TELAT"
-                        ? "bg-red-100 text-red-700"
-                        : "bg-blue-100 text-blue-700"
-                    }`}
-                  >
-                    {
-                      status
-                    }
-                  </span>
-
-                </div>
-
-                {/* NOMINAL */}
-                <div className="mt-5">
-
-                  <p className="text-xs text-gray-400">
-                    Tagihan
-                  </p>
-
-                  <p className="text-xl font-bold text-gray-800 mt-1">
-                    {formatRupiah(
-                      item.jumlah_tagihan
-                    )}
-                  </p>
-
-                </div>
-
-                {/* ACTION */}
-                <div className="mt-5 flex gap-3">
-
-                  {(status ===
-                    "PENDING" ||
-                    status ===
-                      "TELAT") && (
-                    <>
-
-                      {/* TRANSFER */}
-                      <button
-                        onClick={() =>
-                          router.push(
-                            `/nasabah/pembayaran/${item.id_jadwal}`
-                          )
-                        }
-                        className="flex-1 bg-green-600 hover:bg-green-700 text-white text-sm rounded-xl py-3"
+                            ? "bg-red-100 text-red-700"
+                            : currentBill.currentStatus ===
+                              "MENUNGGU"
+                            ? "bg-yellow-100 text-yellow-700"
+                            : "bg-blue-100 text-blue-700"
+                        }`}
                       >
-                        Bayar
-                        Transfer
-                      </button>
-
-                      {/* CASH */}
-                      <button
-                        onClick={() =>
-                          handleCashPayment(
-                            item.id_jadwal
-                          )
+                        {
+                          currentBill.currentStatus
                         }
-                        disabled={
-                          loadingId ===
-                          item.id_jadwal
-                        }
-                        className="flex-1 border text-sm rounded-xl py-3 disabled:opacity-50"
-                      >
-                        {loadingId ===
-                        item.id_jadwal
-                          ? "Memproses..."
-                          : "Bayar di Kantor"}
-                      </button>
+                      </span>
 
-                    </>
-                  )}
+                    </td>
 
-                  {status ===
-                  "MENUNGGU" ? (
-                    <button
-                      disabled
-                      className="w-full bg-yellow-100 text-yellow-700 text-sm rounded-xl py-3"
-                    >
-                      Menunggu
-                      Verifikasi
-                    </button>
-                  ) : null}
+                    {/* AKSI */}
+                    <td className="px-5 py-5">
 
-                  {status ===
-                  "LUNAS" ? (
-                    <button
-                      disabled
-                      className="w-full bg-green-100 text-green-700 text-sm rounded-xl py-3"
-                    >
-                      Lunas ✓
-                    </button>
-                  ) : null}
+                      {(
+                        currentBill.currentStatus ===
+                          "PENDING" ||
+                        currentBill.currentStatus ===
+                          "TELAT"
+                      ) && (
+                        <div className="flex justify-end gap-2">
 
-                </div>
+                          {/* TRANSFER */}
+                          <button
+                            onClick={() =>
+                              router.push(
+                                `/nasabah/pembayaran/${currentBill.id_jadwal}`
+                              )
+                            }
+                            className="rounded-lg bg-green-600 px-4 py-2 text-xs font-semibold text-white transition hover:bg-green-700"
+                          >
+                            Bayar Transfer
+                          </button>
 
-              </div>
-            );
-          }
+                          {/* KANTOR */}
+                          <button
+                            onClick={() =>
+                              handleCashPayment(
+                                currentBill.id_jadwal
+                              )
+                            }
+                            disabled={
+                              loadingId ===
+                              currentBill.id_jadwal
+                            }
+                            className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-xs font-semibold text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+                          >
+                            {loadingId ===
+                            currentBill.id_jadwal
+                              ? "Memproses..."
+                              : "Bayar di Kantor"}
+                          </button>
+
+                        </div>
+                      )}
+
+                      {currentBill.currentStatus ===
+                        "MENUNGGU" && (
+                        <div className="flex justify-end">
+                          <span className="rounded-lg bg-yellow-50 px-4 py-2 text-xs font-semibold text-yellow-700">
+                            Menunggu Verifikasi
+                          </span>
+                        </div>
+                      )}
+
+                    </td>
+
+                  </tr>
+                </tbody>
+
+              </table>
+            </div>
+          </div>
+        ) : (
+          <div className="rounded-2xl border border-dashed border-gray-200 bg-white p-8 text-center">
+            <p className="text-sm text-gray-500">
+              Tidak ada tagihan yang perlu dibayar saat ini.
+            </p>
+          </div>
         )}
 
-      </div>
+      </section>
+
+      {/* =========================
+          RIWAYAT PEMBAYARAN
+      ========================= */}
+      <section>
+
+        <div className="mb-4">
+          <h2 className="text-lg font-bold text-gray-800">
+            Riwayat Pembayaran
+          </h2>
+
+          <p className="mt-1 text-sm text-gray-500">
+            Daftar cicilan yang telah diselesaikan.
+          </p>
+        </div>
+
+        {history.length > 0 ? (
+          <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[650px] text-sm">
+
+                <thead>
+                  <tr className="border-b border-gray-100 bg-gray-50 text-left text-xs uppercase tracking-wide text-gray-500">
+
+                    <th className="px-5 py-4 font-semibold">
+                      Cicilan
+                    </th>
+
+                    <th className="px-5 py-4 font-semibold">
+                      Jatuh Tempo
+                    </th>
+
+                    <th className="px-5 py-4 font-semibold">
+                      Nominal
+                    </th>
+
+                    <th className="px-5 py-4 font-semibold">
+                      Status
+                    </th>
+
+                  </tr>
+                </thead>
+
+                <tbody>
+
+                  {history.map(
+                    (item) => (
+                      <tr
+                        key={
+                          item.id_jadwal
+                        }
+                        className="border-b border-gray-100 last:border-0"
+                      >
+
+                        <td className="px-5 py-4 font-semibold text-gray-800">
+                          Cicilan ke-
+                          {
+                            item.cicilan_ke
+                          }
+                        </td>
+
+                        <td className="px-5 py-4 text-gray-600">
+                          {formatTanggal(
+                            item.jatuh_tempo
+                          )}
+                        </td>
+
+                        <td className="px-5 py-4 font-semibold text-gray-800">
+                          {formatRupiah(
+                            item.jumlah_tagihan
+                          )}
+                        </td>
+
+                        <td className="px-5 py-4">
+
+                          <span className="inline-flex rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700">
+                            LUNAS ✓
+                          </span>
+
+                        </td>
+
+                      </tr>
+                    )
+                  )}
+
+                </tbody>
+
+              </table>
+            </div>
+
+          </div>
+        ) : (
+          <div className="rounded-2xl border border-dashed border-gray-200 bg-white p-8 text-center">
+            <p className="text-sm text-gray-500">
+              Belum ada riwayat pembayaran.
+            </p>
+          </div>
+        )}
+
+      </section>
 
     </div>
   );

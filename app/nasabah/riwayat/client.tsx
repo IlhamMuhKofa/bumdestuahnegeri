@@ -12,6 +12,8 @@ import {
   Calendar,
   SlidersHorizontal,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   FileX,
   Eye,
   Download,
@@ -29,6 +31,8 @@ const FILTER_OPTIONS: FilterOption[] = [
 type Props = {
   data?: any[];
 };
+
+const ITEMS_PER_PAGE = 10;
 
 export default function Riwayat({
   data = [],
@@ -58,6 +62,9 @@ export default function Riwayat({
 
   const [preview, setPreview] =
     useState<string | null>(null);
+
+  const [currentPage, setCurrentPage] =
+    useState(1);
 
   const dropdownRef =
     useRef<HTMLDivElement>(
@@ -188,33 +195,94 @@ export default function Riwayat({
       selectedFilters,
     ]);
 
+  // RESET KE HALAMAN 1 KETIKA FILTER / SEARCH BERUBAH
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [
+    searchJenis,
+    searchTanggal,
+    selectedFilters,
+  ]);
+
+  // PAGINATION
+  const totalPages = Math.max(
+    1,
+    Math.ceil(
+      filteredData.length /
+        ITEMS_PER_PAGE
+    )
+  );
+
+  const paginatedData =
+    useMemo(() => {
+
+      const startIndex =
+        (currentPage - 1) *
+        ITEMS_PER_PAGE;
+
+      return filteredData.slice(
+        startIndex,
+        startIndex +
+          ITEMS_PER_PAGE
+      );
+
+    }, [
+      filteredData,
+      currentPage,
+    ]);
+
+  // PENGAMAN JIKA DATA BERUBAH DAN CURRENT PAGE MELEBIHI TOTAL PAGE
+  useEffect(() => {
+    if (
+      currentPage >
+      totalPages
+    ) {
+      setCurrentPage(
+        totalPages
+      );
+    }
+  }, [
+    currentPage,
+    totalPages,
+  ]);
+
+  const startItem =
+    filteredData.length === 0
+      ? 0
+      : (currentPage - 1) *
+          ITEMS_PER_PAGE +
+        1;
+
+  const endItem =
+    Math.min(
+      currentPage *
+        ITEMS_PER_PAGE,
+      filteredData.length
+    );
+
   return (
-    <div className="min-h-screen bg-gray-50 px-4 py-5 sm:p-6 font-sans">
+    <div className="min-h-screen bg-gray-50 px-4 py-5 font-sans sm:p-6">
 
       <div className="mx-auto w-full max-w-6xl space-y-6">
 
         {/* TITLE */}
-<div>
-    <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-gray-800">
-        Riwayat Transaksi
-    </h1>
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight text-gray-800 sm:text-[30px]">
+            Riwayat Transaksi
+          </h1>
 
-    <p className="mt-2 text-sm text-gray-500 leading-relaxed">
-        Lihat seluruh aktivitas pembayaran, cicilan, dan setoran Anda.
-    </p>
-</div>
+          <p className="mt-2 text-sm leading-relaxed text-gray-500">
+            Lihat seluruh aktivitas pembayaran, cicilan, dan setoran Anda.
+          </p>
+        </div>
 
         {/* SEARCH */}
-        <div className="flex
-flex-col
-gap-3
-lg:flex-row
-lg:items-center3">
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
 
           {/* SEARCH JENIS */}
-          <div className="flex items-center w-full lg:flex-1 bg-white border border-gray-200 rounded-lg px-3 py-2.5 shadow-sm gap-2">
+          <div className="flex w-full items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2.5 shadow-sm lg:flex-1">
 
-            <Search className="w-4 h-4 text-gray-400 shrink-0" />
+            <Search className="h-4 w-4 shrink-0 text-gray-400" />
 
             <input
               type="text"
@@ -229,15 +297,15 @@ lg:items-center3">
                   e.target.value
                 )
               }
-              className="text-sm text-gray-500 bg-transparent outline-none w-full placeholder:text-gray-400"
+              className="w-full bg-transparent text-sm text-gray-500 outline-none placeholder:text-gray-400"
             />
 
           </div>
 
           {/* SEARCH TANGGAL */}
-          <div className="flex items-center w-full lg:flex-1 bg-white border border-gray-200 rounded-lg px-3 py-2.5 shadow-sm gap-2">
+          <div className="flex w-full items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2.5 shadow-sm lg:flex-1">
 
-            <Calendar className="w-4 h-4 text-gray-400 shrink-0" />
+            <Calendar className="h-4 w-4 shrink-0 text-gray-400" />
 
             <input
               type="text"
@@ -252,7 +320,7 @@ lg:items-center3">
                   e.target.value
                 )
               }
-              className="text-sm text-gray-500 bg-transparent outline-none w-full placeholder:text-gray-400"
+              className="w-full bg-transparent text-sm text-gray-500 outline-none placeholder:text-gray-400"
             />
 
           </div>
@@ -272,15 +340,15 @@ lg:items-center3">
                     !prev
                 )
               }
-              className="flex items-center w-full sm:w-auto gap-2 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-semibold text-sm px-4 py-2.5 rounded-lg shadow-sm transition-all duration-150"
+              className="flex h-10 w-full items-center justify-center gap-2 rounded-lg bg-[#1a3c2e] px-4 text-sm font-medium text-white shadow-sm transition-all hover:bg-[#142f24] active:scale-[0.98] sm:w-auto"
             >
 
-              <SlidersHorizontal className="w-4 h-4" />
+              <SlidersHorizontal className="h-4 w-4" />
 
               Filter Data
 
               <ChevronDown
-                className={`w-4 h-4 transition-transform duration-200 ${
+                className={`h-4 w-4 transition-transform duration-200 ${
                   filterOpen
                     ? "rotate-180"
                     : ""
@@ -292,9 +360,9 @@ lg:items-center3">
             {/* DROPDOWN */}
             {filterOpen && (
 
-              <div className="absolute right-0 mt-2 w-full sm:w-56 bg-white border border-gray-200 rounded-xl shadow-lg z-20 p-4">
+              <div className="absolute right-0 z-20 mt-2 w-full rounded-xl border border-gray-200 bg-white p-4 shadow-lg sm:w-56">
 
-                <p className="text-sm font-semibold text-gray-700 mb-3">
+                <p className="mb-3 text-sm font-semibold text-gray-700">
                   Filter
                 </p>
 
@@ -309,7 +377,7 @@ lg:items-center3">
                         key={
                           option
                         }
-                        className="flex items-center gap-2.5 cursor-pointer"
+                        className="flex cursor-pointer items-center gap-2.5"
                       >
 
                         <input
@@ -343,310 +411,450 @@ lg:items-center3">
 
         </div>
 
-{/* TABLE - DESKTOP */}
-<div className="hidden md:block overflow-hidden rounded-3xl border border-gray-100 bg-white shadow-sm">
+        {/* TABLE - DESKTOP */}
+        <div className="hidden overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm md:block">
 
-  <div className="overflow-x-auto">
-    <table className="min-w-[950px] w-full text-sm">
+          <div className="overflow-x-auto">
 
-    <thead>
+            <table className="w-full min-w-[950px] text-sm">
 
-      <tr className="bg-[#1a3c2e]">
+              <thead>
 
-        {[
-          "Tanggal",
-          "Jenis Transaksi",
-          "Nominal",
-          "Status",
-          "Keterangan",
-          "Detail",
-        ].map(
-          (
-            col
-          ) => (
+                <tr className="bg-[#1a3c2e]">
 
-            <th
-              key={
-                col
-              }
-              className="text-white font-semibold text-center px-4 py-4"
-            >
-              {
-                col
-              }
-            </th>
-          )
-        )}
+                  {[
+                    "Tanggal",
+                    "Jenis Transaksi",
+                    "Nominal",
+                    "Status",
+                    "Keterangan",
+                    "Detail",
+                  ].map(
+                    (
+                      col
+                    ) => (
 
-      </tr>
+                      <th
+                        key={
+                          col
+                        }
+                        className="px-4 py-3.5 text-center text-sm font-semibold text-white/90"
+                      >
+                        {
+                          col
+                        }
+                      </th>
+                    )
+                  )}
 
-    </thead>
+                </tr>
 
-    <tbody>
+              </thead>
 
-      {filteredData.length ===
-      0 ? (
+              <tbody>
 
-        <tr>
+                {paginatedData.length ===
+                0 ? (
 
-          <td
-            colSpan={6}
-          >
+                  <tr>
 
-            <div className="flex flex-col items-center justify-center py-20 px-6 text-center gap-4">
+                    <td
+                      colSpan={6}
+                    >
 
-              <div className="w-20 h-20 rounded-full bg-green-50 flex items-center justify-center">
+                      <div className="flex flex-col items-center justify-center gap-4 px-6 py-20 text-center">
 
-                <FileX className="w-10 h-10 text-green-400" />
+                        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-green-50">
+
+                          <FileX className="h-8 w-8 text-green-400" />
+
+                        </div>
+
+                        <div>
+
+                          <p className="mb-1 text-base font-semibold text-gray-700">
+                            Belum Ada
+                            Riwayat
+                            Transaksi
+                          </p>
+
+                          <p className="mx-auto max-w-xs text-sm leading-relaxed text-gray-400">
+                            Transaksi
+                            Anda akan
+                            muncul di
+                            sini
+                          </p>
+
+                        </div>
+
+                      </div>
+
+                    </td>
+
+                  </tr>
+
+                ) : (
+
+                  paginatedData.map(
+                    (
+                      item
+                    ) => (
+
+                      <tr
+                        key={
+                          item.id_riwayat
+                        }
+                        className="border-t border-gray-100 transition-colors hover:bg-gray-50/70"
+                      >
+
+                        {/* TANGGAL */}
+                        <td className="whitespace-nowrap px-4 py-4 text-center text-sm text-gray-700">
+
+                          {new Date(
+                            item.tanggal
+                          ).toLocaleDateString(
+                            "id-ID",
+                            {
+                              day:
+                                "numeric",
+                              month:
+                                "long",
+                              year:
+                                "numeric",
+                            }
+                          )}
+
+                        </td>
+
+                        {/* JENIS */}
+                        <td className="px-4 py-4 text-center text-sm font-medium text-gray-800">
+
+                          {
+                            item.jenis_transaksi
+                          }
+
+                        </td>
+
+                        {/* NOMINAL */}
+                        <td className="whitespace-nowrap px-4 py-4 text-center text-sm font-semibold text-gray-800">
+
+                          Rp{" "}
+                          {item.nominal.toLocaleString(
+                            "id-ID"
+                          )}
+
+                        </td>
+
+                        {/* STATUS */}
+                        <td className="px-4 py-4 text-center">
+
+                          <span className="inline-flex items-center rounded-full border border-green-200 bg-green-100 px-2.5 py-1 text-xs font-medium text-green-700">
+                            BERHASIL
+                          </span>
+
+                        </td>
+
+                        {/* KETERANGAN */}
+                        <td className="px-4 py-4 text-center text-sm text-gray-600">
+
+                          {
+                            item.keterangan
+                          }
+
+                        </td>
+
+                        {/* DETAIL */}
+                        <td className="px-4 py-4 text-center">
+
+                          {item.bukti_bayar ? (
+
+                            <div className="flex justify-center gap-2">
+
+                              <button
+                                onClick={() =>
+                                  setPreview(
+                                    item.bukti_bayar
+                                  )
+                                }
+                                className="inline-flex h-9 items-center gap-1 rounded-lg bg-blue-50 px-3 text-xs font-medium text-blue-700 transition-colors hover:bg-blue-100"
+                              >
+
+                                <Eye className="h-4 w-4" />
+
+                                Lihat
+
+                              </button>
+
+                              <a
+                                href={
+                                  item.bukti_bayar
+                                }
+                                download
+                                className="inline-flex h-9 items-center gap-1 rounded-lg bg-gray-100 px-3 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-200"
+                              >
+
+                                <Download className="h-4 w-4" />
+
+                                Download
+
+                              </a>
+
+                            </div>
+
+                          ) : (
+                            "-"
+                          )}
+
+                        </td>
+
+                      </tr>
+                    )
+                  )
+                )}
+
+              </tbody>
+
+            </table>
+
+          </div>
+
+        </div>
+
+        {/* LIST - MOBILE */}
+        <div className="space-y-3 md:hidden">
+
+          {paginatedData.length ===
+          0 ? (
+
+            <div className="flex flex-col items-center justify-center gap-4 rounded-2xl border border-gray-200 bg-white px-6 py-16 text-center shadow-sm">
+
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-green-50">
+
+                <FileX className="h-8 w-8 text-green-400" />
 
               </div>
 
               <div>
 
-                <p className="text-gray-700 font-semibold text-base mb-1">
-                  Belum Ada
-                  Riwayat
-                  Transaksi
+                <p className="mb-1 text-base font-semibold text-gray-700">
+                  Belum Ada Riwayat Transaksi
                 </p>
 
-                <p className="text-gray-400 text-sm max-w-xs leading-relaxed">
-                  Transaksi
-                  Anda akan
-                  muncul di
-                  sini
+                <p className="mx-auto max-w-xs text-sm leading-relaxed text-gray-400">
+                  Transaksi Anda akan muncul di sini
                 </p>
 
               </div>
 
             </div>
 
-          </td>
+          ) : (
 
-        </tr>
+            paginatedData.map(
+              (
+                item
+              ) => (
 
-      ) : (
-
-        filteredData.map(
-          (
-            item
-          ) => (
-
-            <tr
-              key={
-                item.id_riwayat
-              }
-              className="border-t transition-colors hover:bg-gray-50"
-            >
-
-              {/* TANGGAL */}
-              <td className="px-4 py-4 text-center text-gray-700">
-
-                {new Date(
-                  item.tanggal
-                ).toLocaleDateString(
-                  "id-ID",
-                  {
-                    day:
-                      "numeric",
-                    month:
-                      "long",
-                    year:
-                      "numeric",
+                <div
+                  key={
+                    item.id_riwayat
                   }
-                )}
+                  className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm"
+                >
 
-              </td>
+                  {/* TOP */}
+                  <div className="mb-3 flex items-start justify-between gap-2">
 
-              {/* JENIS */}
-              <td className="px-4 py-4 text-center font-medium text-gray-800">
+                    <span className="text-xs text-gray-500">
 
-                {
-                  item.jenis_transaksi
-                }
+                      {new Date(
+                        item.tanggal
+                      ).toLocaleDateString(
+                        "id-ID",
+                        {
+                          day:
+                            "numeric",
+                          month:
+                            "long",
+                          year:
+                            "numeric",
+                        }
+                      )}
 
-              </td>
+                    </span>
 
-              {/* NOMINAL */}
-              <td className="px-4 py-4 text-center font-semibold text-gray-800">
+                    <span className="inline-flex shrink-0 items-center rounded-full border border-green-200 bg-green-100 px-2.5 py-1 text-xs font-medium text-green-700">
+                      BERHASIL
+                    </span>
 
-                Rp{" "}
-                {item.nominal.toLocaleString(
-                  "id-ID"
-                )}
-
-              </td>
-
-              {/* STATUS */}
-              <td className="px-4 py-4 text-center">
-
-                <span className="bg-green-100 text-green-700 text-xs px-3 py-1 rounded-full font-medium">
-                  BERHASIL
-                </span>
-
-              </td>
-
-              {/* KETERANGAN */}
-              <td className="px-4 py-4 text-center text-gray-600">
-
-                {
-                  item.keterangan
-                }
-
-              </td>
-
-              <td className="px-4 py-4 text-center">
-                {item.bukti_bayar ? (
-                  <div className="flex justify-center gap-2">
-                    <button
-                      onClick={() => setPreview(item.bukti_bayar)}
-                      className="inline-flex items-center gap-1 rounded-lg bg-blue-50 px-3 py-2 text-xs font-semibold text-blue-700 hover:bg-blue-100"
-                    >
-                      <Eye className="h-4 w-4" />
-                      Lihat
-                    </button>
-                    
-                    <a
-                      href={item.bukti_bayar}
-                      download
-                      className="inline-flex items-center gap-1 rounded-lg bg-gray-100 px-3 py-2 text-xs font-semibold text-gray-700 hover:bg-gray-200"
-                    >
-                      <Download className="h-4 w-4" />
-                      Download
-                    </a>
                   </div>
-                ) : (
-                  "-"
-                )}
-              </td>
 
-            </tr>
-          )
-        )
-      )}
+                  {/* JENIS + NOMINAL */}
+                  <div className="mb-1 flex items-center justify-between gap-2">
 
-    </tbody>
+                    <span className="text-sm font-semibold text-gray-800">
+                      {
+                        item.jenis_transaksi
+                      }
+                    </span>
 
-  </table>
-  </div>
+                    <span className="shrink-0 text-sm font-semibold text-emerald-700">
+                      Rp{" "}
+                      {item.nominal.toLocaleString(
+                        "id-ID"
+                      )}
+                    </span>
 
-</div>
+                  </div>
 
-{/* LIST - MOBILE (pengganti tabel) */}
-<div className="md:hidden space-y-3">
+                  {/* KETERANGAN */}
+                  {item.keterangan && (
 
-  {filteredData.length === 0 ? (
+                    <p className="mb-3 mt-1 text-xs text-gray-500">
+                      {
+                        item.keterangan
+                      }
+                    </p>
 
-    <div className="rounded-3xl border border-gray-100 bg-white shadow-sm flex flex-col items-center justify-center py-16 px-6 text-center gap-4">
+                  )}
 
-      <div className="w-20 h-20 rounded-full bg-green-50 flex items-center justify-center">
-        <FileX className="w-10 h-10 text-green-400" />
-      </div>
+                  {/* DETAIL / BUKTI */}
+                  {item.bukti_bayar && (
 
-      <div>
-        <p className="text-gray-700 font-semibold text-base mb-1">
-          Belum Ada Riwayat Transaksi
-        </p>
-        <p className="text-gray-400 text-sm max-w-xs leading-relaxed">
-          Transaksi Anda akan muncul di sini
-        </p>
-      </div>
+                    <div className="flex gap-2 border-t border-gray-100 pt-3">
 
-    </div>
+                      <button
+                        onClick={() =>
+                          setPreview(
+                            item.bukti_bayar
+                          )
+                        }
+                        className="inline-flex h-9 flex-1 items-center justify-center gap-1 rounded-lg bg-blue-50 px-3 text-xs font-medium text-blue-700 transition-colors hover:bg-blue-100"
+                      >
 
-  ) : (
+                        <Eye className="h-4 w-4" />
 
-    filteredData.map((item) => (
+                        Lihat
 
-      <div
-        key={item.id_riwayat}
-        className="rounded-2xl border border-gray-100 bg-white shadow-sm p-4"
-      >
+                      </button>
 
-        {/* TOP: tanggal + status */}
-        <div className="flex items-start justify-between gap-2 mb-3">
-          <span className="text-xs text-gray-500">
-            {new Date(item.tanggal).toLocaleDateString("id-ID", {
-              day: "numeric",
-              month: "long",
-              year: "numeric",
-            })}
-          </span>
+                      <a
+                        href={
+                          item.bukti_bayar
+                        }
+                        download
+                        className="inline-flex h-9 flex-1 items-center justify-center gap-1 rounded-lg bg-gray-100 px-3 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-200"
+                      >
 
-          <span className="bg-green-100 text-green-700 text-xs px-2.5 py-1 rounded-full font-medium shrink-0">
-            BERHASIL
-          </span>
+                        <Download className="h-4 w-4" />
+
+                        Download
+
+                      </a>
+
+                    </div>
+
+                  )}
+
+                </div>
+              )
+            )
+          )}
+
         </div>
 
-        {/* JENIS + NOMINAL */}
-        <div className="flex items-center justify-between gap-2 mb-1">
-          <span className="font-semibold text-gray-800 text-sm">
-            {item.jenis_transaksi}
-          </span>
+        {/* PAGINATION */}
+        <div className="flex flex-col gap-3 px-1 pt-1 text-sm sm:flex-row sm:items-center sm:justify-between">
 
-          <span className="font-bold text-emerald-700 text-sm shrink-0">
-            Rp {item.nominal.toLocaleString("id-ID")}
-          </span>
-        </div>
-
-        {/* KETERANGAN */}
-        {item.keterangan && (
-          <p className="text-xs text-gray-500 mt-1 mb-3">
-            {item.keterangan}
-          </p>
-        )}
-
-        {/* DETAIL / BUKTI BAYAR */}
-        {item.bukti_bayar && (
-          <div className="flex gap-2 pt-3 border-t border-gray-100">
-            <button
-              onClick={() => setPreview(item.bukti_bayar)}
-              className="flex-1 inline-flex items-center justify-center gap-1 rounded-lg bg-blue-50 px-3 py-2 text-xs font-semibold text-blue-700 hover:bg-blue-100"
-            >
-              <Eye className="h-4 w-4" />
-              Lihat
-            </button>
-            <a
-              href={item.bukti_bayar}
-              download
-              className="flex-1 inline-flex items-center justify-center gap-1 rounded-lg bg-gray-100 px-3 py-2 text-xs font-semibold text-gray-700 hover:bg-gray-200"
-            >
-              <Download className="h-4 w-4" />
-              Download
-            </a>
-          </div>
-        )}
-
-      </div>
-    ))
-  )}
-
-</div>
-
-        {/* FOOTER */}
-        <div className="flex items-center justify-between mt-4 text-sm text-gray-400 px-1">
-
-          <span>
+          <span className="text-sm text-gray-500">
             Menampilkan{" "}
-            {
-              filteredData.length
-            }{" "}
+            <span className="font-medium text-gray-700">
+              {startItem} - {endItem}
+            </span>{" "}
+            dari{" "}
+            <span className="font-medium text-gray-700">
+              {filteredData.length}
+            </span>{" "}
             transaksi
           </span>
 
+          {filteredData.length >
+            0 && (
+            <div className="flex items-center justify-end gap-2">
+
+              <button
+                type="button"
+                onClick={() =>
+                  setCurrentPage(
+                    (page) =>
+                      Math.max(
+                        page - 1,
+                        1
+                      )
+                  )
+                }
+                disabled={
+                  currentPage === 1
+                }
+                className="inline-flex h-9 items-center gap-1 rounded-lg border border-gray-200 bg-white px-3 text-xs font-medium text-gray-600 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
+              >
+
+                <ChevronLeft className="h-4 w-4" />
+
+                Sebelumnya
+
+              </button>
+
+              <span className="px-1 text-sm font-medium text-gray-700">
+                Halaman {currentPage} / {totalPages}
+              </span>
+
+              <button
+                type="button"
+                onClick={() =>
+                  setCurrentPage(
+                    (page) =>
+                      Math.min(
+                        page + 1,
+                        totalPages
+                      )
+                  )
+                }
+                disabled={
+                  currentPage ===
+                  totalPages
+                }
+                className="inline-flex h-9 items-center gap-1 rounded-lg border border-gray-200 bg-white px-3 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
+              >
+
+                Berikutnya
+
+                <ChevronRight className="h-4 w-4" />
+
+              </button>
+
+            </div>
+          )}
+
         </div>
 
       </div>
 
+      {/* PREVIEW */}
       {preview && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4"
-          onClick={() => setPreview(null)}
+          onClick={() =>
+            setPreview(null)
+          }
         >
+
           <img
             src={preview}
             alt="Preview bukti pembayaran"
             className="max-h-[85vh] max-w-4xl rounded-xl object-contain"
           />
+
         </div>
       )}
 

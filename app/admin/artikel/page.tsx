@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Calendar, Star, Pencil, Trash2, Plus } from "lucide-react";
+import { Calendar, Star, Plus, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 
@@ -158,13 +158,19 @@ const handleFeature = async (id: number) => {
 
   if (!mounted) return null;
 
-  if (loading) {
-    return (
-      <div className="p-6 text-gray-500 animate-pulse">
-        Memuat artikel...
+if (loading) {
+  return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+        <div className="flex flex-col items-center gap-3">
+          <div className="h-8 w-8 animate-spin rounded-full border-[3px] border-gray-200 border-t-blue-500" />
+
+          <p className="text-sm text-gray-400">
+            Memuat data artikel...
+          </p>
+        </div>
       </div>
-    );
-  }
+  );
+}
 
   const featured = articles.filter((a) => a.status === "featured");
   const regular = articles.filter((a) => a.status !== "featured");

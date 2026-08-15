@@ -1,79 +1,175 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { ChevronRight, Loader2 } from "lucide-react";
 
-export default function CardNasabah({ item }: any) {
+type Props = {
+  item: any;
+};
+
+export default function CardNasabah({
+  item,
+}: Props) {
   const router = useRouter();
 
-  const formatTanggal = (date: string) => {
-    return new Date(date).toLocaleDateString("id-ID", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    });
+  const [loading, setLoading] =
+    useState(false);
+
+  const formatTanggal = (
+    date: string
+  ) => {
+    return new Date(
+      date
+    ).toLocaleDateString(
+      "id-ID",
+      {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      }
+    );
   };
 
-  const getInitial = (name: string) => {
-    return name?.charAt(0)?.toUpperCase() || "?";
+  const getInitial = (
+    name: string
+  ) => {
+    return (
+      name
+        ?.charAt(0)
+        ?.toUpperCase() || "?"
+    );
+  };
+
+  const handleDetail = () => {
+    // Cegah klik berkali-kali
+    if (loading) return;
+
+    setLoading(true);
+
+    router.push(
+      `/admin/cicilan/konten/${item.id_anggota}`
+    );
   };
 
   return (
-    <div className="relative bg-white border rounded-2xl p-5 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+    <tr className="border-b border-gray-50 transition-colors hover:bg-blue-50/40">
 
-      {/* 🔥 ACCENT TOP */}
-      <div className="absolute top-0 left-0 w-full h-1 bg-blue-800" />
+      {/* =====================================================
+          NASABAH
+      ===================================================== */}
 
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-5">
+      <td className="px-5 py-4">
 
-        {/* 🔥 LEFT CONTENT */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
 
-          {/* AVATAR */}
-          <div className="w-12 h-12 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-lg">
-            {getInitial(item.nama)}
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-100">
+
+            <span className="text-xs font-bold text-blue-700">
+              {getInitial(item.nama)}
+            </span>
+
           </div>
 
-          {/* TEXT */}
           <div>
-            <h2 className="text-lg font-semibold text-gray-800">
+
+            <p className="text-sm font-medium text-gray-800">
               {item.nama}
-            </h2>
+            </p>
 
-            <p className="text-xs text-gray-400 mt-1">
-              Terakhir pengajuan:
-            </p>
-            <p className="text-sm text-gray-600">
-              {formatTanggal(item.terakhir)}
-            </p>
           </div>
-        </div>
-
-        {/* 🔥 RIGHT CONTENT */}
-        <div className="flex items-center justify-between md:justify-end gap-6">
-
-          {/* INFO BOX */}
-          <div className="text-center">
-            <p className="text-xs text-gray-400">
-              Total Pengajuan
-            </p>
-            <p className="text-lg font-bold text-gray-800">
-              {item.total_pengajuan}
-            </p>
-          </div>
-
-          {/* BUTTON */}
-          <button
-            onClick={() =>
-              router.push(`/admin/cicilan/konten/${item.id_anggota}`)
-            }
-            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm shadow-sm transition"
-          >
-            Detail →
-          </button>
 
         </div>
 
-      </div>
-    </div>
+      </td>
+
+
+      {/* =====================================================
+          TERAKHIR PENGAJUAN
+      ===================================================== */}
+
+      <td className="px-4 py-4">
+
+        <p className="text-sm font-medium text-gray-700">
+          {formatTanggal(
+            item.terakhir
+          )}
+        </p>
+
+        <p className="mt-0.5 text-xs text-gray-400">
+          Terakhir pengajuan
+        </p>
+
+      </td>
+
+
+      {/* =====================================================
+          TOTAL PENGAJUAN
+      ===================================================== */}
+
+      <td className="px-4 py-4 text-center">
+
+        <span className="inline-flex rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-700">
+          {item.total_pengajuan}
+        </span>
+
+      </td>
+
+
+      {/* =====================================================
+          AKSI
+      ===================================================== */}
+
+      <td className="px-5 py-4 text-center">
+
+        <button
+          type="button"
+          onClick={handleDetail}
+          disabled={loading}
+          className="
+            inline-flex
+            h-8
+            min-w-[72px]
+            items-center
+            justify-center
+            gap-1.5
+            rounded-lg
+            border
+            border-blue-200
+            px-3
+            py-1.5
+            text-xs
+            font-semibold
+            text-blue-700
+            transition-all
+            hover:border-blue-700
+            hover:bg-blue-700
+            hover:text-white
+            disabled:cursor-not-allowed
+            disabled:border-blue-200
+            disabled:bg-blue-50
+            disabled:text-blue-600
+          "
+        >
+
+          {loading ? (
+            <>
+              <Loader2
+                className="h-3.5 w-3.5 animate-spin"
+              />
+
+              Memuat...
+            </>
+          ) : (
+            <>
+              Detail
+            </>
+          )}
+
+        </button>
+
+      </td>
+
+    </tr>
   );
 }

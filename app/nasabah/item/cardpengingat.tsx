@@ -2,9 +2,13 @@
 
 import {
   Bell,
+  CreditCard,
+  Building2,
+  X,
 } from "lucide-react";
 
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 type Props = {
   data: {
@@ -22,11 +26,14 @@ export default function CardPengingatAngsuran({
 }: Props) {
   const router = useRouter();
 
+  const [showPaymentModal, setShowPaymentModal] =
+    useState(false);
+
   if (!data) return null;
 
   const statusColor = {
     PENDING:
-      "bg-emerald-50 text-emerald-700 border-emerald-100",
+      "bg-yellow-50 text-yellow-700 border-yellow-100",
 
     MENUNGGU:
       "bg-yellow-50 text-yellow-700 border-yellow-100",
@@ -38,94 +45,294 @@ export default function CardPengingatAngsuran({
       "bg-green-50 text-green-700 border-green-100",
   };
 
+  const statusLabel = {
+    PENDING: "Menunggu",
+    MENUNGGU: "Menunggu",
+    TELAT: "Telat",
+    LUNAS: "Lunas",
+  };
+
+  // =========================
+  // BAYAR TRANSFER
+  // =========================
+  const handleTransfer = () => {
+    setShowPaymentModal(false);
+
+    router.push(
+      `/nasabah/pembayaran/${data.idPeminjaman}`
+    );
+  };
+
+  // =========================
+  // BAYAR DI KANTOR
+  // =========================
+  const handleCashPayment = () => {
+    setShowPaymentModal(false);
+
+    router.push(
+      `/nasabah/cicilan/${data.idPeminjaman}`
+    );
+  };
+
+  // =========================
+  // LIHAT DETAIL
+  // =========================
+  const handleDetail = () => {
+    router.push(
+      `/nasabah/cicilan/${data.idPeminjaman}`
+    );
+  };
+
+  const normalizedStatus = data.status.toUpperCase() as keyof typeof statusColor;
+  const badgeColor =
+    statusColor[normalizedStatus] ??
+    "bg-gray-100 text-gray-600 border-gray-200";
+  const badgeLabel =
+    statusLabel[normalizedStatus] ?? data.status;
+
   return (
-    <div className="group relative overflow-hidden rounded-2xl sm:rounded-3xl border border-gray-100 bg-white p-4 sm:p-5 md:p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
+    <>
+      {/* =====================================================
+          CARD PENGINGAT
+      ===================================================== */}
+      <div className="relative min-h-[290px] overflow-hidden rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md sm:p-6">
 
-      {/* glow */}
-      <div className="absolute -top-10 -right-10 h-32 w-32 rounded-full bg-emerald-100 blur-3xl" />
+        {/* GLOW */}
+        <div className="absolute -right-10 -top-10 h-24 w-24 rounded-full bg-emerald-100/70 blur-2xl" />
 
-      {/* HEADER */}
-      <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
+        {/* HEADER */}
+        <div className="relative flex items-center gap-3">
 
-        <div className="flex h-10 w-10 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-xl sm:rounded-2xl bg-emerald-50">
-          <Bell className="h-5 w-5 sm:h-6 sm:w-6 text-emerald-600" />
+          {/* ICON */}
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-emerald-50">
+            <Bell className="h-5 w-5 text-emerald-600" />
+          </div>
+
+          {/* TITLE */}
+          <div className="min-w-0">
+
+            <h3 className="text-base sm:text-lg font-semibold text-gray-800">
+              Pengingat Angsuran
+            </h3>
+
+            <p className="mt-0.5 text-xs text-gray-500">
+              Cicilan ke-{data.cicilanKe} dari{" "}
+              {data.totalCicilan}
+            </p>
+
+          </div>
+
         </div>
 
-        <div className="min-w-0">
-          <h3 className="text-base sm:text-lg font-bold text-gray-800">
-            Pengingat Angsuran
-          </h3>
+        {/* INFO */}
+        <div className="relative mt-5 grid grid-cols-2 gap-4">
 
-          <p className="text-xs sm:text-sm text-gray-500">
-            Cicilan ke-{data.cicilanKe} dari{" "}
-            {data.totalCicilan}
-          </p>
+          {/* JATUH TEMPO */}
+          <div>
+
+            <p className="text-xs text-gray-500">
+              Jatuh Tempo
+            </p>
+
+            <p className="mt-1 text-sm font-semibold text-gray-800">
+              {new Date(
+                data.jatuhTempo
+              ).toLocaleDateString(
+                "id-ID",
+                {
+                  day: "numeric",
+                  month: "short",
+                  year: "numeric",
+                }
+              )}
+            </p>
+
+          </div>
+
+          {/* NOMINAL */}
+          <div>
+
+            <p className="text-xs text-gray-500">
+              Nominal
+            </p>
+
+            <p className="mt-1 text-sm font-semibold text-emerald-600">
+              Rp{" "}
+              {Number(
+                data.nominal
+              ).toLocaleString("id-ID")}
+            </p>
+
+          </div>
+
         </div>
 
-      </div>
+        {/* STATUS */}
+        <div className="relative mt-5">
 
-      {/* BODY */}
-      <div>
+          <span
+            className={`inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-medium ${badgeColor}`}
+          >
+            {badgeLabel}
+          </span>
 
-        {/* JATUH TEMPO */}
-        <p className="text-xs sm:text-sm text-gray-500">
-          Jatuh Tempo
-        </p>
+        </div>
 
-        <h3 className="mt-1 text-base sm:text-lg font-semibold text-gray-800">
-          {new Date(
-            data.jatuhTempo
-          ).toLocaleDateString(
-            "id-ID",
-            {
-              day: "numeric",
-              month: "long",
-              year: "numeric",
+        {/* ACTION */}
+        <div className="relative mt-5">
+
+          {/* BAYAR SEKARANG */}
+          <button
+            onClick={() =>
+              setShowPaymentModal(true)
             }
-          )}
-        </h3>
+            disabled={
+              data.status === "LUNAS" ||
+              data.status === "MENUNGGU"
+            }
+            className="h-10 w-full rounded-lg bg-[#1a3c2e] px-4 text-sm font-medium text-white transition-all hover:bg-[#142f24] hover:shadow-md disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            Bayar Sekarang
+          </button>
 
-        {/* NOMINAL (HERO) */}
-        <p className="mt-4 sm:mt-6 text-xs sm:text-sm text-gray-500">
-          Nominal Angsuran
-        </p>
+          {/* LIHAT DETAIL */}
+          <button
+            onClick={handleDetail}
+            className="mt-2 h-8 w-full rounded-lg px-4 text-xs font-medium text-[#1a3c2e] transition-colors hover:bg-emerald-50"
+          >
+            Lihat Detail
+          </button>
 
-        <h2 className="mt-1 text-2xl sm:text-3xl font-bold text-emerald-600 break-words">
-          Rp{" "}
-          {Number(
-            data.nominal
-          ).toLocaleString("id-ID")}
-        </h2>
+        </div>
 
       </div>
 
-      {/* STATUS */}
-      <div className="mt-4 sm:mt-6">
-        <span
-          className={`inline-flex rounded-full border px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-semibold ${
-            statusColor[
-              data.status as keyof typeof statusColor
-            ]
-          }`}
-        >
-          {data.status}
-        </span>
-      </div>
 
-      {/* CTA */}
-      <div className="mt-6 sm:mt-8">
-        <button
+      {/* =====================================================
+          MODAL PILIH METODE PEMBAYARAN
+      ===================================================== */}
+      {showPaymentModal && (
+        <div
+          className="fixed inset-0 z-[999] flex items-center justify-center bg-black/40 px-4 backdrop-blur-sm"
           onClick={() =>
-            router.push(
-              `/nasabah/cicilan/${data.idPeminjaman}`
-            )
+            setShowPaymentModal(false)
           }
-          className="w-full rounded-xl bg-[#1a3c2e] px-4 py-2.5 sm:px-5 sm:py-3 text-sm font-semibold text-white shadow-md shadow-emerald-500/20 transition-all hover:scale-[1.02] hover:shadow-lg"
         >
-          Lihat Tagihan
-        </button>
-      </div>
 
-    </div>
+          {/* MODAL */}
+          <div
+            className="w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-2xl"
+            onClick={(e) =>
+              e.stopPropagation()
+            }
+          >
+
+            {/* HEADER MODAL */}
+            <div className="flex items-center justify-between border-b border-gray-100 px-5 py-4">
+
+              <div>
+
+                <h3 className="text-base sm:text-lg font-semibold text-gray-800">
+                  Pilih Metode Pembayaran
+                </h3>
+
+                <p className="mt-1 text-xs text-gray-500">
+                  Pilih metode pembayaran cicilan Anda
+                </p>
+
+              </div>
+
+              <button
+                type="button"
+                onClick={() =>
+                  setShowPaymentModal(false)
+                }
+                className="flex h-8 w-8 items-center justify-center rounded-full text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-700"
+                aria-label="Tutup"
+              >
+                <X className="h-4 w-4" />
+              </button>
+
+            </div>
+
+
+            {/* BODY */}
+            <div className="space-y-3 p-5 sm:p-6">
+
+              {/* TRANSFER */}
+              <button
+                type="button"
+                onClick={handleTransfer}
+                className="group flex w-full items-center gap-4 rounded-xl border border-gray-200 p-4 text-left transition-all hover:border-[#1a3c2e]/30 hover:bg-emerald-50/50 hover:shadow-sm"
+              >
+
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-[#1a3c2e] transition-colors group-hover:bg-[#1a3c2e] group-hover:text-white">
+                  <CreditCard className="h-5 w-5" />
+                </div>
+
+                <div className="min-w-0">
+
+                  <p className="text-sm font-semibold text-gray-800">
+                    Bayar Transfer
+                  </p>
+
+                  <p className="mt-1 text-xs leading-relaxed text-gray-500">
+                    Bayar melalui transfer dan upload bukti pembayaran
+                  </p>
+
+                </div>
+
+              </button>
+
+
+              {/* KANTOR */}
+              <button
+                type="button"
+                onClick={handleCashPayment}
+                className="group flex w-full items-center gap-4 rounded-xl border border-gray-200 p-4 text-left transition-all hover:border-[#1a3c2e]/30 hover:bg-emerald-50/50 hover:shadow-sm"
+              >
+
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-[#1a3c2e] transition-colors group-hover:bg-[#1a3c2e] group-hover:text-white">
+                  <Building2 className="h-5 w-5" />
+                </div>
+
+                <div className="min-w-0">
+
+                  <p className="text-sm font-semibold text-gray-800">
+                    Bayar di Kantor
+                  </p>
+
+                  <p className="mt-1 text-xs leading-relaxed text-gray-500">
+                    Lakukan pembayaran secara langsung di kantor BUMDes
+                  </p>
+
+                </div>
+
+              </button>
+
+            </div>
+
+
+            {/* FOOTER */}
+            <div className="border-t border-gray-100 bg-gray-50 px-5 py-3">
+
+              <button
+                type="button"
+                onClick={() =>
+                  setShowPaymentModal(false)
+                }
+                className="h-8 w-full rounded-lg px-4 text-xs font-medium text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700"
+              >
+                Batal
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+      )}
+
+    </>
   );
 }

@@ -13,9 +13,7 @@ export default function Cicilan({
     value: number
   ) =>
     "Rp " +
-    value.toLocaleString(
-      "id-ID"
-    );
+    value.toLocaleString("id-ID");
 
   const getProgress = (
     item: any
@@ -26,18 +24,13 @@ export default function Cicilan({
     const lunas =
       item.jadwal?.filter(
         (j: any) =>
-          j.status ===
-          "LUNAS"
+          j.status === "LUNAS"
       ).length || 0;
 
     const percent =
       total === 0
         ? 0
-        : (
-          (lunas /
-            total) *
-          100
-        );
+        : (lunas / total) * 100;
 
     return {
       total,
@@ -47,132 +40,216 @@ export default function Cicilan({
   };
 
   return (
-    <div className="p-5 md:p-10">
+    <div className="bg-gray-50 px-4 py-5 sm:p-6">
 
-      <div className="grid md:grid-cols-2 gap-5">
+      {/* HEADER */}
+      <div className="mb-6">
+        <h2 className="text-2xl font-bold tracking-tight text-gray-800 sm:text-[30px]">
+          Pinjaman Saya
+        </h2>
 
-        {data.map(
-          (
-            item,
-            index
-          ) => {
+        <p className="mt-2 text-sm leading-relaxed text-gray-500">
+          Pantau status dan perkembangan pembayaran pinjaman Anda.
+        </p>
+      </div>
 
-            const progress =
-              getProgress(
-                item
-              );
+      {/* TABLE */}
+      <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
 
-            return (
-              <div
-                key={
-                  item.id_peminjaman
-                }
-                className="bg-white rounded-2xl border p-5 shadow-sm hover:shadow-lg transition"
-              >
+        {/* RESPONSIVE SCROLL */}
+        <div className="overflow-x-auto">
 
-                {/* TOP */}
-                <div className="flex justify-between">
+          <table className="w-full min-w-[800px] text-sm">
 
-                  <div>
+            {/* HEADER TABLE */}
+            <thead>
+              <tr className="border-b border-gray-100 bg-[#1a3c2e] text-left">
 
-                    <p className="text-lg font-bold text-gray-800">
-                      Pinjaman ke-
-                      {
-                        index + 1
-                      }
-                    </p>
+                <th className="px-5 py-3.5 text-sm font-semibold text-white/90">
+                  Pinjaman
+                </th>
 
-                    <p className="text-xs text-gray-400 mt-1">
-                      {new Date(
-                        item.tanggal_pengajuan
-                      ).toLocaleDateString(
-                        "id-ID",
-                        {
-                          day:
-                            "numeric",
-                          month:
-                            "long",
-                          year:
-                            "numeric",
+                <th className="px-5 py-3.5 text-sm font-semibold text-white/90">
+                  Tanggal Pengajuan
+                </th>
+
+                <th className="px-5 py-3.5 text-sm font-semibold text-white/90">
+                  Total Pinjaman
+                </th>
+
+                <th className="px-5 py-3.5 text-sm font-semibold text-white/90">
+                  Progress
+                </th>
+
+                <th className="px-5 py-3.5 text-sm font-semibold text-white/90">
+                  Status
+                </th>
+
+                <th className="px-5 py-3.5 text-right text-sm font-semibold text-white/90">
+                  Aksi
+                </th>
+
+              </tr>
+            </thead>
+
+            {/* BODY */}
+            <tbody>
+
+              {data.length > 0 ? (
+                data.map(
+                  (
+                    item,
+                    index
+                  ) => {
+
+                    const progress =
+                      getProgress(
+                        item
+                      );
+
+                    return (
+                      <tr
+                        key={
+                          item.id_peminjaman
                         }
-                      )}
+                        className="border-b border-gray-100 last:border-0 transition-colors hover:bg-gray-50/70"
+                      >
+
+                        {/* PINJAMAN */}
+                        <td className="px-5 py-4">
+
+                          <p className="text-sm font-semibold text-gray-800">
+                            Pinjaman ke-
+                            {index + 1}
+                          </p>
+
+                        </td>
+
+                        {/* TANGGAL */}
+                        <td className="whitespace-nowrap px-5 py-4 text-sm text-gray-500">
+
+                          {new Date(
+                            item.tanggal_pengajuan
+                          ).toLocaleDateString(
+                            "id-ID",
+                            {
+                              day: "numeric",
+                              month: "short",
+                              year: "numeric",
+                            }
+                          )}
+
+                        </td>
+
+                        {/* TOTAL */}
+                        <td className="whitespace-nowrap px-5 py-4">
+
+                          <p className="text-sm font-semibold text-gray-800">
+                            {formatRupiah(
+                              item.total_pinjaman
+                            )}
+                          </p>
+
+                        </td>
+
+                        {/* PROGRESS */}
+                        <td className="px-5 py-4">
+
+                          <div className="w-36">
+
+                            <div className="mb-2 flex items-center justify-between text-xs">
+
+                              <span className="text-gray-500">
+                                Pembayaran
+                              </span>
+
+                              <span className="font-medium text-gray-700">
+                                {
+                                  progress.lunas
+                                }
+                                /
+                                {
+                                  progress.total
+                                }
+                              </span>
+
+                            </div>
+
+                            <div className="h-2 w-full overflow-hidden rounded-full bg-gray-100">
+
+                              <div
+                                className="h-full rounded-full bg-[#1a3c2e] transition-all duration-300"
+                                style={{
+                                  width: `${progress.percent}%`,
+                                }}
+                              />
+
+                            </div>
+
+                          </div>
+
+                        </td>
+
+{/* STATUS */}
+<td className="px-5 py-4">
+
+  <span
+    className={`inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-medium ${
+      item.status === "LUNAS"
+        ? "bg-green-100 text-green-700 border-green-200"
+        : "bg-yellow-100 text-yellow-700 border-yellow-200"
+    }`}
+  >
+    {item.status === "ACTIVE"
+      ? "Sedang Berjalan"
+      : item.status === "LUNAS"
+      ? "Lunas"
+      : item.status}
+  </span>
+
+</td>
+
+                        {/* ACTION */}
+                        <td className="px-5 py-4 text-right">
+
+                          <Link
+                            href={`/nasabah/cicilan/${item.id_peminjaman}`}
+                            className="h-10 inline-flex items-center justify-center rounded-lg bg-[#1a3c2e] px-4 text-sm font-medium text-white transition-all hover:bg-[#245240] hover:shadow-sm"
+                          >
+                            Lihat Cicilan
+                          </Link>
+
+                        </td>
+
+                      </tr>
+                    );
+                  }
+                )
+              ) : (
+                /* EMPTY */
+                <tr>
+
+                  <td
+                    colSpan={6}
+                    className="px-5 py-10 text-center"
+                  >
+                    <p className="text-sm font-medium text-gray-500">
+                      Belum ada data pinjaman.
                     </p>
 
-                  </div>
+                    <p className="mt-1 text-xs text-gray-400">
+                      Data pinjaman Anda akan tampil di sini.
+                    </p>
+                  </td>
 
-                  <span
-                    className={`inline-flex items-center text-xs px-3 py-1 rounded-full font-semibold whitespace-nowrap
-    ${item.status === "LUNAS"
-                        ? "bg-green-100 text-green-700"
-                        : "bg-blue-100 text-blue-700"
-                      }`}
-                  >
-                    {item.status}
-                  </span>
+                </tr>
+              )}
 
-                </div>
+            </tbody>
 
-                {/* NOMINAL */}
-                <div className="mt-5">
+          </table>
 
-                  <p className="text-xs text-gray-400">
-                    Total Pinjaman
-                  </p>
-
-                  <p className="text-xl font-bold text-gray-800 mt-1">
-                    {formatRupiah(
-                      item.total_pinjaman
-                    )}
-                  </p>
-
-                </div>
-
-                {/* PROGRESS */}
-                <div className="mt-5">
-
-                  <div className="flex justify-between text-sm mb-2">
-
-                    <span>
-                      Progress
-                    </span>
-
-                    <span>
-                      {
-                        progress.lunas
-                      }
-                      /
-                      {
-                        progress.total
-                      }
-                    </span>
-
-                  </div>
-
-                  <div className="w-full h-2 bg-gray-100 rounded-full">
-
-                    <div
-                      className="h-full bg-blue-500 rounded-full"
-                      style={{
-                        width: `${progress.percent}%`,
-                      }}
-                    />
-
-                  </div>
-
-                </div>
-
-                {/* ACTION */}
-                <Link
-                  href={`/nasabah/cicilan/${item.id_peminjaman}`}
-                  className="mt-5 w-full bg-[#245240] hover:bg-[#1a3c2e] text-white text-sm rounded-xl py-3 flex justify-center"
-                >
-                  Lihat Cicilan
-                </Link>
-
-              </div>
-            );
-          }
-        )}
+        </div>
 
       </div>
 

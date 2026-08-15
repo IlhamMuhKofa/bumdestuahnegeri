@@ -18,17 +18,18 @@ function LoginContent() {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setErrorMsg(null);
+async function handleSubmit(e: React.FormEvent) {
+  e.preventDefault();
+  setErrorMsg(null);
 
-    if (!email || !password) {
-      setErrorMsg("Email dan password wajib diisi.");
-      return;
-    }
+  if (!email || !password) {
+    setErrorMsg("Email dan password wajib diisi.");
+    return;
+  }
 
-    setLoading(true);
+  setLoading(true);
 
+  try {
     const res = await signIn("credentials", {
       email,
       password,
@@ -36,23 +37,28 @@ function LoginContent() {
       callbackUrl,
     });
 
-    setLoading(false);
-
     if (!res) {
       setErrorMsg("Gagal login. Coba lagi.");
+      setLoading(false);
       return;
     }
 
     if (res.error) {
       if (res.error === "AKUN_MENUNGGU") {
-        setErrorMsg("Akun kamu masih menunggu verifikasi admin.");
+        setErrorMsg(
+          "Akun kamu masih menunggu verifikasi admin."
+        );
       } else if (res.error === "AKUN_DITOLAK") {
         setErrorMsg(
           "Akun kamu ditolak. Hubungi admin untuk info lebih lanjut."
         );
       } else {
-        setErrorMsg("Email atau password salah.");
+        setErrorMsg(
+          "Email atau password salah."
+        );
       }
+
+      setLoading(false);
       return;
     }
 
@@ -60,17 +66,31 @@ function LoginContent() {
 
     if (!session) {
       setErrorMsg("Gagal mengambil session.");
+      setLoading(false);
       return;
     }
 
     const role = (session.user as any).role;
+
+    // Jangan matikan loading di sini.
+    // Biarkan spinner tetap tampil sampai halaman berpindah.
 
     if (role === "admin") {
       router.push("/admin/dashboard");
     } else {
       router.push("/nasabah/dashboard");
     }
+
+  } catch (error) {
+    console.error("LOGIN ERROR:", error);
+
+    setErrorMsg(
+      "Terjadi kesalahan saat login. Coba lagi."
+    );
+
+    setLoading(false);
   }
+}
 
   // Animation variants
   const easeOut = [0.22, 1, 0.36, 1] as const;

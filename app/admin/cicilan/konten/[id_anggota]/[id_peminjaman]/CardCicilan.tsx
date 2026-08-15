@@ -1,7 +1,12 @@
 "use client";
 
 import React from "react";
-import { CalendarDays, CheckCircle2, Clock, AlertTriangle } from "lucide-react";
+import {
+  CalendarDays,
+  CheckCircle2,
+  Clock,
+  AlertTriangle,
+} from "lucide-react";
 
 interface CardCicilanProps {
   item: {
@@ -13,79 +18,197 @@ interface CardCicilanProps {
   };
 }
 
-export default function CardCicilan({ item }: CardCicilanProps) {
-  const isLunas = item.status === "LUNAS";
-  const dueDate = new Date(item.jatuh_tempo);
-  const isOverdue = !isLunas && dueDate < new Date(new Date().toDateString());
+export default function CardCicilan({
+  item,
+}: CardCicilanProps) {
+  const isLunas =
+    item.status === "LUNAS";
 
-  const accent = isLunas
-    ? "from-emerald-500 to-emerald-400"
+  const dueDate =
+    new Date(item.jatuh_tempo);
+
+  const isOverdue =
+    !isLunas &&
+    dueDate <
+      new Date(
+        new Date().toDateString()
+      );
+
+  // =====================================================
+  // STATUS
+  // =====================================================
+
+  const statusType = isLunas
+    ? "lunas"
     : isOverdue
-    ? "from-rose-500 to-rose-400"
-    : "from-yellow-500 to-amber-600";
+    ? "telat"
+    : "berjalan";
 
-  const pillClass = isLunas
-    ? "bg-emerald-100 text-emerald-700"
-    : isOverdue
-    ? "bg-rose-100 text-rose-700"
-    : "bg-amber-100 text-amber-700";
+  const statusLabel =
+    statusType === "lunas"
+      ? "Lunas"
+      : statusType === "telat"
+      ? "Telat"
+      : "Berjalan";
 
-  const statusLabel = isLunas ? "LUNAS" : isOverdue ? "TERLAMBAT" : item.status;
+  // =====================================================
+  // STATUS STYLE
+  // =====================================================
 
-  const noteBox = isLunas
-    ? {
-        wrap: "bg-emerald-50 border-emerald-200 text-emerald-700",
-        icon: <CheckCircle2 className="w-4 h-4 shrink-0" />,
-        text: "Pembayaran telah selesai dan diverifikasi",
-      }
-    : isOverdue
-    ? {
-        wrap: "bg-rose-50 border-rose-200 text-rose-700",
-        icon: <AlertTriangle className="w-4 h-4 shrink-0" />,
-        text: "Pembayaran telah melewati jatuh tempo",
-      }
-    : {
-        wrap: "bg-amber-50 border-amber-200 text-amber-700",
-        icon: <Clock className="w-4 h-4 shrink-0" />,
-        text: "Menunggu pembayaran dari nasabah",
-      };
+  const statusClass =
+    statusType === "lunas"
+      ? "border-green-200 bg-green-50 text-green-700"
+      : statusType === "telat"
+      ? "border-red-200 bg-red-50 text-red-700"
+      : "border-yellow-200 bg-yellow-50 text-yellow-700";
+
+  // =====================================================
+  // KETERANGAN
+  // =====================================================
+
+  const note =
+    statusType === "lunas"
+      ? {
+          className:
+            "border-green-100 bg-green-50 text-green-700",
+          icon: (
+            <CheckCircle2 className="h-3.5 w-3.5 shrink-0" />
+          ),
+          text:
+            "Pembayaran telah selesai dan diverifikasi",
+        }
+      : statusType === "telat"
+      ? {
+          className:
+            "border-red-100 bg-red-50 text-red-700",
+          icon: (
+            <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
+          ),
+          text:
+            "Pembayaran telah melewati jatuh tempo",
+        }
+      : {
+          className:
+            "border-yellow-100 bg-yellow-50 text-yellow-700",
+          icon: (
+            <Clock className="h-3.5 w-3.5 shrink-0" />
+          ),
+          text:
+            "Menunggu pembayaran dari nasabah",
+        };
 
   return (
-    <div className="group relative bg-white border rounded-2xl shadow-sm overflow-hidden transition-all hover:shadow-md hover:-translate-y-0.5">
-      <div className={`h-1.5 w-full bg-gradient-to-r ${accent}`} />
+    <tr
+      className="
+        border-b
+        border-gray-100
+        last:border-0
+        transition-colors
+        hover:bg-blue-50/40
+      "
+    >
+      {/* =====================================================
+          CICILAN
+      ===================================================== */}
+      <td className="px-5 py-4">
+        <div>
+          <p className="text-sm font-semibold text-gray-800">
+            Cicilan ke-{item.cicilan_ke}
+          </p>
 
-      <div className="p-5">
-        <div className="flex justify-between items-start gap-3">
-          <div>
-            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">
-              Cicilan ke-{item.cicilan_ke}
-            </p>
-            <div className="flex items-center gap-1.5 text-sm text-gray-500 mt-1.5">
-              <CalendarDays className="w-3.5 h-3.5" />
-              <span>
-                {dueDate.toLocaleDateString("id-ID", {
-                  day: "numeric",
-                  month: "long",
-                  year: "numeric",
-                })}
-              </span>
-            </div>
+          <p className="mt-0.5 text-xs text-gray-400">
+            ID #{item.id_jadwal}
+          </p>
+        </div>
+      </td>
+
+      {/* =====================================================
+          JATUH TEMPO
+      ===================================================== */}
+      <td className="px-5 py-4">
+        <div className="flex items-center gap-2">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-blue-50">
+            <CalendarDays className="h-4 w-4 text-blue-600" />
           </div>
 
-          <span className={`text-xs px-3 py-1 rounded-full font-semibold whitespace-nowrap ${pillClass}`}>
-            {statusLabel}
+          <div>
+            <p className="text-sm font-medium text-gray-700">
+              {dueDate.toLocaleDateString(
+                "id-ID",
+                {
+                  day: "numeric",
+                  month: "short",
+                  year: "numeric",
+                }
+              )}
+            </p>
+
+            <p className="mt-0.5 text-xs text-gray-400">
+              Jatuh tempo
+            </p>
+          </div>
+        </div>
+      </td>
+
+      {/* =====================================================
+          JUMLAH TAGIHAN
+      ===================================================== */}
+      <td className="px-5 py-4">
+        <p className="text-sm font-semibold text-gray-800">
+          Rp{" "}
+          {item.jumlah_tagihan.toLocaleString(
+            "id-ID"
+          )}
+        </p>
+      </td>
+
+      {/* =====================================================
+          STATUS
+      ===================================================== */}
+      <td className="px-5 py-4">
+        <span
+          className={`
+            inline-flex
+            items-center
+            rounded-full
+            border
+            px-2.5
+            py-1
+            text-xs
+            font-medium
+            ${statusClass}
+          `}
+        >
+          {statusLabel}
+        </span>
+      </td>
+
+      {/* =====================================================
+          KETERANGAN
+      ===================================================== */}
+      <td className="px-5 py-4">
+        <div
+          className={`
+            inline-flex
+            max-w-[280px]
+            items-center
+            gap-1.5
+            rounded-lg
+            border
+            px-3
+            py-1.5
+            text-xs
+            font-medium
+            ${note.className}
+          `}
+        >
+          {note.icon}
+
+          <span>
+            {note.text}
           </span>
         </div>
-
-        <p className="text-2xl font-bold text-gray-800 mt-4">
-          Rp {item.jumlah_tagihan.toLocaleString("id-ID")}
-        </p>
-
-        <div className={`mt-4 flex items-center gap-2 text-sm px-4 py-2.5 rounded-xl border ${noteBox.wrap}`}>
-          {noteBox.icon}
-          <span>{noteBox.text}</span>
-        </div>
-      </div>
-    </div>
+      </td>
+    </tr>
   );
 }

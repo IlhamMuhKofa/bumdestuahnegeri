@@ -14,8 +14,14 @@ export default async function Page({
   searchParams,
 }: Props) {
   const params = await searchParams;
-  const currentPage = Math.max(Number(params?.page || 1), 1);
-  const skip = (currentPage - 1) * PAGE_SIZE;
+
+  const currentPage = Math.max(
+    Number(params?.page || 1),
+    1
+  );
+
+  const skip =
+    (currentPage - 1) * PAGE_SIZE;
 
   // =========================
   // DATA NASABAH
@@ -23,34 +29,38 @@ export default async function Page({
   const [anggotaRaw, totalNasabah] =
     await Promise.all([
       prisma.anggota.findMany({
-      where: {
-        peminjaman: {
-          some: {
-            status: "APPROVED",
+        where: {
+          peminjaman: {
+            some: {
+              status: "APPROVED",
+            },
           },
         },
-      },
 
-      include: {
-        peminjaman: {
-          where: {
-            status: "APPROVED",
-          },
-          include: {
-            jadwalSurvey: true,
-          },
-          orderBy: {
-            tanggal_pengajuan: "desc",
+        include: {
+          peminjaman: {
+            where: {
+              status: "APPROVED",
+            },
+
+            include: {
+              jadwalSurvey: true,
+            },
+
+            orderBy: {
+              tanggal_pengajuan: "desc",
+            },
           },
         },
-      },
 
-      orderBy: {
-        id: "desc",
-      },
-      skip,
-      take: PAGE_SIZE,
-    }),
+        orderBy: {
+          id: "desc",
+        },
+
+        skip,
+        take: PAGE_SIZE,
+      }),
+
       prisma.anggota.count({
         where: {
           peminjaman: {
@@ -64,16 +74,36 @@ export default async function Page({
 
   const dataNasabah =
     anggotaRaw.map((item) => {
-      const latest = item.peminjaman[0];
+      const latest =
+        item.peminjaman[0];
 
       return {
         id_anggota: item.id,
-        nama: item.nama || "Tanpa Nama",
-        total_pengajuan: item.peminjaman.length,
-        terakhir: latest?.tanggal_pengajuan,
-        latest_peminjaman: latest?.id_peminjaman,
-        status_survey: latest?.status_survey,
-        jadwalSurvey: latest?.jadwalSurvey?.[0] || null,
+
+        // =====================================================
+        // ID PEMINJAMAN TERBARU
+        // Digunakan untuk langsung menuju:
+        // /admin/survey/konten/[id_peminjaman]
+        // =====================================================
+        id_peminjaman:
+          latest?.id_peminjaman,
+
+        nama:
+          item.nama ||
+          "Tanpa Nama",
+
+        total_pengajuan:
+          item.peminjaman.length,
+
+        terakhir:
+          latest?.tanggal_pengajuan,
+
+        status_survey:
+          latest?.status_survey,
+
+        jadwalSurvey:
+          latest?.jadwalSurvey?.[0] ||
+          null,
       };
     });
 
@@ -82,7 +112,6 @@ export default async function Page({
   // =========================
   const dataSurvey =
     await prisma.jadwal_survey.findMany({
-
       include: {
         peminjaman: {
           include: {
@@ -102,11 +131,17 @@ export default async function Page({
         dataPeminjaman={dataNasabah}
         dataSurvey={dataSurvey}
       />
+
       <div className="bg-gray-50 px-4 pb-6 sm:px-6 lg:px-10">
         <div className="mx-auto max-w-7xl">
           <Pagination
             currentPage={currentPage}
-            totalPages={Math.max(Math.ceil(totalNasabah / PAGE_SIZE), 1)}
+            totalPages={Math.max(
+              Math.ceil(
+                totalNasabah / PAGE_SIZE
+              ),
+              1
+            )}
             basePath="/admin/survey"
           />
         </div>

@@ -193,7 +193,7 @@ export default function ClientPage({ jadwal }: Props) {
           <button
             onClick={handleSubmit}
             disabled={loading || uploading}
-            className="flex-1 bg-green-600 hover:bg-green-700 text-white rounded-xl py-3 text-sm disabled:opacity-50"
+            className="flex-1 bg-[#1a3c2e] hover:bg-[#1a3c2e]/90 text-white rounded-xl py-3 text-sm disabled:opacity-50"
           >
             {loading ? "Mengirim..." : "Kirim Pembayaran"}
           </button>

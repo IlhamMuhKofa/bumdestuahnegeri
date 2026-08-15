@@ -4,14 +4,12 @@ import { useState, useRef, useEffect } from "react";
 import { Plus, ChevronDown, ClipboardList } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import FormPengajuan from "@/app/nasabah/pinjaman/form_pinjaman/formpengajuan";
-import { AnimatePresence, motion } from "framer-motion";
 
 type StatusFilter =
   | "ACTIVE"
   | "PENDING"
   | "APPROVED"
-  | "REJECTED";
+  | "REJECTED"
 
 const FILTER_OPTIONS: StatusFilter[] = [
   "ACTIVE",
@@ -19,6 +17,22 @@ const FILTER_OPTIONS: StatusFilter[] = [
   "APPROVED",
   "REJECTED",
 ];
+
+// Design System — halaman Pinjaman
+const UI = {
+  pageTitle: "text-2xl sm:text-[30px] font-bold tracking-tight text-gray-800",
+  pageDescription: "text-sm leading-relaxed text-gray-500",
+  sectionTitle: "text-base sm:text-lg font-semibold text-gray-900",
+  body: "text-sm text-gray-700",
+  secondary: "text-xs text-gray-500",
+  button:
+    "h-10 px-4 rounded-lg text-sm font-medium inline-flex items-center justify-center transition-all",
+  smallButton:
+    "h-8 px-3 rounded-lg text-xs font-medium inline-flex items-center justify-center transition-all",
+  status:
+    "inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium",
+  card: "rounded-2xl border border-gray-200 bg-white shadow-sm",
+} as const;
 
 type Surat = {
   id_surat: number;
@@ -31,7 +45,7 @@ export default function Pengajuan() {
   const [filterOpen, setFilterOpen] = useState(false);
   const [selectedFilters, setSelectedFilters] = useState<StatusFilter[]>([]);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const [openForm, setOpenForm] = useState(false);
+  
   const [pengajuan, setPengajuan] = useState<any[]>([]);
   const [surat, setSurat] = useState<Surat | null>(null);
   const [loading, setLoading] = useState(true);
@@ -119,44 +133,64 @@ useEffect(() => {
     );
   };
 
+  const normalizeStatus = (status?: string): StatusFilter | undefined => {
+    const s = status?.toUpperCase();
+
+    if (s === "ACTIVE") return "ACTIVE";
+    if (s === "PENDING") return "PENDING";
+    if (s === "APPROVED" || s === "DITERIMA" || s === "DISETUJUI") return "APPROVED";
+    if (s === "REJECTED" || s === "DITOLAK") return "REJECTED";
+
+    return undefined;
+  };
+
+  const statusLabel = (status?: string) => {
+    const s = normalizeStatus(status);
+
+    if (s === "ACTIVE") return "Aktif";
+    if (s === "PENDING") return "Menunggu";
+    if (s === "APPROVED") return "Diterima";
+    if (s === "REJECTED") return "Ditolak";
+    if (s === "LATE") return "Telat";
+
+    return "-";
+  };
+
+  const statusClass = (status?: string) => {
+    const s = normalizeStatus(status);
+
+    if (s === "ACTIVE") return "bg-green-100 text-green-700";
+    if (s === "PENDING") return "bg-yellow-100 text-yellow-700";
+    if (s === "APPROVED") return "bg-blue-100 text-blue-700";
+    if (s === "REJECTED" || s === "LATE") return "bg-red-100 text-red-700";
+
+    return "bg-gray-100 text-gray-600";
+  };
+
   const filteredPengajuan =
-  selectedFilters.length === 0
-    ? pengajuan
-    : pengajuan.filter((item) =>
-        selectedFilters.includes(
-          item.status?.toUpperCase()
-        )
-      );
+    selectedFilters.length === 0
+      ? pengajuan
+      : pengajuan.filter((item) =>
+          selectedFilters.includes(
+            normalizeStatus(item.status) as StatusFilter
+          )
+        );
 
   const totalData = filteredPengajuan.length;
   const totalPages = Math.ceil(totalData / itemsPerPage);
 
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentData =
-  filteredPengajuan.slice(
+  const currentData = filteredPengajuan.slice(
     startIndex,
     startIndex + itemsPerPage
   );
 
-  const statusLabel = (status?: string) => {
-    const s = status?.toUpperCase();
-    if (s === "PENDING") return "Menunggu";
-    if (s === "APPROVED") return "Disetujui";
-    if (s === "REJECTED") return "Ditolak";
-    if (s === "ACTIVE") return "Aktif";
-    return "-";
-  };
-
-  const statusClass = (status?: string) => {
-    const s = status?.toUpperCase();
-    if (s === "PENDING") return "bg-yellow-100 text-yellow-700";
-    if (s === "APPROVED") return "bg-blue-100 text-blue-700";
-    if (s === "ACTIVE") return "bg-green-100 text-green-700";
-    return "bg-red-100 text-red-700";
-  };
-
   return (
     <div className="bg-gray-50 px-4 py-5 sm:p-6">
+      {/* Design System v1:
+          Page title 30/24px • section 18/16px • body/table 14px • secondary/badge 12px
+          Buttons 40px • small buttons 32px • card radius 16px • hero radius 24px */}
+
       <div className="mx-auto w-full max-w-6xl">
 
         {/* TITLE */}
@@ -164,11 +198,11 @@ useEffect(() => {
 
           <div className="flex items-center gap-3">
             <div>
-              <h1 className="text-2xl font-bold sm:text-3xl tracking-tight text-gray-800">
+              <h1 className={UI.pageTitle}>
                 Pinjaman
               </h1>
 
-              <p className="mt-2 text-sm leading-relaxed text-gray-500">
+              <p className={`mt-2 ${UI.pageDescription}`}>
                 Pantau perkembangan pinjaman dan angsuran Anda dengan lebih mudah melalui layanan digital BUMDes
               </p>
             </div>
@@ -192,11 +226,11 @@ useEffect(() => {
             {/* LEFT */}
             <div className="flex flex-1 flex-col justify-center px-5 py-6 sm:px-8 sm:py-8 lg:py-10">
 
-              <p className="mb-2 sm:mb-3 text-[10px] sm:text-xs font-semibold uppercase tracking-[2px] sm:tracking-[3px] text-green-300">
+              <p className="mb-3 text-xs font-semibold uppercase tracking-[2px] text-green-300">
                 BUMDes · Layanan Pinjaman
               </p>
 
-              <h2 className="max-w-lg text-2xl sm:text-3xl font-bold leading-tight text-white">
+              <h2 className="max-w-lg text-2xl sm:text-[30px] font-bold leading-tight text-white">
                 Kelola{" "}
                 <span className="text-yellow-400">
                   Pinjaman Anda
@@ -204,26 +238,48 @@ useEffect(() => {
                 dengan lebih nyaman
               </h2>
 
-              <p className="mt-3 sm:mt-4 max-w-xl text-sm leading-relaxed text-gray-300">
+              <p className="mt-4 max-w-xl text-sm leading-relaxed text-gray-300">
                 Tenang, prosesnya mudah dan cepat. Kami siap membantu kebutuhan usaha maupun pribadi Anda.
               </p>
 
               {/* badge */}
               <div className="mt-4 sm:mt-5 flex flex-wrap gap-2">
 
-                <span className="rounded-full border border-white/10 bg-white/10 px-3 py-1 text-xs text-white/80 backdrop-blur-sm">
+                <span className="rounded-full border border-white/10 bg-white/10 px-3 py-1 text-xs font-medium text-white/80 backdrop-blur-sm">
                   Simpel tanpa ribet
                 </span>
 
-                <span className="rounded-full border border-white/10 bg-white/10 px-3 py-1 text-xs text-white/80 backdrop-blur-sm">
+                <span className="rounded-full border border-white/10 bg-white/10 px-3 py-1 text-xs font-medium text-white/80 backdrop-blur-sm">
                   Cepat & jelas
                 </span>
 
-                <span className="rounded-full border border-white/10 bg-white/10 px-3 py-1 text-xs text-white/80 backdrop-blur-sm">
+                <span className="rounded-full border border-white/10 bg-white/10 px-3 py-1 text-xs font-medium text-white/80 backdrop-blur-sm">
                   Transparan
                 </span>
 
               </div>
+ {/* BUTTON SIMULASI */}
+<div className="mt-4 sm:mt-5 flex flex-wrap gap-2">
+<Link
+  href="/nasabah/pinjaman/simulasi"
+  className="
+    inline-flex w-fit items-center
+    h-10
+    rounded-lg
+    border border-white/20
+    bg-white/10
+    px-4
+    text-sm font-medium text-white
+    backdrop-blur-sm
+    transition-all duration-200
+    hover:border-white/30
+    hover:bg-white/20
+    active:scale-[0.98]
+  "
+>
+  Cek Angsuran Disini !
+</Link>
+</div>
             </div>
 
             {/* RIGHT IMAGE */}
@@ -245,20 +301,20 @@ useEffect(() => {
         </div>
 
 {/* DOKUMEN PERSYARATAN */}
-<div className="mb-6 rounded-2xl border border-gray-200 bg-white p-4 sm:p-6 shadow-sm">
+<div className={`mb-6 ${UI.card} p-4 sm:p-6`}>
 
   {/* HEADER */}
   <div className="mb-4 sm:mb-5 flex items-start justify-between gap-3">
     <div>
-      <h3 className="text-base sm:text-lg font-semibold text-gray-900">
+      <h3 className={UI.sectionTitle}>
         Dokumen Persyaratan
       </h3>
-      <p className="mt-1 text-xs sm:text-sm text-gray-500">
+      <p className="mt-1 text-sm text-gray-500">
         Unduh dan lengkapi dokumen sebelum mengajukan pinjaman.
       </p>
     </div>
 
-    <span className="rounded-full bg-green-50 px-3 py-1 text-xs font-medium text-green-700 shrink-0">
+    <span className="rounded-full bg-green-50 px-2.5 py-1 text-xs font-medium text-green-700 shrink-0">
       Wajib
     </span>
   </div>
@@ -292,7 +348,7 @@ useEffect(() => {
       {/* DOCUMENT INFO */}
       <div className="min-w-0">
 
-        <p className="font-medium text-gray-900 text-sm sm:text-base truncate">
+        <p className="font-semibold text-gray-900 text-sm truncate">
           SP2K Pencairan
         </p>
 
@@ -309,8 +365,8 @@ useEffect(() => {
       type="button"
       onClick={handleDownload}
       className="
-        flex items-center gap-1 sm:gap-2 shrink-0
-        text-xs sm:text-sm font-medium text-[#1a3c2e]
+        flex h-8 items-center gap-2 shrink-0
+        text-sm font-medium text-[#1a3c2e]
         opacity-80 transition
         hover:opacity-100
         cursor-pointer
@@ -383,7 +439,7 @@ sm:justify-end">
             <div className="relative" ref={dropdownRef}>
               <button
                 onClick={() => setFilterOpen((v) => !v)}
-                className="flex w-full sm:w-auto items-center justify-center gap-2 bg-white border border-gray-200 hover:border-gray-300 text-gray-600 text-sm font-medium px-4 py-2 rounded-lg shadow-sm transition-all"
+                className={`${UI.button} w-full sm:w-auto gap-2 bg-white border border-gray-200 hover:border-gray-300 text-gray-600 shadow-sm`}
               >
                 <span>Filter</span>
                 {selectedFilters.length > 0 && (
@@ -439,13 +495,13 @@ sm:justify-end">
               )}
             </div>
             {/* ✅ BUTTON BARU (SELALU MUNCUL) */}
-            <button
-              onClick={() => setOpenForm(true)}
-              className="flex w-full sm:w-auto items-center justify-center gap-2 bg-[#1a3c2e] hover:bg-green-900 text-white text-sm font-medium px-4 py-2 rounded-lg transition-all"
-            >
-              <Plus className="w-4 h-4" />
-              Buat Pengajuan
-            </button>
+<Link
+  href="/nasabah/pinjaman/form_pinjaman"
+  className={`${UI.button} w-full sm:w-auto gap-2 bg-[#1a3c2e] hover:bg-green-900 text-white`}
+>
+  <Plus className="w-4 h-4" />
+  Buat Pengajuan
+</Link>
 
           </div>
         </div>
@@ -457,7 +513,7 @@ sm:justify-end">
             <thead>
               <tr className="bg-[#1a3c2e]">
                 {["Tanggal", "Jenis Pengajuan", "Jumlah", "Jangka Waktu", "Jenis Agunan", "Status"].map((col) => (
-                  <th key={col} className="text-white/90 font-semibold text-center px-4 py-4">
+                  <th key={col} className="text-white/90 text-sm font-semibold text-center px-4 py-3.5">
                     {col}
                   </th>
                 ))}
@@ -486,8 +542,8 @@ sm:justify-end">
               ) : (
                 currentData.map((item: any) => (
                   <tr key={item.id_peminjaman} className="border-b">
-                    <td className="px-4 py-3 text-center">
-                      <span className="block font-medium">
+                    <td className="px-4 py-3.5 text-center text-sm">
+                      <span className="block text-sm font-medium text-gray-800">
                         {new Date(item.tanggal_pengajuan).toLocaleDateString("id-ID", {
                           weekday: "long",
                           day: "2-digit",
@@ -502,24 +558,24 @@ sm:justify-end">
                         })}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-center">Pinjaman</td>
-                    <td className="px-4 py-3 text-center">
+                    <td className="px-4 py-3.5 text-center text-sm">Pinjaman</td>
+                    <td className="px-4 py-3.5 text-center text-sm">
                       Rp {item.total_pinjaman.toLocaleString()}
                     </td>
 
                     {/* JANGKA WAKTU */}
-                    <td className="px-4 py-3 text-center">
+                    <td className="px-4 py-3.5 text-center text-sm">
                       {item.jangka_waktu} bulan
                     </td>
 
                     {/* AGUNAN */}
-                    <td className="px-4 py-3 text-center">
+                    <td className="px-4 py-3.5 text-center text-sm">
                       {item.detail?.[0]?.jenis || "-"}
                     </td>
 
-                    <td className="px-4 py-3 text-center">
+                    <td className="px-4 py-3.5 text-center text-sm">
                       <span
-                        className={`px-3 py-1 text-xs rounded-full ${statusClass(item.status)}`}
+                        className={`${UI.status} ${statusClass(item.status)}`}
                       >
                         {statusLabel(item.status)}
                       </span>
@@ -557,7 +613,7 @@ sm:justify-end">
             currentData.map((item: any) => (
               <div
                 key={item.id_peminjaman}
-                className="rounded-2xl border border-gray-100 bg-white shadow-sm p-4"
+                className={`${UI.card} p-4`}
               >
                 {/* TOP: tanggal + status */}
                 <div className="flex items-start justify-between gap-2 mb-3">
@@ -579,7 +635,7 @@ sm:justify-end">
                   </div>
 
                   <span
-                    className={`px-2.5 py-1 text-xs rounded-full font-medium shrink-0 ${statusClass(item.status)}`}
+                    className={`${UI.status} shrink-0 ${statusClass(item.status)}`}
                   >
                     {statusLabel(item.status)}
                   </span>
@@ -587,16 +643,16 @@ sm:justify-end">
 
                 {/* JENIS + JUMLAH */}
                 <div className="flex items-center justify-between gap-2 mb-2">
-                  <span className="font-semibold text-gray-800 text-sm">
+                  <span className="text-sm font-semibold text-gray-800">
                     Pinjaman
                   </span>
-                  <span className="font-bold text-emerald-700 text-sm shrink-0">
+                  <span className="text-sm font-semibold text-emerald-700 shrink-0">
                     Rp {item.total_pinjaman.toLocaleString()}
                   </span>
                 </div>
 
                 {/* DETAIL: jangka waktu & agunan */}
-                <div className="grid grid-cols-2 gap-2 pt-3 mt-1 border-t border-gray-100 text-xs">
+                <div className="grid grid-cols-2 gap-3 pt-3 mt-1 border-t border-gray-100 text-xs">
                   <div>
                     <p className="text-gray-400 mb-0.5">Jangka Waktu</p>
                     <p className="text-gray-700 font-medium">{item.jangka_waktu} bulan</p>
@@ -637,7 +693,7 @@ px-1">
             <button
               onClick={() => setCurrentPage((prev) => prev - 1)}
               disabled={currentPage === 1}
-              className={`px-3 py-1.5 rounded-lg border text-xs ${currentPage === 1
+              className={`${UI.smallButton} border ${currentPage === 1
                   ? "border-gray-200 text-gray-300 cursor-not-allowed"
                   : "border-gray-300 hover:bg-gray-100"
                 }`}
@@ -646,7 +702,7 @@ px-1">
             </button>
 
             {/* PAGE NUMBER */}
-            <span className="px-3 py-1.5 text-xs font-medium">
+            <span className="h-8 px-3 text-xs font-medium inline-flex items-center">
               Halaman {currentPage} / {totalPages || 1}
             </span>
 
@@ -654,7 +710,7 @@ px-1">
             <button
               onClick={() => setCurrentPage((prev) => prev + 1)}
               disabled={currentPage === totalPages || totalPages === 0}
-              className={`px-3 py-1.5 rounded-lg border text-xs ${currentPage === totalPages || totalPages === 0
+              className={`${UI.smallButton} border ${currentPage === totalPages || totalPages === 0
                   ? "border-gray-200 text-gray-300 cursor-not-allowed"
                   : "border-gray-300 hover:bg-gray-100"
                 }`}
@@ -665,44 +721,6 @@ px-1">
           </div>
         </div>
       </div>
-      <AnimatePresence>
-        {openForm && (
-          <motion.div
-            className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
-            {/* Overlay blur */}
-            <div
-              className="absolute inset-0 bg-black/40 backdrop-blur-sm"
-              onClick={() => setOpenForm(false)}
-            />
-
-            {/* Modal content */}
-            <motion.div
-              className="relative w-full max-w-5xl max-h-[90vh] overflow-y-auto rounded-2xl bg-white shadow-xl"
-              initial={{ y: 30, opacity: 0, scale: 0.95 }}
-              animate={{ y: 0, opacity: 1, scale: 1 }}
-              exit={{ y: 30, opacity: 0, scale: 0.95 }}
-            >
-              <FormPengajuan
-  onSuccess={() => {
-    setOpenForm(false);
-  }}
-/>
-
-              {/* Tombol close */}
-              <button
-                onClick={() => setOpenForm(false)}
-                className="absolute top-4 right-4 bg-white border rounded-full p-2 shadow"
-              >
-                ✕
-              </button>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 }

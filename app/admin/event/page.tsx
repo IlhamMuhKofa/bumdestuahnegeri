@@ -3,11 +3,10 @@
 import React, { useEffect, useState } from "react";
 import {
   Calendar,
-  Pencil,
-  Trash2,
   Plus,
   MapPin,
   Star,
+  Loader2,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
@@ -38,6 +37,7 @@ export default function AdminEvent() {
   const [totalPages, setTotalPages] = useState(1);
   const [currentPage, setCurrentPage] = useState(1);
   const router = useRouter();
+    const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     setCurrentPage(
@@ -46,6 +46,7 @@ export default function AdminEvent() {
   }, []);
 
   useEffect(() => {
+    setLoading(true);
     fetch(`/api/event?page=${currentPage}`)
       .then((res) => res.json())
       .then((result) => {
@@ -57,6 +58,7 @@ export default function AdminEvent() {
         );
         setEvents(sorted);
         setTotalPages(result.totalPages || 1);
+        setLoading(false);
       });
   }, [currentPage]);
 
@@ -162,6 +164,20 @@ const handleFeature = async (id: number) => {
     });
   }
 };
+
+  if (loading) {
+  return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+        <div className="flex flex-col items-center gap-3">
+          <div className="h-8 w-8 animate-spin rounded-full border-[3px] border-gray-200 border-t-blue-500" />
+
+          <p className="text-sm text-gray-400">
+            Memuat data event...
+          </p>
+        </div>
+      </div>
+  );
+}
 
   const featured = events.filter((e) => e.status === "featured");
   const regular = events.filter((e) => e.status !== "featured");

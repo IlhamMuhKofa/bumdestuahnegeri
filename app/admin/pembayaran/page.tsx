@@ -84,17 +84,16 @@ export default async function Page({
         pinjaman={pembayaranPinjaman}
         simpanan={pembayaranSimpanan}
       />
-      <div className="bg-gray-50 px-5 pb-10 md:px-10">
-        <Pagination
-          currentPage={currentPage}
-          totalPages={Math.max(
-            Math.ceil(Math.max(totalPinjaman, totalSimpanan) / PAGE_SIZE),
-            1
-          )}
-          basePath="/admin/pembayaran"
-          totalItems={Math.max(totalPinjaman, totalSimpanan)}
-          pageSize={PAGE_SIZE}
-        />
+      <div className="bg-gray-50 px-6 pb-6">
+        <div className="mx-auto max-w-7xl">
+          <Pagination
+            currentPage={currentPage}
+            totalPages={Math.max(Math.ceil(totalPinjaman / PAGE_SIZE), 1)}
+            basePath="/admin/pembayaran"
+            totalItems={totalPinjaman}
+            pageSize={PAGE_SIZE}
+          />
+        </div>
       </div>
     </>
   );

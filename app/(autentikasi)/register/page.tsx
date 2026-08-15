@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { toast } from "react-toastify";
 import { motion, AnimatePresence, type Variants } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
@@ -105,23 +106,19 @@ export default function SignupPage() {
       setLoading(false);
 
       // Opsional: arahkan ke login setelah 1 detik
-      setTimeout(() => {
-        sessionStorage.setItem("showRegisterToast", "true");
-        router.push("/");
-      }, 1000);
+toast.success("Akun berhasil dibuat, silahkan login 🎉", {
+  autoClose: 5000,
+  closeOnClick: false,
+  pauseOnHover: false,
+});
+
+// Arahkan ke halaman login setelah toast selesai
+setTimeout(() => {
+  router.push("/login");
+}, 3000);
     } catch (err) {
       setLoading(false);
       setErrorMsg("Terjadi kesalahan jaringan. Coba lagi.");
-    }
-  };
-
-  const handleBack = () => {
-    setErrorMsg(null);
-    setSuccessMsg(null);
-    if (step === 1) {
-      router.push("/");
-    } else {
-      setStep(1);
     }
   };
 
@@ -163,15 +160,6 @@ export default function SignupPage() {
       {/* Left Side - form */}
       <div className="relative w-full flex-1 lg:flex-none lg:w-2/3 bg-[#F5C542] flex items-center justify-center px-5 sm:px-8 md:px-10 py-10 sm:py-12">
         <div className="w-full">
-          <motion.button
-            onClick={handleBack}
-            whileTap={{ scale: 0.96 }}
-            type="button"
-            className="inline-flex items-center gap-2 rounded-full bg-white/80 px-4 py-2 text-xs sm:text-sm font-semibold text-black shadow-sm backdrop-blur hover:bg-white transition mb-6 sm:mb-8"
-          >
-            ← {step === 1 ? "Kembali ke Beranda" : "Kembali"}
-          </motion.button>
-
           <AnimatePresence mode="wait">
             {step === 1 ? (
               <motion.div
@@ -184,7 +172,7 @@ export default function SignupPage() {
                 <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2 sm:mb-3 text-black">
                   Biar Lebih Dekat, Daftar Dulu Yuk!
                 </h2>
-                <p className="text-sm sm:text-base mb-8 sm:mb-10 lg:mb-12 text-black">
+                <p className="text-sm sm:text-base mb-8 sm:mb-10 lg:mb-8 text-black">
                   Kami butuh sedikit data kamu agar bisa kasih layanan terbaik ke depannya.
                 </p>
 

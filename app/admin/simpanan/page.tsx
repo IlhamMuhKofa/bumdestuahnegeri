@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import Client from "./client";
 import Pagination from "../component/Pagination";
 
-const PAGE_SIZE = 7;
+const PAGE_SIZE = 10;
 
 type Props = {
   searchParams?: Promise<{

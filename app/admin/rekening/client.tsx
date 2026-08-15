@@ -208,15 +208,12 @@ export default function Client({
                       {item.is_active ? (
                         <div className="inline-flex items-center gap-2 rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700">
 
-                          <BadgeCheck className="h-3.5 w-3.5" />
-
                           Aktif
 
                         </div>
                       ) : (
-                        <div className="inline-flex items-center gap-2 rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-500">
+                        <div className="inline-flex items-center gap-2 rounded-full bg-red-100 px-3 py-1 text-xs font-semibold text-red-500">
 
-                          <Circle className="h-3 w-3" />
 
                           Tidak Aktif
 
@@ -225,79 +222,115 @@ export default function Client({
 
                     </td>
 
-                    {/* AKSI */}
-                    <td className="px-4 py-4">
+{/* AKSI */}
+<td className="px-4 py-4">
 
-                      <div className="flex items-center justify-center gap-2">
+  <div className="flex items-center justify-center gap-2">
 
-                        {/* AKTIF/NONAKTIF */}
-                        {item.is_active ? (
-                          <button
-                            onClick={() =>
-                              handleNonaktifkan(
-                                item.id_rekening
-                              )
-                            }
-                            className="flex items-center gap-1 rounded-xl bg-orange-100 px-3 py-2 text-xs font-semibold text-orange-700 transition-all hover:bg-orange-200"
-                          >
+    {/* AKTIF/NONAKTIF */}
+    {item.is_active ? (
+      <button
+        onClick={() =>
+          handleNonaktifkan(
+            item.id_rekening
+          )
+        }
+        className="
+          rounded-lg
+          border
+          border-red-200
+          bg-red-50
+          px-3
+          py-2
+          text-xs
+          font-medium
+          text-red-600
+          transition-all
+          duration-200
+          hover:bg-red-100
+        "
+      >
+        Nonaktifkan
+      </button>
+    ) : (
+      <button
+        onClick={() =>
+          handleAktifkan(
+            item.id_rekening
+          )
+        }
+        className="
+          rounded-lg
+          border
+          border-green-200
+          bg-green-50
+          px-3
+          py-2
+          text-xs
+          font-medium
+          text-green-600
+          transition-all
+          duration-200
+          hover:bg-green-100
+        "
+      >
+        Aktifkan
+      </button>
+    )}
 
-                            <Power className="h-3.5 w-3.5" />
+    {/* EDIT */}
+    <button
+      onClick={() => {
+        setSelectedData(item);
 
-                            Nonaktifkan
+        setOpenEdit(true);
+      }}
+      className="
+        rounded-lg
+        border
+        border-blue-200
+        bg-blue-50
+        px-3
+        py-2
+        text-xs
+        font-medium
+        text-blue-600
+        transition-all
+        duration-200
+        hover:bg-blue-100
+      "
+    >
+      Edit
+    </button>
 
-                          </button>
-                        ) : (
-                          <button
-                            onClick={() =>
-                              handleAktifkan(
-                                item.id_rekening
-                              )
-                            }
-                            className="flex items-center gap-1 rounded-xl bg-[#1a3c2e] px-3 py-2 text-xs font-semibold text-white transition-all hover:bg-[#244d3c]"
-                          >
+    {/* HAPUS */}
+    <button
+      onClick={() =>
+        handleHapus(
+          item.id_rekening
+        )
+      }
+      className="
+        rounded-lg
+        border
+        border-red-200
+        bg-red-50
+        px-3
+        py-2
+        text-xs
+        font-medium
+        text-red-600
+        transition-all
+        duration-200
+        hover:bg-red-100
+      "
+    >
+      Hapus
+    </button>
 
-                            <BadgeCheck className="h-3.5 w-3.5" />
+  </div>
 
-                            Aktifkan
-
-                          </button>
-                        )}
-
-                        {/* EDIT */}
-                        <button
-                          onClick={() => {
-                            setSelectedData(item);
-
-                            setOpenEdit(true);
-                          }}
-                          className="flex items-center gap-1 rounded-xl bg-blue-100 px-3 py-2 text-xs font-semibold text-blue-700 transition-all hover:bg-blue-200"
-                        >
-
-                          <Pencil className="h-3.5 w-3.5" />
-
-                          Edit
-
-                        </button>
-
-                        {/* HAPUS */}
-                        <button
-                          onClick={() =>
-                            handleHapus(
-                              item.id_rekening
-                            )
-                          }
-                          className="flex items-center gap-1 rounded-xl bg-red-100 px-3 py-2 text-xs font-semibold text-red-700 transition-all hover:bg-red-200"
-                        >
-
-                          <Trash2 className="h-3.5 w-3.5" />
-
-                          Hapus
-
-                        </button>
-
-                      </div>
-
-                    </td>
+</td>
 
                   </tr>
                 )

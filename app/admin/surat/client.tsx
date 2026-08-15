@@ -83,12 +83,25 @@ const handleSubmit = (formData: FormData) => {
             </p>
           </div>
 
-          <button
-            onClick={() => setOpen(true)}
-            className="bg-blue-800 text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-blue-900"
-          >
-            {surat ? "Update Dokumen" : "+ Upload Dokumen"}
-          </button>
+<button
+  onClick={() => setOpen(true)}
+  className="
+    rounded-lg
+    bg-blue-700
+    px-4
+    py-2
+    text-xs
+    font-medium
+    text-white
+    transition-all
+    duration-200
+    hover:bg-blue-800
+  "
+>
+  {surat
+    ? "Update Dokumen"
+    : "Upload Dokumen"}
+</button>
         </div>
 
         {surat ? (
@@ -198,44 +211,53 @@ const handleSubmit = (formData: FormData) => {
                   </div>
 
                   <div className="flex justify-end gap-3 pt-3">
-                    <button
-                      type="button"
-                      onClick={() => setOpen(false)}
-                      className="
-                        rounded-xl
-                        border border-gray-200
-                        px-4 py-2.5
-                        text-sm
-                        font-medium
-                        text-gray-600
-                        hover:bg-gray-50
-                      "
-                    >
-                      Batal
-                    </button>
+<button
+  type="button"
+  onClick={() => setOpen(false)}
+  className="
+    rounded-lg
+    border
+    border-gray-200
+    bg-white
+    px-4
+    py-2
+    text-xs
+    font-medium
+    text-gray-600
+    transition-all
+    duration-200
+    hover:bg-gray-50
+  "
+>
+  Batal
+</button>
 
-                    <button
-                      type="submit"
-                      disabled={isPending}
-                      className="
-                        rounded-xl
-                        bg-blue-800
-                        px-5 py-2.5
-                        text-sm
-                        font-medium
-                        text-white
-                        hover:bg-blue-900
-                        disabled:opacity-50
-                      "
-                    >
-                      {isPending
-                        ? surat
-                          ? "Mengupdate..."
-                          : "Mengupload..."
-                        : surat
-                        ? "Update Dokumen"
-                        : "Simpan Dokumen"}
-                    </button>
+<button
+  type="submit"
+  disabled={isPending}
+  className="
+    rounded-lg
+    bg-blue-700
+    px-4
+    py-2
+    text-xs
+    font-medium
+    text-white
+    transition-all
+    duration-200
+    hover:bg-blue-800
+    disabled:cursor-not-allowed
+    disabled:opacity-50
+  "
+>
+  {isPending
+    ? surat
+      ? "Mengupdate..."
+      : "Mengupload..."
+    : surat
+    ? "Update Dokumen"
+    : "Simpan Dokumen"}
+</button>
                   </div>
                 </form>
               </div>

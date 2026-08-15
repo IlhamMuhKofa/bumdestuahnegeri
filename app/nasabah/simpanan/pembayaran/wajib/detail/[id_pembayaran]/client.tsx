@@ -62,49 +62,49 @@ export default function ClientPage({
     Clock3;
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-gray-50">
 
-      <div className="mx-auto max-w-4xl p-5 md:p-8">
+      <div className="mx-auto w-full max-w-6xl px-4 py-5 sm:p-6">
 
         {/* HEADER */}
-
         <div className="mb-6">
 
           <Link
             href="/nasabah/simpanan"
-            className="inline-flex items-center gap-2 text-sm text-slate-600 hover:text-green-700"
+            className="h-8 -ml-3 inline-flex items-center gap-2 rounded-lg px-3 text-xs font-medium text-gray-600 transition-colors hover:bg-white hover:text-[#1a3c2e]"
           >
             <ArrowLeft className="h-4 w-4" />
             Kembali
           </Link>
 
-          <h1 className="mt-4 text-3xl font-bold text-slate-900">
+          <h1 className="mt-4 text-2xl font-bold tracking-tight text-gray-800 sm:text-[30px]">
             Detail Pembayaran
           </h1>
 
-          <p className="mt-1 text-slate-500">
+          <p className="mt-2 text-sm leading-relaxed text-gray-500">
             Informasi pembayaran simpanan wajib
           </p>
 
         </div>
 
         {/* STATUS */}
-
         <div
-          className={`mb-6 rounded-3xl border p-6 ${current.color}`}
+          className={`mb-6 rounded-2xl border p-5 sm:p-6 ${current?.color ?? "bg-gray-100 text-gray-600 border-gray-200"}`}
         >
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
 
-            <StatusIcon className="h-8 w-8" />
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-white/50">
+              <StatusIcon className="h-5 w-5" />
+            </div>
 
             <div>
 
-              <p className="text-sm">
+              <p className="text-xs font-medium">
                 Status Pembayaran
               </p>
 
-              <h2 className="text-2xl font-bold">
+              <h2 className="mt-1 text-lg font-semibold sm:text-2xl">
                 {pembayaran.status}
               </h2>
 
@@ -115,14 +115,13 @@ export default function ClientPage({
         </div>
 
         {/* INFORMASI */}
+        <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm sm:p-6">
 
-        <div className="rounded-3xl border bg-white p-6 shadow-sm">
-
-          <h3 className="mb-5 text-lg font-semibold">
+          <h3 className="mb-5 text-base font-semibold text-gray-900 sm:text-lg">
             Informasi Pembayaran
           </h3>
 
-          <div className="grid gap-5 md:grid-cols-2">
+          <div className="grid gap-3 md:grid-cols-2">
 
             <InfoItem
               icon={<CalendarDays className="h-5 w-5" />}
@@ -160,14 +159,13 @@ export default function ClientPage({
         </div>
 
         {/* CATATAN */}
+        <div className="mt-6 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm sm:p-6">
 
-        <div className="mt-6 rounded-3xl border bg-white p-6 shadow-sm">
-
-          <h3 className="mb-4 text-lg font-semibold">
+          <h3 className="mb-4 text-base font-semibold text-gray-900 sm:text-lg">
             Catatan
           </h3>
 
-          <div className="rounded-2xl bg-slate-50 p-4 text-slate-600">
+          <div className="rounded-xl bg-gray-50 p-4 text-sm leading-relaxed text-gray-600">
 
             {pembayaran.catatan ||
               "Tidak ada catatan."}
@@ -177,10 +175,9 @@ export default function ClientPage({
         </div>
 
         {/* BUKTI */}
+        <div className="mt-6 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm sm:p-6">
 
-        <div className="mt-6 rounded-3xl border bg-white p-6 shadow-sm">
-
-          <h3 className="mb-5 text-lg font-semibold">
+          <h3 className="mb-5 text-base font-semibold text-gray-900 sm:text-lg">
             Bukti Pembayaran
           </h3>
 
@@ -192,7 +189,8 @@ export default function ClientPage({
                 src={
                   pembayaran.bukti_bayar
                 }
-                className="h-72 w-full rounded-2xl border object-cover"
+                alt="Bukti pembayaran"
+                className="h-72 w-full rounded-xl border object-cover"
               />
 
               <div className="mt-5 flex flex-col gap-3 sm:flex-row">
@@ -202,9 +200,10 @@ export default function ClientPage({
                     pembayaran.bukti_bayar
                   }
                   target="_blank"
-                  className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-blue-600 py-3 text-white hover:bg-blue-700"
+                  rel="noreferrer"
+                  className="h-10 flex flex-1 items-center justify-center gap-2 rounded-lg bg-[#1a3c2e] px-4 text-sm font-medium text-white transition-colors hover:bg-[#142f24]"
                 >
-                  <Eye className="h-5 w-5" />
+                  <Eye className="h-4 w-4" />
                   Lihat Fullscreen
                 </a>
 
@@ -213,9 +212,9 @@ export default function ClientPage({
                     pembayaran.bukti_bayar
                   }
                   download
-                  className="flex flex-1 items-center justify-center gap-2 rounded-xl border py-3 hover:bg-slate-100"
+                  className="h-10 flex flex-1 items-center justify-center gap-2 rounded-lg border border-gray-200 px-4 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
                 >
-                  <Download className="h-5 w-5" />
+                  <Download className="h-4 w-4" />
                   Download
                 </a>
 
@@ -225,7 +224,7 @@ export default function ClientPage({
 
           ) : (
 
-            <div className="rounded-2xl border border-dashed p-8 text-center text-slate-500">
+            <div className="rounded-xl border border-dashed p-8 text-center text-sm text-gray-500">
 
               <FileText className="mx-auto mb-3 h-10 w-10" />
 
@@ -253,19 +252,19 @@ function InfoItem({
   value: string;
 }) {
   return (
-    <div className="flex gap-4 rounded-2xl border p-4">
+    <div className="flex gap-4 rounded-xl border border-gray-200 p-4">
 
-      <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-green-100 text-green-700">
+      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-700">
         {icon}
       </div>
 
-      <div>
+      <div className="min-w-0">
 
-        <p className="text-sm text-slate-500">
+        <p className="text-xs text-gray-500">
           {label}
         </p>
 
-        <p className="font-semibold text-slate-800">
+        <p className="mt-0.5 text-sm font-semibold text-gray-800">
           {value}
         </p>
 

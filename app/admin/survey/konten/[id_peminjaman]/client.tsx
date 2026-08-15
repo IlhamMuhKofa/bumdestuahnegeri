@@ -105,7 +105,7 @@ export default function ClientPage({
         );
 
         router.push(
-          `/admin/survey/konten/${peminjaman.id_anggota}`
+          `/admin/survey`
         );
 
       } catch (

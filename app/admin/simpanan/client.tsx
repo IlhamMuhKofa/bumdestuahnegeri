@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 
 import {
   Search,
@@ -9,6 +10,8 @@ import {
   Clock3,
   ChevronRight,
   BadgeCheck,
+  SlidersHorizontal,
+  ArrowUpDown,
 } from "lucide-react";
 
 type Props = {
@@ -20,313 +23,430 @@ export default function Client({
   data,
   search = "",
 }: Props) {
-  return (
-    <div className="min-h-screen bg-gray-50 p-6">
 
-      <div className="mx-auto max-w-7xl space-y-6">
+  const [sort, setSort] = useState("terbaru");
+
+  return (
+    <div className="min-h-screen bg-gray-50/50 p-2">
+
+      <div className="mx-auto max-w-7xl space-y-7">
 
         {/* =======================================================
             HEADER
         ======================================================= */}
-        <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+        <div className="flex items-start justify-between">
 
           <div>
-
-            <h1 className="text-3xl font-bold text-gray-800">
+            <h1 className="text-2xl font-bold tracking-tight text-gray-900">
               Data Simpanan Nasabah
             </h1>
 
             <p className="mt-1 text-sm text-gray-500">
               Kelola simpanan wajib dan tabungan pendidikan seluruh nasabah
             </p>
-
           </div>
-
-          {/* SEARCH */}
-          <form action="/admin/simpanan" className="relative w-full lg:w-96">
-
-            <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-
-            <input
-              type="text"
-              name="q"
-              defaultValue={search}
-              placeholder="Cari nama nasabah..."
-              className="w-full rounded-2xl border border-gray-200 bg-white py-3 pl-11 pr-4 text-sm outline-none transition-all focus:border-[#1a3c2e]"
-            />
-
-          </form>
 
         </div>
 
+
 {/* =======================================================
-    SUMMARY CARD
+    SEARCH + SORT
 ======================================================= */}
+<div className="flex items-center gap-3">
 
-<div className="grid gap-4 md:grid-cols-3">
+  {/* SEARCH */}
+  <div className="relative flex-1 max-w-full">
 
-  {/* TOTAL SIMPANAN WAJIB */}
-  <div className="rounded-3xl bg-white p-6 shadow-sm border border-gray-100">
-    <div className="flex items-center justify-between">
+    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
 
-      <div>
-        <p className="text-sm font-medium text-gray-500">
-          Simpanan Wajib
-        </p>
+    <input
+      type="text"
+      placeholder="Cari nama nasabah..."
+      defaultValue={search}
+      className="w-full pl-9 pr-4 py-2 text-sm border border-gray-200 rounded-xl bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all placeholder:text-gray-400"
+    />
 
-        <h2 className="mt-2 text-3xl font-bold text-gray-800">
-          {
-            data.filter(
-              (x) => x.total_wajib > 0
-            ).length
-          }
-        </h2>
-      </div>
-
-      <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-green-100">
-        <Wallet className="h-6 w-6 text-green-700" />
-      </div>
-
-    </div>
   </div>
 
+  {/* SORT */}
+  <div className="relative">
 
-  {/* TOTAL PENDIDIKAN */}
-  <div className="rounded-3xl bg-white p-6 shadow-sm border border-gray-100">
-    <div className="flex items-center justify-between">
+    <SlidersHorizontal className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
 
-      <div>
-        <p className="text-sm font-medium text-gray-500">
-          Tabungan Pendidikan
-        </p>
+    <select
+      value={sort}
+      onChange={(e) => setSort(e.target.value)}
+      className="pl-9 pr-8 py-2 text-sm border border-gray-200 rounded-xl bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all appearance-none cursor-pointer text-gray-600"
+    >
+      <option value="terbaru">
+        Terbaru
+      </option>
 
-        <h2 className="mt-2 text-3xl font-bold text-gray-800">
-          {
-            data.filter(
-              (x) => x.total_pendidikan > 0
-            ).length
-          }
-        </h2>
-      </div>
+      <option value="terlama">
+        Terlama
+      </option>
 
-      <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-purple-100">
-        <GraduationCap className="h-6 w-6 text-purple-700" />
-      </div>
+      <option value="az">
+        Nama A – Z
+      </option>
 
-    </div>
-  </div>
+      <option value="za">
+        Nama Z – A
+      </option>
+    </select>
 
+    <ArrowUpDown className="absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-400 pointer-events-none" />
 
-  {/* MENUNGGU VERIFIKASI */}
-  <div className="rounded-3xl bg-white p-6 shadow-sm border border-gray-100">
-    <div className="flex items-center justify-between">
-
-      <div>
-        <p className="text-sm font-medium text-gray-500">
-          Menunggu Verifikasi
-        </p>
-
-        <h2 className="mt-2 text-3xl font-bold text-gray-800">
-          {
-            data.filter(
-              (x) => x.pending > 0
-            ).length
-          }
-        </h2>
-      </div>
-
-      <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-orange-100">
-        <Clock3 className="h-6 w-6 text-orange-700" />
-      </div>
-
-    </div>
   </div>
 
 </div>
 
+
         {/* =======================================================
-            TABLE
+            SUMMARY CARDS
         ======================================================= */}
-        <div className="overflow-hidden rounded-3xl border border-gray-100 bg-white shadow-sm">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
 
-          <table className="w-full text-sm">
+          {/* =====================================================
+              SIMPANAN WAJIB
+          ===================================================== */}
+          <div className="group relative overflow-hidden rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
 
-            <thead>
-              <tr className="bg-blue-800 text-white">
+            <div className="flex items-start justify-between">
 
-                <th className="px-6 py-4 text-left">
-                  Nasabah
-                </th>
+              <div>
 
-                <th className="px-6 py-4 text-left">
+                <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">
                   Simpanan Wajib
-                </th>
+                </p>
 
-                <th className="px-6 py-4 text-left">
-                  Pendidikan
-                </th>
+                <p className="mt-2 text-3xl font-bold text-gray-900">
+                  {
+                    data.filter(
+                      (x) => x.total_wajib > 0
+                    ).length
+                  }
+                </p>
 
-                <th className="px-6 py-4 text-center">
-                  Pending
-                </th>
+              </div>
 
-                <th className="px-6 py-4 text-center">
-                  Status
-                </th>
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-green-50 transition-colors group-hover:bg-green-100">
 
-                <th className="px-6 py-4 text-center">
-                  Detail
-                </th>
+                <Wallet className="h-5 w-5 text-green-600" />
 
-              </tr>
-            </thead>
+              </div>
 
-            <tbody>
+            </div>
 
-              {data.length > 0 ? (
-                data.map(
-                  (item: any) => (
-                    <tr
-                      key={
-                        item.id_anggota
-                      }
-                      className="border-t transition-all hover:bg-gray-50"
+            <div className="absolute bottom-0 left-0 right-0 h-0.5 rounded-b-2xl bg-gradient-to-r from-green-500 to-green-300 opacity-0 transition-opacity group-hover:opacity-100" />
+
+          </div>
+
+
+          {/* =====================================================
+              TABUNGAN PENDIDIKAN
+          ===================================================== */}
+          <div className="group relative overflow-hidden rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
+
+            <div className="flex items-start justify-between">
+
+              <div>
+
+                <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">
+                  Tabungan Pendidikan
+                </p>
+
+                <p className="mt-2 text-3xl font-bold text-gray-900">
+                  {
+                    data.filter(
+                      (x) => x.total_pendidikan > 0
+                    ).length
+                  }
+                </p>
+
+              </div>
+
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-purple-50 transition-colors group-hover:bg-purple-100">
+
+                <GraduationCap className="h-5 w-5 text-purple-600" />
+
+              </div>
+
+            </div>
+
+            <div className="absolute bottom-0 left-0 right-0 h-0.5 rounded-b-2xl bg-gradient-to-r from-purple-500 to-purple-300 opacity-0 transition-opacity group-hover:opacity-100" />
+
+          </div>
+
+
+          {/* =====================================================
+              MENUNGGU VERIFIKASI
+          ===================================================== */}
+          <div className="group relative overflow-hidden rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
+
+            <div className="flex items-start justify-between">
+
+              <div>
+
+                <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">
+                  Menunggu Verifikasi
+                </p>
+
+                <p className="mt-2 text-3xl font-bold text-gray-900">
+                  {
+                    data.filter(
+                      (x) => x.pending > 0
+                    ).length
+                  }
+                </p>
+
+              </div>
+
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-amber-50 transition-colors group-hover:bg-amber-100">
+
+                <Clock3 className="h-5 w-5 text-amber-600" />
+
+              </div>
+
+            </div>
+
+            <div className="absolute bottom-0 left-0 right-0 h-0.5 rounded-b-2xl bg-gradient-to-r from-amber-500 to-amber-300 opacity-0 transition-opacity group-hover:opacity-100" />
+
+          </div>
+
+        </div>
+
+
+        {/* =======================================================
+            TABLE CARD
+        ======================================================= */}
+        <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
+
+          <div className="overflow-x-auto">
+
+            <table className="w-full">
+
+              {/* =================================================
+                  TABLE HEADER
+              ================================================= */}
+              <thead>
+
+                <tr className="border-b border-gray-100 bg-blue-800">
+
+                  <th className="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-white">
+                    Nasabah
+                  </th>
+
+                  <th className="px-4 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-white">
+                    Simpanan Wajib
+                  </th>
+
+                  <th className="px-4 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-white">
+                    Pendidikan
+                  </th>
+
+                  <th className="px-4 py-3.5 text-center text-xs font-semibold uppercase tracking-wider text-white">
+                    Pending
+                  </th>
+
+                  <th className="px-4 py-3.5 text-center text-xs font-semibold uppercase tracking-wider text-white">
+                    Status
+                  </th>
+
+                  <th className="px-5 py-3.5 text-center text-xs font-semibold uppercase tracking-wider text-white">
+                    Detail
+                  </th>
+
+                </tr>
+
+              </thead>
+
+
+              {/* =================================================
+                  TABLE BODY
+              ================================================= */}
+              <tbody className="divide-y divide-gray-50">
+
+                {data.length > 0 ? (
+
+                  data.map(
+                    (item: any) => (
+
+                      <tr
+                        key={item.id_anggota}
+                        className="group transition-colors duration-150 hover:bg-blue-50/40"
+                      >
+
+                        {/* =================================================
+                            NASABAH
+                        ================================================= */}
+                        <td className="px-5 py-4">
+
+                          <div className="flex items-center gap-3">
+
+                            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-100">
+
+                              <span className="text-xs font-bold text-blue-700">
+                                {item.nama
+                                  ?.charAt(0)
+                                  ?.toUpperCase()}
+                              </span>
+
+                            </div>
+
+                            <div className="min-w-0">
+
+                              <span className="block text-sm font-medium text-gray-800">
+                                {item.nama}
+                              </span>
+
+                              <span className="block text-xs text-gray-400">
+                                {item.email}
+                              </span>
+
+                            </div>
+
+                          </div>
+
+                        </td>
+
+
+                        {/* =================================================
+                            SIMPANAN WAJIB
+                        ================================================= */}
+                        <td className="px-4 py-4">
+
+                          <span className="text-sm font-semibold text-gray-800">
+                            Rp{" "}
+                            {item.total_wajib?.toLocaleString(
+                              "id-ID"
+                            )}
+                          </span>
+
+                        </td>
+
+
+                        {/* =================================================
+                            PENDIDIKAN
+                        ================================================= */}
+                        <td className="px-4 py-4">
+
+                          <span className="text-sm font-semibold text-gray-800">
+                            Rp{" "}
+                            {item.total_pendidikan?.toLocaleString(
+                              "id-ID"
+                            )}
+                          </span>
+
+                        </td>
+
+
+                        {/* =================================================
+                            PENDING
+                        ================================================= */}
+                        <td className="px-4 py-4 text-center">
+
+                          {item.pending > 0 ? (
+
+                            <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-4 py-1 text-xs font-medium text-amber-700 ring-1 ring-amber-200">
+
+                              <Clock3 className="h-3.5 w-3.5" />
+
+                              {item.pending} pembayaran
+
+                            </span>
+
+                          ) : (
+
+                            <span className="inline-flex items-center gap-1.5 rounded-full bg-gray-50 px-4 py-1 text-xs font-medium text-gray-600 ring-1 ring-gray-200">
+
+                              <BadgeCheck className="h-3.5 w-3.5" />
+
+                              Tidak ada
+
+                            </span>
+
+                          )}
+
+                        </td>
+
+
+                        {/* =================================================
+                            STATUS
+                        ================================================= */}
+                        <td className="px-4 py-4 text-center">
+
+                          <span className="inline-flex items-center gap-1.5 rounded-full bg-green-50 px-4 py-1 text-xs font-medium text-green-700 ring-1 ring-green-200">
+
+                            Aktif
+
+                          </span>
+
+                        </td>
+
+
+                        {/* =================================================
+                            DETAIL
+                        ================================================= */}
+                        <td className="px-5 py-4 text-center">
+
+                          <Link
+                            href={`/admin/simpanan/${item.id_anggota}`}
+                            className="inline-flex items-center gap-1 rounded-lg border border-blue-200 px-3 py-1.5 text-xs font-semibold text-blue-700 transition-all duration-150 hover:border-blue-700 hover:bg-blue-700 hover:text-white"
+                          >
+
+                            Kelola
+
+                          </Link>
+
+                        </td>
+
+                      </tr>
+
+                    )
+                  )
+
+                ) : (
+
+                  /* =================================================
+                     EMPTY STATE
+                  ================================================= */
+                  <tr>
+
+                    <td
+                      colSpan={6}
+                      className="py-16"
                     >
 
-                      {/* NASABAH */}
-                      <td className="px-6 py-5">
+                      <div className="flex flex-col items-center justify-center text-center">
 
-                        <div className="flex items-center gap-4">
+                        <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-gray-100">
 
-                          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-100 text-lg font-bold text-blue-700">
-
-                            {item.nama
-                              ?.charAt(0)
-                              ?.toUpperCase()}
-
-                          </div>
-
-                          <div>
-
-                            <h3 className="font-semibold text-gray-800">
-                              {item.nama}
-                            </h3>
-
-                            <p className="text-xs text-gray-500">
-                              {item.email}
-                            </p>
-
-                          </div>
+                          <Wallet className="h-6 w-6 text-gray-300" />
 
                         </div>
 
-                      </td>
+                        <p className="text-sm font-medium text-gray-500">
+                          Belum ada data simpanan
+                        </p>
 
-                      {/* WAJIB */}
-                      <td className="px-6 py-5 font-semibold text-gray-700">
-
-                        Rp{" "}
-                        {item.total_wajib?.toLocaleString(
-                          "id-ID"
-                        )}
-
-                      </td>
-
-                      {/* PENDIDIKAN */}
-                      <td className="px-6 py-5 font-semibold text-gray-700">
-
-                        Rp{" "}
-                        {item.total_pendidikan?.toLocaleString(
-                          "id-ID"
-                        )}
-
-                      </td>
-
-                      {/* PENDING */}
-                      <td className="px-6 py-5 text-center">
-
-                        {item.pending > 0 ? (
-                          <div className="inline-flex items-center gap-2 rounded-full bg-orange-100 px-3 py-1 text-xs font-semibold text-orange-700">
-
-                            <Clock3 className="h-3.5 w-3.5" />
-
-                            {item.pending} pembayaran
-
-                          </div>
-                        ) : (
-                          <div className="inline-flex items-center gap-2 rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-700">
-
-                            <BadgeCheck className="h-3.5 w-3.5" />
-
-                            Tidak ada
-
-                          </div>
-                        )}
-
-                      </td>
-
-                      {/* STATUS */}
-                      <td className="px-6 py-5 text-center">
-
-                        <div className="inline-flex rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
-                          Aktif
-                        </div>
-
-                      </td>
-
-                      {/* DETAIL */}
-                      <td className="px-6 py-5 text-center">
-
-                        <Link
-                          href={`/admin/simpanan/${item.id_anggota}`}
-                          className="inline-flex items-center gap-2 rounded-2xl bg-blue-700 px-4 py-2 text-xs font-semibold text-white transition-all hover:bg-blue-800"
-                        >
-
-                          Kelola
-
-                          <ChevronRight className="h-4 w-4" />
-
-                        </Link>
-
-                      </td>
-
-                    </tr>
-                  )
-                )
-              ) : (
-                <tr>
-
-                  <td
-                    colSpan={6}
-                    className="py-20"
-                  >
-
-                    <div className="flex flex-col items-center justify-center text-center">
-
-                      <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-3xl bg-gray-100">
-
-                        <Wallet className="h-9 w-9 text-gray-400" />
+                        <p className="mt-1 text-xs text-gray-400">
+                          Data simpanan nasabah akan muncul di sini
+                        </p>
 
                       </div>
 
-                      <h3 className="text-lg font-bold text-gray-700">
-                        Belum ada data simpanan
-                      </h3>
+                    </td>
 
-                      <p className="mt-1 text-sm text-gray-400">
-                        Data simpanan nasabah akan muncul di sini
-                      </p>
+                  </tr>
 
-                    </div>
+                )}
 
-                  </td>
+              </tbody>
 
-                </tr>
-              )}
+            </table>
 
-            </tbody>
-
-          </table>
+          </div>
 
         </div>
 

@@ -3,8 +3,6 @@
 import {
   Download,
   FileText,
-  RefreshCw,
-  Trash2,
 } from "lucide-react";
 import { deleteSurat } from "../action";
 
@@ -126,36 +124,51 @@ export default function SuratCard({
         </a>
 
         <div className="flex gap-2">
+
+          {/* EDIT */}
           <button
             onClick={() => onEdit(data)}
             className="
-              h-9 w-9
               rounded-lg
-              border border-gray-200
-              flex items-center justify-center
-              hover:bg-gray-50
+              border
+              border-blue-200
+              bg-blue-50
+              px-3
+              py-2
+              text-xs
+              font-medium
+              text-blue-600
+              transition-all
+              duration-200
+              hover:bg-blue-100
             "
             type="button"
-            title="Update"
           >
-            <RefreshCw size={16} />
+            Edit
           </button>
 
+          {/* HAPUS */}
           <button
             onClick={handleDelete}
             className="
-              h-9 w-9
               rounded-lg
-              border border-red-200
+              border
+              border-red-200
+              bg-red-50
+              px-3
+              py-2
+              text-xs
+              font-medium
               text-red-600
-              flex items-center justify-center
-              hover:bg-red-50
+              transition-all
+              duration-200
+              hover:bg-red-100
             "
             type="button"
-            title="Hapus"
           >
-            <Trash2 size={16} />
+            Hapus
           </button>
+
         </div>
       </div>
     </div>

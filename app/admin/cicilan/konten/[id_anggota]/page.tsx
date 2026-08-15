@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { Prisma } from "@prisma/client";
+import DetailButton from "./DetailButton";
 
 type PeminjamanWithRelasi =
   Prisma.peminjamanGetPayload<{
@@ -17,9 +18,7 @@ export default async function DetailNasabah({
     id_anggota: string;
   };
 }) {
-  const id = Number(
-    params.id_anggota
-  );
+  const id = Number(params.id_anggota);
 
   if (isNaN(id)) {
     return (
@@ -49,18 +48,20 @@ export default async function DetailNasabah({
       },
 
       orderBy: {
-        tanggal_pengajuan:
-          "desc",
+        tanggal_pengajuan: "desc",
       },
     });
 
-  if (
-    !data ||
-    data.length === 0
-  ) {
+  if (!data || data.length === 0) {
     return (
-      <div className="p-6 text-gray-400">
-        Tidak ada pengajuan
+      <div className="min-h-screen bg-gray-50 p-6">
+        <div className="mx-auto max-w-7xl">
+          <div className="rounded-2xl border border-gray-100 bg-white p-10 text-center shadow-sm">
+            <p className="text-sm text-gray-400">
+              Tidak ada pengajuan
+            </p>
+          </div>
+        </div>
       </div>
     );
   }
@@ -73,402 +74,407 @@ export default async function DetailNasabah({
     num: number
   ) =>
     "Rp " +
-    num.toLocaleString(
-      "id-ID"
-    );
+    num.toLocaleString("id-ID");
 
   return (
     <div className="min-h-screen bg-gray-50">
 
-      {/* HEADER */}
-      <div className="bg-white border-b">
+      {/* =====================================================
+          HEADER
+      ===================================================== */}
+<div className="border-b bg-white">
+  <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-4 sm:px-6 lg:px-10">
 
-        <div className="max-w-7xl mx-auto px-6 py-5 flex items-center gap-4">
+    {/* BACK */}
+    <Link
+      href="/admin/cicilan"
+      className="
+        flex h-10 w-10 shrink-0
+        items-center justify-center
+        rounded-xl
+        border border-gray-200
+        bg-white
+        text-lg text-gray-600
+        transition-all
+        hover:border-blue-200
+        hover:bg-blue-50
+        hover:text-blue-700
+      "
+      aria-label="Kembali"
+    >
+      ←
+    </Link>
 
-          {/* BACK */}
-          <Link
-            href="/admin/cicilan"
-            className="
-              flex
-              items-center
-              justify-center
-              w-10
-              h-10
-              rounded-xl
-              border
-              hover:bg-gray-100
-              transition
-            "
-          >
-            ←
-          </Link>
+    {/* TITLE */}
+    <div className="min-w-0">
+      <h1 className="text-2xl font-bold text-gray-800">
+        Detail Pengajuan
+      </h1>
 
-          {/* TITLE */}
-          <div>
+      <p className="mt-0.5 text-sm text-gray-500">
+        {nama} • {data.length} pengajuan
+      </p>
+    </div>
 
-            <h1 className="text-2xl font-bold text-gray-800">
-              Detail Pengajuan
-            </h1>
+  </div>
+</div>
 
-            <p className="text-sm text-gray-500 mt-1">
-              {nama} •{" "}
-              {data.length} pengajuan
-            </p>
 
-          </div>
+      {/* =====================================================
+          CONTENT
+      ===================================================== */}
+      <div className="w-full px-4 py-6 sm:px-6 lg:px-10">
 
-        </div>
+        <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
 
-      </div>
+          {/* =================================================
+              TABLE
+          ================================================= */}
+          <div className="overflow-x-auto">
 
-      {/* CONTENT */}
-      <div className="max-w-7xl mx-auto px-6 py-6">
+            <table className="w-full text-sm">
 
-        <div className="grid md:grid-cols-2 gap-5">
+              {/* =================================================
+                  HEADER
+              ================================================= */}
+              <thead>
 
-          {data.map(
-            (item) => {
+                <tr className="bg-blue-800 text-white">
 
-              const total =
-                item.jangka_waktu ||
-                0;
+                  <th className="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wide">
+                    Pengajuan
+                  </th>
 
-              const jadwal =
-                item.jadwal ||
-                [];
+                  <th className="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wide">
+                    Jangka Waktu
+                  </th>
 
-              const sudahBayar =
-                jadwal.filter(
-                  (j) =>
-                    j.status ===
-                    "LUNAS"
-                ).length;
+                  <th className="px-5 py-3.5 text-center text-xs font-semibold uppercase tracking-wide">
+                    Progress
+                  </th>
 
-              const progress =
-                total === 0
-                  ? 0
-                  : (sudahBayar /
-                      total) *
-                    100;
+                  <th className="px-5 py-3.5 text-center text-xs font-semibold uppercase tracking-wide">
+                    Status
+                  </th>
 
-              let status:
-                | "baru"
-                | "aktif"
-                | "telat"
-                | "lunas" =
-                "baru";
+                  <th className="px-5 py-3.5 text-center text-xs font-semibold uppercase tracking-wide">
+                    Aksi
+                  </th>
 
-              const today =
-                new Date();
+                </tr>
 
-              today.setHours(
-                0,
-                0,
-                0,
-                0
-              );
+              </thead>
 
-              if (
-                item.status ===
-                "LUNAS"
-              ) {
-                status = "lunas";
-              } else if (
-                item.status ===
-                "ACTIVE"
-              ) {
-                status = "aktif";
 
-                const telat =
-                  jadwal.some(
-                    (j) => {
-                      if (
+              {/* =================================================
+                  BODY
+              ================================================= */}
+              <tbody>
+
+                {data.map((item) => {
+
+                  const total =
+                    item.jangka_waktu || 0;
+
+                  const jadwal =
+                    item.jadwal || [];
+
+                  const sudahBayar =
+                    jadwal.filter(
+                      (j) =>
                         j.status ===
                         "LUNAS"
-                      ) {
-                        return false;
-                      }
+                    ).length;
 
-                      const dueDate =
-                        new Date(
-                          j.jatuh_tempo
-                        );
+                  const progress =
+                    total === 0
+                      ? 0
+                      : (sudahBayar /
+                          total) *
+                        100;
 
-                      dueDate.setHours(
-                        0,
-                        0,
-                        0,
-                        0
-                      );
 
-                      return (
-                        dueDate <
-                        today
-                      );
-                    }
+                  // ============================================
+                  // STATUS
+                  // ============================================
+                  let status:
+                    | "baru"
+                    | "Berjalan"
+                    | "telat"
+                    | "lunas" =
+                    "baru";
+
+                  const today =
+                    new Date();
+
+                  today.setHours(
+                    0,
+                    0,
+                    0,
+                    0
                   );
 
-                if (telat) {
-                  status = "telat";
-                }
-              }
 
-              const accentGradient =
-                status === "telat"
-                  ? "from-red-500 to-rose-400"
-                  : status === "lunas"
-                  ? "from-emerald-500 to-teal-400"
-                  : status === "aktif"
-                  ? "from-blue-500 to-blue-700"
-                  : "from-blue-500 to-cyan-400";
+                  if (
+                    item.status ===
+                    "LUNAS"
+                  ) {
 
-              const badgeClass =
-                status === "baru"
-                  ? "bg-blue-100 text-blue-700"
-                  : status === "aktif"
-                  ? "bg-blue-100 text-blue-700"
-                  : status === "lunas"
-                  ? "bg-emerald-100 text-emerald-700"
-                  : "bg-red-100 text-red-700";
+                    status =
+                      "lunas";
 
-              const badgeLabel =
-                status === "baru"
-                  ? "Baru"
-                  : status === "aktif"
-                  ? "Aktif"
-                  : status === "lunas"
-                  ? "Lunas"
-                  : "Telat";
+                  } else if (
+                    item.status ===
+                    "ACTIVE"
+                  ) {
 
-              const progressBarClass =
-                status === "telat"
-                  ? "bg-red-500"
-                  : status === "lunas"
-                  ? "bg-emerald-500"
-                  : "bg-blue-500";
+                    status =
+                      "Berjalan";
 
-              const buttonClass =
-                status === "baru"
-                  ? "bg-blue-600 hover:bg-blue-700"
-                  : status === "aktif"
-                  ? "bg-blue-600 hover:bg-blue-700"
-                  : status === "lunas"
-                  ? "bg-blue-600 hover:bg-blue-700"
-                  : "bg-red-500 hover:bg-red-600";
+                    const telat =
+                      jadwal.some(
+                        (j) => {
 
-              const buttonLabel =
-                status === "baru"
-                  ? "Buat Jadwal"
-                  : status === "aktif"
-                  ? "Detail"
-                  : status === "lunas"
-                  ? "Selesai"
-                  : "Lihat";
+                          if (
+                            j.status ===
+                            "LUNAS"
+                          ) {
+                            return false;
+                          }
 
-              const belumAdaJadwal =
-                jadwal.length === 0;
+                          const dueDate =
+                            new Date(
+                              j.jatuh_tempo
+                            );
 
-              return (
-                <div
-                  key={
-                    item.id_peminjaman
+                          dueDate.setHours(
+                            0,
+                            0,
+                            0,
+                            0
+                          );
+
+                          return (
+                            dueDate <
+                            today
+                          );
+
+                        }
+                      );
+
+                    if (telat) {
+                      status =
+                        "telat";
+                    }
                   }
-                  className="
-                    relative
-                    bg-white
-                    rounded-3xl
-                    border
-                    shadow-sm
-                    hover:shadow-xl
-                    hover:-translate-y-1
-                    transition-all
-                    duration-300
-                    overflow-hidden
-                    p-6
-                  "
-                >
 
-                  {/* ACCENT */}
-                  <div
-                    className={`
-                      absolute
-                      top-0
-                      left-0
-                      w-full
-                      h-1
-                      bg-gradient-to-r
-                      ${accentGradient}
-                    `}
-                  />
 
-                  <div className="flex flex-col gap-6">
+                  // ============================================
+                  // STATUS STYLE
+                  // ============================================
+                  const badgeClass =
+                    status === "baru"
+                      ? "bg-blue-100 text-blue-700"
+                      : status === "Berjalan"
+                      ? "bg-yellow-100 text-yellow-700"
+                      : status === "lunas"
+                      ? "bg-green-100 text-green-700"
+                      : "bg-red-100 text-red-700";
 
-                    {/* TOP */}
-                    <div className="flex items-start justify-between">
 
-                      <div>
+                  const badgeLabel =
+                    status === "baru"
+                      ? "Baru"
+                      : status === "Berjalan"
+                      ? "Berjalan"
+                      : status === "lunas"
+                      ? "Lunas"
+                      : "Telat";
 
-                        <p className="text-2xl font-bold text-gray-800">
-                          {formatRupiah(
-                            item.total_pinjaman
-                          )}
-                        </p>
 
-                        <p className="text-xs text-gray-400 mt-2">
-                          Pengajuan:
-                        </p>
+                  const progressBarClass =
+                    status === "telat"
+                      ? "bg-red-500"
+                      : status === "lunas"
+                      ? "bg-emerald-500"
+                      : "bg-blue-500";
 
-                        <p className="text-sm text-gray-600">
-                          {new Date(
-                            item.tanggal_pengajuan
-                          ).toLocaleDateString(
-                            "id-ID",
-                            {
-                              day: "numeric",
-                              month: "long",
-                              year: "numeric",
-                            }
-                          )}
-                        </p>
 
-                      </div>
+                  const buttonClass =
+                    status === "telat"
+                      ? "border-red-200 text-red-600 hover:bg-red-600 hover:text-white"
+                      : "border-blue-200 text-blue-700 hover:bg-blue-700 hover:text-white";
 
-                      {/* STATUS */}
-                      <span
-                        className={`
-                          text-xs
-                          px-3
-                          py-1
-                          rounded-full
-                          font-medium
-                          ${badgeClass}
-                        `}
-                      >
-                        {badgeLabel}
-                      </span>
 
-                    </div>
+                  const buttonLabel =
+                    status === "baru"
+                      ? "Buat Jadwal"
+                      : status === "Berjalan"
+                      ? "Detail"
+                      : status === "lunas"
+                      ? "Selesai"
+                      : "Lihat";
 
-                    {/* INFO */}
-                    <div className="grid grid-cols-2 gap-4">
 
-                      {/* TENOR */}
-                      <div className="bg-gray-50 border rounded-2xl p-4">
+                  const belumAdaJadwal =
+                    jadwal.length === 0;
 
-                        <p className="text-xs text-gray-400">
-                          Jangka Waktu
-                        </p>
 
-                        <p className="text-lg font-bold text-gray-800 mt-1">
-                          {total} Bulan
-                        </p>
+                  return (
 
-                      </div>
+                    <tr
+                      key={
+                        item.id_peminjaman
+                      }
+                      className="
+                        border-t
+                        border-gray-100
+                        transition-colors
+                        hover:bg-blue-50/40
+                      "
+                    >
 
-                      {/* PROGRESS COUNT */}
-                      <div className="bg-gray-50 border rounded-2xl p-4">
-
-                        <p className="text-xs text-gray-400">
-                          Progress
-                        </p>
-
-                        {belumAdaJadwal ? (
-                          <p className="text-sm font-semibold text-gray-400 mt-1">
-                            Belum ada
-                          </p>
-                        ) : (
-                          <p className="text-lg font-bold text-gray-800 mt-1">
-                            {sudahBayar}/{total}
-                          </p>
-                        )}
-
-                      </div>
-
-                    </div>
-
-                    {/* PROGRESS BAR */}
-                    {belumAdaJadwal ? (
-                      <div
-                        className="
-                          flex
-                          items-center
-                          gap-3
-                          bg-gray-50
-                          border
-                          border-dashed
-                          border-gray-300
-                          rounded-2xl
-                          p-4
-                        "
-                      >
-
-                        <div className="w-9 h-9 shrink-0 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-base">
-                          🗓️
-                        </div>
+                      {/* ======================================
+                          PENGAJUAN
+                      ======================================= */}
+                      <td className="px-5 py-4">
 
                         <div>
-                          <p className="text-sm font-semibold text-gray-600">
-                            Jadwal cicilan belum dibuat
+
+                          <p className="text-sm font-semibold text-gray-800">
+                            {formatRupiah(
+                              item.total_pinjaman
+                            )}
                           </p>
-                          <p className="text-xs text-gray-400 mt-0.5">
-                            Buat jadwal untuk mulai memantau progress pembayaran
+
+                          <p className="mt-1 text-xs text-gray-400">
+                            Pengajuan{" "}
+                            {new Date(
+                              item.tanggal_pengajuan
+                            ).toLocaleDateString(
+                              "id-ID",
+                              {
+                                day: "numeric",
+                                month: "short",
+                                year: "numeric",
+                              }
+                            )}
                           </p>
-                        </div>
-
-                      </div>
-                    ) : (
-                      <div className="bg-gray-50 border rounded-2xl p-4">
-
-                        <p className="text-xs text-gray-400 mb-2">
-                          Progress Pembayaran
-                        </p>
-
-                        <div className="w-full h-2.5 bg-white border rounded-full overflow-hidden">
-
-                          <div
-                            className={`h-full transition-all ${progressBarClass}`}
-                            style={{
-                              width: `${progress}%`,
-                            }}
-                          />
 
                         </div>
 
-                        <p className="text-[11px] text-right mt-1 text-gray-400">
-                          {Math.round(progress)}%
-                        </p>
+                      </td>
 
-                      </div>
-                    )}
 
-                    {/* ACTION */}
-                    <div className="flex justify-end">
+                      {/* ======================================
+                          JANGKA WAKTU
+                      ======================================= */}
+                      <td className="px-5 py-4">
 
-                      <Link
-                        href={`/admin/cicilan/konten/${id}/${item.id_peminjaman}`}
-                        className={`
-                          px-5
-                          py-3
-                          rounded-xl
-                          text-sm
-                          font-medium
-                          text-white
-                          shadow-sm
-                          transition
-                          ${buttonClass}
-                        `}
-                      >
-                        {buttonLabel}
-                      </Link>
+                        <span className="inline-flex rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-700">
+                          {total} Bulan
+                        </span>
 
-                    </div>
+                      </td>
 
-                  </div>
 
-                </div>
-              );
-            }
-          )}
+                      {/* ======================================
+                          PROGRESS
+                      ======================================= */}
+                      <td className="px-5 py-4">
+
+                        {belumAdaJadwal ? (
+
+                          <div className="flex min-w-[150px] items-center gap-2">
+
+                            <span className="text-xs text-gray-400">
+                              Belum ada jadwal
+                            </span>
+
+                          </div>
+
+                        ) : (
+
+                          <div className="min-w-[150px]">
+
+                            <div className="mb-1 flex items-center justify-between">
+
+                              <span className="text-xs font-semibold text-gray-700">
+                                {sudahBayar}/{total}
+                              </span>
+
+                              <span className="text-[11px] text-gray-400">
+                                {Math.round(
+                                  progress
+                                )}%
+                              </span>
+
+                            </div>
+
+                            <div className="h-1.5 w-full overflow-hidden rounded-full bg-gray-100">
+
+                              <div
+                                className={`h-full rounded-full transition-all ${progressBarClass}`}
+                                style={{
+                                  width: `${progress}%`,
+                                }}
+                              />
+
+                            </div>
+
+                          </div>
+
+                        )}
+
+                      </td>
+
+
+                      {/* ======================================
+                          STATUS
+                      ======================================= */}
+                      <td className="px-5 py-4 text-center">
+
+                        <span
+                          className={`
+                            inline-flex
+                            rounded-full
+                            px-3
+                            py-1
+                            text-xs
+                            font-semibold
+                            ${badgeClass}
+                          `}
+                        >
+                          {badgeLabel}
+                        </span>
+
+                      </td>
+
+
+                      {/* ======================================
+                          AKSI
+                      ======================================= */}
+                      <td className="px-5 py-4 text-center">
+
+<DetailButton
+  href={`/admin/cicilan/konten/${id}/${item.id_peminjaman}`}
+  label={buttonLabel}
+  className={buttonClass}
+/>
+
+                      </td>
+
+                    </tr>
+
+                  );
+
+                })}
+
+              </tbody>
+
+            </table>
+
+          </div>
 
         </div>
 

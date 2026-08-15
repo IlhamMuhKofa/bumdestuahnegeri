@@ -73,29 +73,25 @@ export default function PengajuanPinjamanPage({ data }: any) {
     const s = (status || "").toLowerCase();
     if (s === "pending")
       return (
-        <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-amber-50 text-amber-700 ring-1 ring-amber-200">
-          <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+        <span className="inline-flex items-center rounded-full border border-yellow-200 bg-yellow-100 px-2.5 py-1 text-xs font-medium text-yellow-700">
           Menunggu
         </span>
       );
     if (s === "approved")
       return (
-        <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-blue-50 text-blue-700 ring-1 ring-blue-200">
-          <span className="w-1.5 h-1.5 rounded-full bg-blue-400" />
+        <span className="inline-flex items-center rounded-full border border-blue-200 bg-blue-100 px-2.5 py-1 text-xs font-medium text-blue-700">
           Diterima
         </span>
       );
     if (s === "active")
       return (
-        <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-green-50 text-green-700 ring-1 ring-green-200">
-          <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
+        <span className="inline-flex items-center rounded-full border border-green-200 bg-green-100 px-2.5 py-1 text-xs font-medium text-green-700">
           Aktif
         </span>
       );
     if (s === "rejected")
       return (
-        <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-red-50 text-red-700 ring-1 ring-red-200">
-          <span className="w-1.5 h-1.5 rounded-full bg-red-400" />
+        <span className="inline-flex items-center rounded-full border border-red-200 bg-red-100 px-2.5 py-1 text-xs font-medium text-red-700">
           Ditolak
         </span>
       );
@@ -103,118 +99,22 @@ export default function PengajuanPinjamanPage({ data }: any) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50/50 p-2">
-      <div className="max-w-7xl mx-auto space-y-7">
+    <div className="min-h-screen bg-slate-50 px-4 py-5 sm:px-6 sm:py-6">
+      <div className="mx-auto max-w-7xl space-y-6">
 
         {/* HEADER */}
         <div className="flex items-start justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 tracking-tight">
+            <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-[30px]">
               Pengajuan Pinjaman
             </h1>
-            <p className="mt-1 text-sm text-gray-500">
+            <p className="mt-1 text-sm leading-relaxed text-slate-500">
               Kelola dan pantau pengajuan pinjaman nasabah
             </p>
           </div>
         </div>
 
-        {/* SUMMARY CARDS */}
-        <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
-
-          {/* Aktif */}
-          <div className="group relative bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-0.5">
-            <div className="flex items-start justify-between">
-              <div>
-                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Pinjaman Aktif</p>
-                <p className="mt-2 text-3xl font-bold text-gray-900">{totalAktif}</p>
-                <p className="mt-1 text-xs text-green-600 font-medium">Berjalan</p>
-              </div>
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50 group-hover:bg-blue-100 transition-colors">
-                <Wallet className="h-5 w-5 text-blue-600" />
-              </div>
-            </div>
-            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-500 to-blue-300 rounded-b-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
-          </div>
-
-          {/* Pending */}
-          <div className="group relative bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-0.5">
-            <div className="flex items-start justify-between">
-              <div>
-                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Menunggu</p>
-                <p className="mt-2 text-3xl font-bold text-gray-900">{totalPending}</p>
-                <p className="mt-1 text-xs text-amber-600 font-medium">Perlu ditinjau</p>
-              </div>
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-amber-50 group-hover:bg-amber-100 transition-colors">
-                <Clock3 className="h-5 w-5 text-amber-600" />
-              </div>
-            </div>
-            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-amber-500 to-amber-300 rounded-b-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
-          </div>
-
-          {/* Approved */}
-          <div className="group relative bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-0.5">
-            <div className="flex items-start justify-between">
-              <div>
-                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Disetujui</p>
-                <p className="mt-2 text-3xl font-bold text-gray-900">{totalApproved}</p>
-                <p className="mt-1 text-xs text-blue-600 font-medium">Approved</p>
-              </div>
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50 group-hover:bg-blue-100 transition-colors">
-                <BadgeCheck className="h-5 w-5 text-blue-600" />
-              </div>
-            </div>
-            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-500 to-blue-300 rounded-b-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
-          </div>
-
-          {/* Rejected */}
-          <div className="group relative bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-0.5">
-            <div className="flex items-start justify-between">
-              <div>
-                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Ditolak</p>
-                <p className="mt-2 text-3xl font-bold text-gray-900">{totalRejected}</p>
-                <p className="mt-1 text-xs text-red-500 font-medium">Tidak lolos</p>
-              </div>
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-red-50 group-hover:bg-red-100 transition-colors">
-                <XCircle className="h-5 w-5 text-red-500" />
-              </div>
-            </div>
-            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-red-500 to-red-300 rounded-b-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
-          </div>
-
-        </div>
-
-                  {/* TOOLBAR */}
-          <div className=" border-b border-gray-100 space-y-4">
-
-            {/* TABS */}
-            <div className="flex gap-1 bg-gray-100 rounded-xl p-1 w-fit">
-              {tabs.map((tab) => (
-                <button
-                  key={tab}
-                  onClick={() => setActiveTab(tab)}
-                  className={`relative flex items-center gap-2 px-4 py-1.5 text-sm font-medium rounded-lg transition-all duration-200 ${
-                    activeTab === tab
-                      ? "bg-white text-blue-700 shadow-sm"
-                      : "text-gray-500 hover:text-gray-700"
-                  }`}
-                >
-                  {tab}
-                  {tabCount(tab) > 0 && (
-                    <span
-                      className={`text-xs px-1.5 py-0.5 rounded-full font-semibold leading-none ${
-                        activeTab === tab
-                          ? "bg-blue-100 text-blue-700"
-                          : "bg-gray-200 text-gray-500"
-                      }`}
-                    >
-                      {tabCount(tab)}
-                    </span>
-                  )}
-                </button>
-              ))}
-            </div>
-
-            {/* SEARCH + SORT */}
+                    {/* SEARCH + SORT */}
             <div className="flex items-center gap-3">
               <div className="relative flex-1 max-w-full">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
@@ -223,7 +123,7 @@ export default function PengajuanPinjamanPage({ data }: any) {
                   placeholder="Cari nama nasabah..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="w-full pl-9 pr-4 py-2 text-sm border border-gray-200 rounded-xl bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all placeholder:text-gray-400"
+                  className="w-full h-10 w-full rounded-lg border border-slate-200 bg-white pl-9 pr-4 text-sm text-slate-700 outline-none transition-all placeholder:text-slate-400 focus:border-[#2553d8] focus:ring-2 focus:ring-blue-100"
                 />
               </div>
 
@@ -232,7 +132,7 @@ export default function PengajuanPinjamanPage({ data }: any) {
                 <select
                   value={sort}
                   onChange={(e) => setSort(e.target.value)}
-                  className="pl-9 pr-8 py-2 text-sm border border-gray-200 rounded-xl bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all appearance-none cursor-pointer text-gray-600"
+                  className="h-10 appearance-none rounded-lg border border-slate-200 bg-white pl-9 pr-8 text-sm text-slate-700 outline-none transition-all focus:border-[#2553d8] focus:ring-2 focus:ring-blue-100 cursor-pointer"
                 >
                   <option value="terbaru">Terbaru</option>
                   <option value="terlama">Terlama</option>
@@ -242,35 +142,132 @@ export default function PengajuanPinjamanPage({ data }: any) {
                 <ArrowUpDown className="absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-400 pointer-events-none" />
               </div>
             </div>
+
+        {/* SUMMARY CARDS */}
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+
+          {/* Aktif */}
+          <div className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Pinjaman Aktif</p>
+                <p className="mt-1.5 text-2xl font-bold tracking-tight text-slate-900">{totalAktif}</p>
+                <p className="mt-1 text-xs font-medium text-green-600">Berjalan</p>
+              </div>
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 transition-colors group-hover:bg-blue-100 transition-colors">
+                <Wallet className="h-5 w-5 text-blue-600" />
+              </div>
+            </div>
+            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-500 to-blue-300 rounded-b-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
+          </div>
+
+          {/* Pending */}
+          <div className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Menunggu</p>
+                <p className="mt-1.5 text-2xl font-bold tracking-tight text-slate-900">{totalPending}</p>
+                <p className="mt-1 text-xs font-medium text-amber-600">Perlu ditinjau</p>
+              </div>
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-yellow-50 transition-colors group-hover:bg-yellow-100 transition-colors">
+                <Clock3 className="h-5 w-5 text-amber-600" />
+              </div>
+            </div>
+            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-amber-500 to-amber-300 rounded-b-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
+          </div>
+
+          {/* Approved */}
+          <div className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Disetujui</p>
+                <p className="mt-1.5 text-2xl font-bold tracking-tight text-slate-900">{totalApproved}</p>
+                <p className="mt-1 text-xs font-medium text-blue-600">Approved</p>
+              </div>
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 transition-colors group-hover:bg-blue-100 transition-colors">
+                <BadgeCheck className="h-5 w-5 text-blue-600" />
+              </div>
+            </div>
+            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-500 to-blue-300 rounded-b-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
+          </div>
+
+          {/* Rejected */}
+          <div className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Ditolak</p>
+                <p className="mt-1.5 text-2xl font-bold tracking-tight text-slate-900">{totalRejected}</p>
+                <p className="mt-1 text-xs font-medium text-red-600">Tidak lolos</p>
+              </div>
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-50 group-hover:bg-red-100 transition-colors">
+                <XCircle className="h-5 w-5 text-red-500" />
+              </div>
+            </div>
+            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-red-500 to-red-300 rounded-b-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
+          </div>
+
+        </div>
+
+                  {/* TOOLBAR */}
+          <div className=" space-y-3">
+
+{/* TABS */}
+<div className="flex w-full gap-1 rounded-xl bg-slate-100 p-1">
+  {tabs.map((tab) => (
+    <button
+      key={tab}
+      onClick={() => setActiveTab(tab)}
+      className={`relative flex flex-1 items-center justify-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 ${
+        activeTab === tab
+          ? "bg-white text-[#2553d8] shadow-sm"
+          : "text-gray-500 hover:text-gray-700"
+      }`}
+    >
+      {tab}
+
+      {tabCount(tab) > 0 && (
+        <span
+          className={`rounded-full px-1.5 py-0.5 text-xs font-semibold leading-none ${
+            activeTab === tab
+              ? "bg-blue-50 text-[#2553d8]"
+              : "bg-slate-200 text-slate-500"
+          }`}
+        >
+          {tabCount(tab)}
+        </span>
+      )}
+    </button>
+  ))}
+</div>
           </div>
 
         {/* TABLE CARD */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
           {/* TABLE */}
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-gray-100 bg-blue-800">
-                  <th className="px-5 py-3.5 text-left text-xs font-semibold text-white uppercase tracking-wider">Anggota</th>
-                  <th className="px-4 py-3.5 text-left text-xs font-semibold text-white uppercase tracking-wider">Tgl Pengajuan</th>
-                  <th className="px-4 py-3.5 text-right text-xs font-semibold text-white uppercase tracking-wider">Jumlah</th>
-                  <th className="px-4 py-3.5 text-center text-xs font-semibold text-white uppercase tracking-wider">Jangka</th>
-                  <th className="px-4 py-3.5 text-center text-xs font-semibold text-white uppercase tracking-wider">Agunan</th>
-                  <th className="px-4 py-3.5 text-center text-xs font-semibold text-white uppercase tracking-wider">Status</th>
-                  <th className="px-5 py-3.5 text-center text-xs font-semibold text-white uppercase tracking-wider">Aksi</th>
+                <tr className="border-b border-blue-700 bg-[#2553d8]">
+                  <th className="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wide text-white/95">Anggota</th>
+                  <th className="px-4 py-3.5 text-left text-xs font-semibold uppercase tracking-wide text-white/95">Tgl Pengajuan</th>
+                  <th className="px-4 py-3.5 text-right text-xs font-semibold uppercase tracking-wide text-white/95">Jumlah</th>
+                  <th className="px-4 py-3.5 text-center text-xs font-semibold uppercase tracking-wide text-white/95">Jangka</th>
+                  <th className="px-4 py-3.5 text-center text-xs font-semibold uppercase tracking-wide text-white/95">Agunan</th>
+                  <th className="px-4 py-3.5 text-center text-xs font-semibold uppercase tracking-wide text-white/95">Status</th>
+                  <th className="px-5 py-3.5 text-center text-xs font-semibold uppercase tracking-wide text-white/95">Aksi</th>
                 </tr>
               </thead>
 
-              <tbody className="divide-y divide-gray-50">
+              <tbody className="divide-y divide-slate-100">
                 {currentData.length === 0 ? (
                   <tr>
                     <td colSpan={7}>
                       <div className="flex flex-col items-center justify-center py-16 text-gray-400">
-                        <div className="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center mb-3">
-                          <Search className="w-6 h-6 text-gray-300" />
+                        <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-slate-100">
+                          <Search className="h-6 w-6 text-slate-300" />
                         </div>
-                        <p className="text-sm font-medium text-gray-500">Tidak ada data ditemukan</p>
-                        <p className="text-xs text-gray-400 mt-1">Coba ubah filter atau kata kunci pencarian</p>
+                        <p className="text-sm font-medium text-slate-600">Tidak ada data ditemukan</p>
+                        <p className="text-xs text-slate-400 mt-1">Coba ubah filter atau kata kunci pencarian</p>
                       </div>
                     </td>
                   </tr>
@@ -278,17 +275,17 @@ export default function PengajuanPinjamanPage({ data }: any) {
                   currentData.map((item: any, idx: number) => (
                     <tr
                       key={item.id_peminjaman}
-                      className="group hover:bg-blue-50/40 transition-colors duration-150"
+                      className="group transition-colors duration-150 hover:bg-blue-50/50"
                     >
                       {/* Anggota */}
                       <td className="px-5 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
-                            <span className="text-xs font-bold text-blue-700">
+                          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-50">
+                            <span className="text-xs font-bold text-[#2553d8]">
                               {(item.anggota?.nama || "?")[0].toUpperCase()}
                             </span>
                           </div>
-                          <span className="text-sm font-medium text-gray-800">
+                          <span className="text-sm font-medium text-slate-800">
                             {item.anggota?.nama}
                           </span>
                         </div>
@@ -296,27 +293,27 @@ export default function PengajuanPinjamanPage({ data }: any) {
 
                       {/* Tanggal */}
                       <td className="px-4 py-4">
-                        <span className="block text-sm text-gray-800">{item.tanggal_formatted}</span>
-                        <span className="text-xs text-gray-400">{item.waktu_formatted}</span>
+                        <span className="block text-sm text-slate-700">{item.tanggal_formatted}</span>
+                        <span className="text-xs text-slate-400">{item.waktu_formatted}</span>
                       </td>
 
                       {/* Jumlah */}
                       <td className="px-4 py-4 text-right">
-                        <span className="text-sm font-semibold text-gray-800">
+                        <span className="text-sm font-semibold text-slate-800">
                           Rp {item.jumlah_formatted}
                         </span>
                       </td>
 
                       {/* Jangka Waktu */}
                       <td className="px-4 py-4 text-center">
-                        <span className="inline-flex items-center px-2.5 py-1 rounded-lg bg-gray-100 text-xs font-medium text-gray-600">
+                        <span className="inline-flex items-center rounded-lg bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-600">
                           {item.jangka_waktu} bln
                         </span>
                       </td>
 
                       {/* Agunan */}
                       <td className="px-4 py-4 text-center">
-                        <span className="text-sm text-gray-600">
+                        <span className="text-sm text-slate-600">
                           {item.detail?.[0]?.jenis || "—"}
                         </span>
                       </td>
@@ -330,7 +327,7 @@ export default function PengajuanPinjamanPage({ data }: any) {
                       <td className="px-5 py-4 text-center">
                         <a
                           href={`/admin/pinjaman/${item.id_peminjaman}`}
-                          className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-blue-700 border border-blue-200 rounded-lg hover:bg-blue-700 hover:text-white hover:border-green-700 transition-all duration-150"
+                          className="inline-flex h-9 items-center justify-center rounded-lg border border-blue-200 px-3 text-xs font-semibold text-[#2553d8] transition-all duration-150 hover:border-[#2553d8] hover:bg-[#2553d8] hover:text-white"
                         >
                           Detail
                         </a>
@@ -343,21 +340,21 @@ export default function PengajuanPinjamanPage({ data }: any) {
           </div>
 
           {/* PAGINATION */}
-          <div className="flex items-center justify-between px-5 py-3.5 border-t border-gray-100 bg-gray-50/50">
-            <p className="text-xs text-gray-500">
+          <div className="flex items-center justify-between px-5 py-3.5 border-t border-slate-100 bg-slate-50/70">
+            <p className="text-xs text-slate-500">
               Menampilkan{" "}
-              <span className="font-semibold text-gray-700">
+              <span className="font-semibold text-slate-700">
                 {totalData === 0 ? 0 : startIndex + 1}–{Math.min(startIndex + itemsPerPage, totalData)}
               </span>{" "}
               dari{" "}
-              <span className="font-semibold text-gray-700">{totalData}</span> data
+              <span className="font-semibold text-slate-700">{totalData}</span> data
             </p>
 
             <div className="flex items-center gap-1">
               <button
                 onClick={() => setCurrentPage((p) => p - 1)}
                 disabled={currentPage === 1}
-                className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+                className="inline-flex h-9 items-center gap-1 rounded-lg border border-slate-200 bg-white px-3 text-xs font-medium text-slate-600 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40"
               >
                 <ChevronLeft className="w-3.5 h-3.5" />
                 Sebelumnya
@@ -375,15 +372,15 @@ export default function PengajuanPinjamanPage({ data }: any) {
                 }, [])
                 .map((p, i) =>
                   p === "..." ? (
-                    <span key={`ellipsis-${i}`} className="px-2 text-xs text-gray-400">…</span>
+                    <span key={`ellipsis-${i}`} className="px-2 text-xs text-slate-400">…</span>
                   ) : (
                     <button
                       key={p}
                       onClick={() => setCurrentPage(p as number)}
-                      className={`w-8 h-8 text-xs font-semibold rounded-lg transition-all ${
+                      className={`inline-flex h-8 w-8 items-center justify-center rounded-lg text-xs font-semibold transition-all ${
                         currentPage === p
-                          ? "bg-blue-700 text-white"
-                          : "text-gray-600 border border-gray-200 hover:bg-gray-100"
+                          ? "bg-[#2553d8] text-white"
+                          : "text-slate-600 border border-slate-200 hover:bg-slate-50"
                       }`}
                     >
                       {p}
@@ -394,7 +391,7 @@ export default function PengajuanPinjamanPage({ data }: any) {
               <button
                 onClick={() => setCurrentPage((p) => p + 1)}
                 disabled={currentPage === totalPages || totalPages === 0}
-                className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+                className="inline-flex h-9 items-center gap-1 rounded-lg border border-slate-200 bg-white px-3 text-xs font-medium text-slate-600 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40"
               >
                 Berikutnya
                 <ChevronRight className="w-3.5 h-3.5" />

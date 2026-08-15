@@ -1,17 +1,12 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Calculator, Handshake, Wallet } from 'lucide-react';
+import { Handshake, ArrowLeft } from 'lucide-react';
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 
-type FormPengajuanProps = {
-  onSuccess?: () => void;
-};
+const FormPengajuan = () => {
 
-const FormPengajuan = ({
-  onSuccess,
-}: FormPengajuanProps) => {
   const [jumlahPinjaman, setJumlahPinjaman] = useState('10000000');
   const [jangkaWaktu, setJangkaWaktu] = useState('12');
   const [pekerjaan, setPekerjaan] = useState('');
@@ -33,7 +28,7 @@ const FormPengajuan = ({
     if (input) input.click();
   };
 
-    useEffect(() => {
+  useEffect(() => {
     async function loadProfile() {
       try {
         const res = await fetch("/api/nasabah/profile", {
@@ -120,235 +115,231 @@ const FormPengajuan = ({
     setFile(file);
   };
 
-async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-  e.preventDefault();
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
 
-  if (loading) return;
+    if (loading) return;
 
-  setLoading(true);
-
-  // =========================
-  // VALIDASI FILE
-  // =========================
-
-  if (!fotoAgunan) {
-    toast.error("Foto agunan wajib diisi.", {
-      position: "top-right",
-      autoClose: 3500,
-    });
-
-    setLoading(false);
-    return;
-  }
-
-  if (!fotoSurat) {
-    toast.error("Surat usaha wajib diisi.", {
-      position: "top-right",
-      autoClose: 3500,
-    });
-
-    setLoading(false);
-    return;
-  }
-
-  // =========================
-  // VALIDASI DATA FORM
-  // =========================
-
-  if (!pekerjaan.trim()) {
-    toast.error("Pekerjaan wajib diisi.", {
-      position: "top-right",
-      autoClose: 3500,
-    });
-
-    setLoading(false);
-    return;
-  }
-
-  if (!penghasilan.trim()) {
-    toast.error("Penghasilan wajib diisi.", {
-      position: "top-right",
-      autoClose: 3500,
-    });
-
-    setLoading(false);
-    return;
-  }
-
-  if (!jenis.trim()) {
-    toast.error("Jenis agunan wajib diisi.", {
-      position: "top-right",
-      autoClose: 3500,
-    });
-
-    setLoading(false);
-    return;
-  }
-
-  if (!rencanaUsaha.trim()) {
-    toast.error("Rencana usaha wajib diisi.", {
-      position: "top-right",
-      autoClose: 3500,
-    });
-
-    setLoading(false);
-    return;
-  }
-
-  try {
-    // =========================
-    // BENTUK FORM DATA
-    // =========================
-
-    const formData = new FormData();
-
-    formData.append(
-      "jumlahPinjaman",
-      jumlahPinjamanInput
-    );
-
-    formData.append(
-      "jangkaWaktu",
-      jangkaWaktu
-    );
-
-    formData.append(
-      "pekerjaan",
-      pekerjaan
-    );
-
-    formData.append(
-      "penghasilan",
-      penghasilan
-    );
-
-    // Frontend tetap menggunakan nama jenisAgunan.
-    // API akan menyimpannya ke kolom database "jenis".
-    formData.append(
-      "jenis",
-      jenis
-    );
-
-    formData.append(
-      "rencanaUsaha",
-      rencanaUsaha
-    );
+    setLoading(true);
 
     // =========================
-    // FILE AGUNAN
+    // VALIDASI FILE
     // =========================
 
-    formData.append(
-      "fotoAgunan",
-      fotoAgunan
-    );
+    if (!fotoAgunan) {
+      toast.error("Foto agunan wajib diisi.", {
+        position: "top-right",
+        autoClose: 3500,
+      });
+
+      setLoading(false);
+      return;
+    }
+
+    if (!fotoSurat) {
+      toast.error("Surat usaha wajib diisi.", {
+        position: "top-right",
+        autoClose: 3500,
+      });
+
+      setLoading(false);
+      return;
+    }
 
     // =========================
-    // FILE SURAT
+    // VALIDASI DATA FORM
     // =========================
 
-    formData.append(
-      "fotoSurat",
-      fotoSurat
-    );
+    if (!pekerjaan.trim()) {
+      toast.error("Pekerjaan wajib diisi.", {
+        position: "top-right",
+        autoClose: 3500,
+      });
 
-    console.log(
-      "=== MENGIRIM PENGAJUAN ==="
-    );
+      setLoading(false);
+      return;
+    }
 
-    console.log({
-      jumlahPinjaman: jumlahPinjamanInput,
-      jangkaWaktu,
-      pekerjaan,
-      penghasilan,
-      jenis,
-      rencanaUsaha,
-      fotoAgunan: fotoAgunan.name,
-      fotoSurat: fotoSurat.name,
-    });
+    if (!penghasilan.trim()) {
+      toast.error("Penghasilan wajib diisi.", {
+        position: "top-right",
+        autoClose: 3500,
+      });
 
-    // =========================
-    // KIRIM KE API
-    // =========================
+      setLoading(false);
+      return;
+    }
 
-    const res = await fetch(
-      "/api/peminjaman",
-      {
-        method: "POST",
-        body: formData,
-      }
-    );
+    if (!jenis.trim()) {
+      toast.error("Jenis agunan wajib diisi.", {
+        position: "top-right",
+        autoClose: 3500,
+      });
 
-    // Ambil response dengan aman
-    const data = await res
-      .json()
-      .catch(() => null);
+      setLoading(false);
+      return;
+    }
 
-    console.log(
-      "STATUS API:",
-      res.status
-    );
+    if (!rencanaUsaha.trim()) {
+      toast.error("Rencana usaha wajib diisi.", {
+        position: "top-right",
+        autoClose: 3500,
+      });
 
-    console.log(
-      "RESPONSE API:",
-      data
-    );
+      setLoading(false);
+      return;
+    }
 
-    // =========================
-    // JIKA API GAGAL
-    // =========================
+    try {
+      // =========================
+      // BENTUK FORM DATA
+      // =========================
 
-    if (!res.ok) {
-      toast.error(
-        data?.error ||
+      const formData = new FormData();
+
+      formData.append(
+        "jumlahPinjaman",
+        jumlahPinjamanInput
+      );
+
+      formData.append(
+        "jangkaWaktu",
+        jangkaWaktu
+      );
+
+      formData.append(
+        "pekerjaan",
+        pekerjaan
+      );
+
+      formData.append(
+        "penghasilan",
+        penghasilan
+      );
+
+      // Frontend tetap menggunakan nama jenisAgunan.
+      // API akan menyimpannya ke kolom database "jenis".
+      formData.append(
+        "jenis",
+        jenis
+      );
+
+      formData.append(
+        "rencanaUsaha",
+        rencanaUsaha
+      );
+
+      // =========================
+      // FILE AGUNAN
+      // =========================
+
+      formData.append(
+        "fotoAgunan",
+        fotoAgunan
+      );
+
+      // =========================
+      // FILE SURAT
+      // =========================
+
+      formData.append(
+        "fotoSurat",
+        fotoSurat
+      );
+
+      console.log(
+        "=== MENGIRIM PENGAJUAN ==="
+      );
+
+      console.log({
+        jumlahPinjaman: jumlahPinjamanInput,
+        jangkaWaktu,
+        pekerjaan,
+        penghasilan,
+        jenis,
+        rencanaUsaha,
+        fotoAgunan: fotoAgunan.name,
+        fotoSurat: fotoSurat.name,
+      });
+
+      // =========================
+      // KIRIM KE API
+      // =========================
+
+      const res = await fetch(
+        "/api/peminjaman",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      // Ambil response dengan aman
+      const data = await res
+        .json()
+        .catch(() => null);
+
+      console.log(
+        "STATUS API:",
+        res.status
+      );
+
+      console.log(
+        "RESPONSE API:",
+        data
+      );
+
+      // =========================
+      // JIKA API GAGAL
+      // =========================
+
+      if (!res.ok) {
+        toast.error(
+          data?.error ||
           "Terjadi kesalahan saat mengajukan pinjaman.",
+          {
+            position: "top-right",
+            autoClose: 4000,
+          }
+        );
+
+        return;
+      }
+
+      // =========================
+      // BERHASIL
+      // =========================
+
+      setSubmitted(true);
+
+      toast.success(
+        data?.message ||
+        "Pengajuan pinjaman berhasil dikirim!",
+        {
+          position: "top-right",
+          autoClose: 1200,
+        }
+      );
+
+    } catch (error) {
+
+      console.error(
+        "ERROR HANDLE SUBMIT:",
+        error
+      );
+
+      toast.error(
+        "Terjadi kesalahan saat mengirim pengajuan.",
         {
           position: "top-right",
           autoClose: 4000,
         }
       );
 
-      return;
+    } finally {
+      setLoading(false);
     }
-
-    // =========================
-    // BERHASIL
-    // =========================
-
-setSubmitted(true);
-
-toast.success(
-  data?.message ||
-    "Pengajuan pinjaman berhasil dikirim!",
-  {
-    position: "top-right",
-    autoClose: 1200,
   }
-);
-
-setTimeout(() => {
-  onSuccess?.();
-}, 1200);
-
-  } catch (error) {
-
-    console.error(
-      "ERROR HANDLE SUBMIT:",
-      error
-    );
-
-    toast.error(
-      "Terjadi kesalahan saat mengirim pengajuan.",
-      {
-        position: "top-right",
-        autoClose: 4000,
-      }
-    );
-
-  } finally {
-    setLoading(false);
-  }
-}
 
   useEffect(() => {
     return () => {
@@ -358,164 +349,42 @@ setTimeout(() => {
 
   return (
     <div className="min-h-screen bg-gray-50 py-4 px-4 sm:px-6">
-      <div className="max-w-3xl mx-auto sm:p-4 md:p-8">
-
-        {/* Kalkulator Section */}
-        <div className="bg-white rounded-2xl shadow-lg p-4 sm:p-6 md:p-8 mb-6">
-          <div className="flex items-center gap-2 mb-4 sm:mb-6">
-            <Calculator className="w-5 h-5 sm:w-6 sm:h-6 text-green-600 flex-shrink-0" />
-            <h2 className="text-lg sm:text-xl font-bold text-gray-800">Cek Cicilan di Sini</h2>
-          </div>
-          <p className="text-gray-600 text-xs sm:text-sm mb-5 sm:mb-6">
-            Masukkan data berikut untuk menghitung estimasi angsuran
-          </p>
-
-          <div className="grid sm:grid-cols-2 gap-4 sm:gap-6 mb-6">
-            {/* Jumlah Pinjaman */}
-            <div>
-              <label className="block text-gray-700 font-medium mb-2 text-sm">
-                Jumlah Pinjaman
-              </label>
-              <p className="text-xs text-gray-400 mb-2">
-                Kelipatan Rp1.000.000, min Rp1.000.000 - maks Rp10.000.000
-              </p>
-
-              <div className="flex items-center gap-2">
-                {/* TOMBOL KURANG */}
-                <button
-                  type="button"
-                  disabled={loading || submitted || parseInt(jumlahPinjaman) <= 1000000}
-                  onClick={() =>
-                    setJumlahPinjaman((prev) => {
-                      const next = Math.max(1000000, (parseInt(prev) || 0) - 1000000);
-                      return String(next);
-                    })
-                  }
-                  className="shrink-0 w-11 h-11 flex items-center justify-center rounded-xl border-2 border-gray-200 text-gray-600 font-bold text-lg disabled:opacity-30 disabled:cursor-not-allowed hover:border-green-400 hover:text-green-600 transition"
-                >
-                  −
-                </button>
-
-                <div className="relative flex-1">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-medium text-sm sm:text-base pointer-events-none">
-                    Rp
-                  </span>
-                  <input
-                    disabled={loading || submitted}
-                    type="text"
-                    inputMode="numeric"
-                    value={formatNumberDisplay(jumlahPinjaman)}
-                    onChange={(e) => {
-                      const value = e.target.value.replace(/\D/g, '');
-                      if (Number(value) <= 10000000) {
-                        setJumlahPinjaman(value);
-                      }
-                    }}
-                    onBlur={() => {
-                      setJumlahPinjaman((prev) => {
-                        let angka = parseInt(prev) || 0;
-                        let snapped = Math.round(angka / 1000000) * 1000000;
-                        if (snapped < 1000000) snapped = 1000000;
-                        if (snapped > 10000000) snapped = 10000000;
-                        return String(snapped);
-                      });
-                    }}
-                    className="w-full pl-11 sm:pl-12 pr-4 py-3 bg-white border border-gray-200 rounded-xl
-focus:border-[#1a3c2e] focus:ring-2 focus:ring-[#1a3c2e]/20
-outline-none text-gray-800 text-sm sm:text-base transition-all duration-200"
-                    placeholder="10.000.000"
-                  />
-                </div>
-
-                {/* TOMBOL TAMBAH */}
-                <button
-                  type="button"
-                  disabled={loading || submitted || parseInt(jumlahPinjaman) >= 10000000}
-                  onClick={() =>
-                    setJumlahPinjaman((prev) => {
-                      const next = Math.min(10000000, (parseInt(prev) || 0) + 1000000);
-                      return String(next);
-                    })
-                  }
-                  className="shrink-0 w-11 h-11 flex items-center justify-center rounded-xl border-2 border-gray-200 text-gray-600 font-bold text-lg disabled:opacity-30 disabled:cursor-not-allowed hover:border-green-400 hover:text-green-600 transition"
-                >
-                  +
-                </button>
-              </div>
-            </div>
-
-            {/* Jangka Waktu */}
-            <div>
-              <label className="block text-gray-700 font-medium mb-2 text-sm">
-                Jangka Waktu
-              </label>
-              <div className="grid grid-cols-3 gap-2">
-                {["6", "12", "18"].map((bulan) => (
-                  <button
-                    key={bulan}
-                    type="button"
-                    disabled={loading || submitted}
-                    onClick={() => setJangkaWaktu(bulan)}
-                    className={`py-3 rounded-xl font-semibold text-sm transition-all ${jangkaWaktu === bulan
-                        ? "bg-green-600 text-white shadow-md"
-                        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                      }`}
-                  >
-                    {bulan} Bln
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Hasil Kalkulasi */}
-          <div className="bg-gradient-to-br from-green-700 to-green-700 rounded-2xl shadow-xl p-5 sm:p-6 text-white">
-            <div className="flex items-center gap-3 mb-4 sm:mb-5">
-              <div className="bg-white/20 p-2.5 rounded-xl backdrop-blur-sm flex-shrink-0">
-                <Wallet className="w-5 h-5 text-white" />
-              </div>
-              <h3 className="text-base sm:text-lg font-bold">Estimasi Angsuran</h3>
-            </div>
-
-            <div className="space-y-3">
-              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
-                <p className="text-xs sm:text-sm text-green-100 mb-1">Angsuran per Bulan</p>
-                <p className="text-xl sm:text-2xl font-bold break-words">
-                  {formatRupiah(hasil.angsuranPerBulan)}
-                </p>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 border border-white/20">
-                  <p className="text-xs text-green-100 mb-1">Total Bunga</p>
-                  <p className="text-sm sm:text-base font-bold break-words">
-                    {formatRupiah(hasil.totalBunga)}
-                  </p>
-                </div>
-
-                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 border border-white/20">
-                  <p className="text-xs text-green-100 mb-1">Total Bayar</p>
-                  <p className="text-sm sm:text-base font-bold break-words">
-                    {formatRupiah(hasil.totalPembayaran)}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Note */}
-
-          {/* Note */}
-          <div className="mt-4 bg-yellow-50 border border-yellow-200 rounded-lg p-3">
-            <p className="text-xs sm:text-sm text-gray-700">
-              <span className="font-semibold">Note :</span> Untuk Nasabah baru hanya dapat mengajukan pinjaman{' '}
-              <span className="font-bold">maksimal Rp 10.000.000</span>
-            </p>
-          </div>
-        </div>
-
+      <div className="w-full">
         {/* Form Pengajuan */}
-        <div className="bg-[#1a3c2e] rounded-2xl p-4 sm:p-6 md:p-8">
+        <div className="relative bg-[#1a3c2e] rounded-2xl p-4 sm:p-6 md:p-8">
+<button
+  type="button"
+  onClick={() => router.back()}
+  className="
+    absolute left-4 top-4
+    sm:left-6 sm:top-6
+    group
+    inline-flex items-center gap-2
+    rounded-xl
+    border border-white/20
+    bg-white/10
+    px-4 py-2.5
+    text-sm font-semibold text-white
+    backdrop-blur-sm
+    shadow-sm
+    transition-all duration-200
+    hover:bg-white/20
+    hover:border-white/30
+    hover:-translate-x-0.5
+    hover:shadow-md
+    active:scale-95
+  "
+>
+  <ArrowLeft
+    className="
+      w-5 h-5
+      transition-transform duration-200
+      group-hover:-translate-x-1
+    "
+  />
+
+  <span>Kembali</span>
+</button>
           <div className="flex items-center justify-center gap-3 mb-3 sm:mb-4">
             <Handshake className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
           </div>

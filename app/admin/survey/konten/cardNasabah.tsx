@@ -3,7 +3,6 @@
 import { useRouter } from "next/navigation";
 
 export default function CardNasabah({ item }: any) {
-
   const router = useRouter();
 
   const formatTanggal = (
@@ -15,7 +14,7 @@ export default function CardNasabah({ item }: any) {
       "id-ID",
       {
         day: "numeric",
-        month: "long",
+        month: "short",
         year: "numeric",
       }
     );
@@ -36,55 +35,35 @@ export default function CardNasabah({ item }: any) {
     "SUDAH";
 
   return (
-    <div
+    <tr
       className="
-        relative
-        bg-white
-        border
-        rounded-3xl
-        p-6
-        shadow-sm
-        hover:shadow-xl
-        hover:-translate-y-1
-        transition-all
-        duration-300
-        overflow-hidden
+        border-b
+        border-gray-100
+        last:border-0
+        transition-colors
+        hover:bg-blue-50/40
       "
     >
 
-      {/* ACCENT */}
-      <div
-        className={`
-          absolute
-          top-0
-          left-0
-          w-full
-          h-1
-          ${
-            isSudahSurvey
-              ? "bg-gradient-to-r from-blue-500 to-cyan-400"
-              : "bg-gradient-to-r from-orange-500 to-yellow-400"
-          }
-        `}
-      />
+      {/* =====================================================
+          NASABAH
+      ===================================================== */}
 
-      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+      <td className="px-5 py-4">
 
-        {/* LEFT */}
-        <div className="flex items-start gap-4">
+        <div className="flex items-center gap-3">
 
           {/* AVATAR */}
+
           <div
             className={`
-              w-14
-              h-14
-              rounded-2xl
               flex
+              h-9
+              w-9
+              shrink-0
               items-center
               justify-center
-              font-bold
-              text-lg
-              shadow-sm
+              rounded-full
               ${
                 isSudahSurvey
                   ? "bg-blue-100 text-blue-700"
@@ -92,110 +71,160 @@ export default function CardNasabah({ item }: any) {
               }
             `}
           >
-            {getInitial(
-              item.nama
-            )}
+
+            <span className="text-xs font-bold">
+              {getInitial(
+                item.nama
+              )}
+            </span>
+
           </div>
 
-          {/* TEXT */}
-          <div>
 
-            {/* NAME */}
-            <div className="flex flex-wrap items-center gap-2">
+          {/* NAMA */}
 
-              <h2 className="text-xl font-bold text-gray-800">
-                {item.nama}
-              </h2>
+          <div className="min-w-0">
 
-              {/* STATUS */}
-              <span
-                className={`
-                  text-xs
-                  px-3
-                  py-1
-                  rounded-full
-                  font-medium
-                  ${
-                    isSudahSurvey
-                      ? "bg-blue-100 text-blue-700"
-                      : "bg-orange-100 text-orange-700"
-                  }
-                `}
-              >
-                {isSudahSurvey
-                  ? "Sudah Survey"
-                  : "Belum Survey"}
-              </span>
-
-            </div>
-
-            {/* DATE */}
-            <div className="mt-3">
-
-              <p className="text-xs text-gray-400">
-                Pengajuan terakhir
-              </p>
-
-              <p className="text-sm text-gray-700 font-medium">
-                {formatTanggal(
-                  item.terakhir
-                )}
-              </p>
-
-            </div>
+            <p className="truncate text-sm font-semibold text-gray-800">
+              {item.nama}
+            </p>
 
           </div>
 
         </div>
 
-        {/* RIGHT */}
-        <div className="flex items-center justify-between lg:justify-end gap-6">
+      </td>
 
-          {/* TOTAL */}
-          <div className="text-center">
 
-            <p className="text-xs text-gray-400">
-              Total Pengajuan
-            </p>
+      {/* =====================================================
+          PENGAJUAN TERAKHIR
+      ===================================================== */}
 
-            <p className="text-2xl font-bold text-gray-800">
-              {item.total_pengajuan}
-            </p>
+      <td className="whitespace-nowrap px-5 py-4">
 
-          </div>
+        <p className="text-sm font-medium text-gray-700">
+          {formatTanggal(
+            item.terakhir
+          )}
+        </p>
 
-          {/* ACTION */}
-          <button
-            onClick={() =>
-              router.push(
-                `/admin/survey/konten/${item.id_anggota}`
-              )
+        <p className="mt-0.5 text-xs text-gray-400">
+          Pengajuan terakhir
+        </p>
+
+      </td>
+
+
+      {/* =====================================================
+          TOTAL PENGAJUAN
+      ===================================================== */}
+
+      <td className="px-5 py-4 text-center">
+
+        <span
+          className="
+            inline-flex
+            min-w-[36px]
+            items-center
+            justify-center
+            rounded-full
+            bg-gray-100
+            px-3
+            py-1
+            text-xs
+            font-semibold
+            text-gray-700
+          "
+        >
+          {item.total_pengajuan}
+        </span>
+
+      </td>
+
+
+      {/* =====================================================
+          STATUS SURVEY
+      ===================================================== */}
+
+      <td className="px-5 py-4">
+
+        <span
+          className={`
+            inline-flex
+            items-center
+            rounded-full
+            border
+            px-2.5
+            py-1
+            text-xs
+            font-semibold
+            ${
+              isSudahSurvey
+                ? "border-blue-200 bg-blue-50 text-blue-700"
+                : "border-orange-200 bg-orange-50 text-orange-700"
             }
-            className={`
-              px-5
-              py-3
-              rounded-xl
-              text-sm
-              font-medium
-              text-white
-              shadow-sm
-              transition
-              ${
-                isSudahSurvey
-                  ? "bg-blue-600 hover:bg-blue-700"
-                  : "bg-orange-500 hover:bg-orange-600"
-              }
-            `}
-          >
-            {isSudahSurvey
-              ? "Lihat Survey"
-              : "Buat Jadwal"}
-          </button>
+          `}
+        >
+          {isSudahSurvey
+            ? "Sudah Survey"
+            : "Belum Survey"}
+        </span>
 
-        </div>
+      </td>
 
-      </div>
 
-    </div>
+      {/* =====================================================
+          AKSI
+      ===================================================== */}
+
+      <td className="px-5 py-4 text-center">
+
+        <button
+          type="button"
+          onClick={() =>
+            router.push(
+              `/admin/survey/konten/${item.id_peminjaman}`
+            )
+          }
+          className={`
+            inline-flex
+            h-9
+            items-center
+            justify-center
+            rounded-lg
+            border
+            px-3
+            text-xs
+            font-semibold
+            transition-all
+            ${
+              isSudahSurvey
+                ? `
+                  border-blue-200
+                  bg-white
+                  text-blue-700
+                  hover:border-blue-700
+                  hover:bg-blue-700
+                  hover:text-white
+                `
+                : `
+                  border-blue-200
+                  bg-white
+                  text-blue-700
+                  hover:border-blue-700
+                  hover:bg-blue-700
+                  hover:text-white
+                `
+            }
+          `}
+        >
+          {isSudahSurvey
+            ? "Lihat Survey"
+            : "Buat Jadwal"}
+        </button>
+
+      </td>
+
+    </tr>
   );
 }
